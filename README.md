@@ -34,3 +34,7 @@ TODO:
 * Better way to pull external dependencies
 * Better way to handle IB_USE_STD_STRING
 * Write more tests
+
+License
+-------
+Copyright (c) 2013 Jae Yang. See LICENSE file for license rights and limitations (MIT).
