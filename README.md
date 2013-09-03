@@ -26,6 +26,9 @@ Installation:
     EPosixClientSocket.cpp
 7. node-gyp configure build
 
+Tests:
+------
+Uses mocha, so install it.
 
 TODO:
 -----
