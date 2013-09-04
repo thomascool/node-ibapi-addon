@@ -26,6 +26,12 @@ void NodeIbapi::Init(Handle<Object> exports) {
     tpl->PrototypeTemplate()->Set(String::NewSymbol("isConnected"),
         FunctionTemplate::New(IsConnected)->GetFunction());
 
+    tpl->PrototypeTemplate()->Set(String::NewSymbol("processMsg"),
+        FunctionTemplate::New(ProcessMsg)->GetFunction());
+    
+    tpl->PrototypeTemplate()->Set(String::NewSymbol("reqCurrentTime"),
+        FunctionTemplate::New(ReqCurrentTime)->GetFunction());
+
     //
     Persistent<Function> constructor = Persistent<Function>::New(tpl->GetFunction());
     exports->Set(String::NewSymbol("NodeIbapi"), constructor);
@@ -71,6 +77,20 @@ Handle<Value> NodeIbapi::IsConnected(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
     return scope.Close(Boolean::New(obj->m_client.isConnected()));
+}
+
+Handle<Value> NodeIbapi::ProcessMsg(const Arguments& args) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
+    obj->m_client.processMessages();
+    return scope.Close(Integer::New(1));
+}
+
+Handle<Value> NodeIbapi::ReqCurrentTime(const Arguments& args) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
+    obj->m_client.reqCurrentTime();
+    return scope.Close(Integer::New(1));
 }
 
 // see http://stackoverflow.com/questions/10507323/shortest-way-one-liner-to-get-a-default-argument-out-of-a-v8-function

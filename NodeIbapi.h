@@ -18,6 +18,8 @@ private:
     static v8::Handle<v8::Value> Connect(const v8::Arguments& args);
     static v8::Handle<v8::Value> Disconnect(const v8::Arguments& args);
     static v8::Handle<v8::Value> IsConnected(const v8::Arguments& args);
+    static v8::Handle<v8::Value> ProcessMsg(const v8::Arguments& args);
+    static v8::Handle<v8::Value> ReqCurrentTime(const v8::Arguments& args);
 
 private:
     static char *getChar(v8::Local<v8::Value> value, const char *fallback = "");
