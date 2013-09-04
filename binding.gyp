@@ -4,7 +4,7 @@
       "target_name": "NodeIbapiAddon",
       "sources": [ "NodeIbapiAddon.cpp"
                   ,"NodeIbapi.cpp"
-                  ,"IbPosixClient.cpp"
+                  ,"import/IbPosixClient.cpp"
                   ,"import/EPosixClientSocket.cpp"
                   ,"import/EClientSocketBase.cpp" ],
       "cflags":  ['-fexceptions', '-O2'],

@@ -19,7 +19,7 @@ Installation:
 3. Get the IB API package from Interactive Brokers
 4. Write your implementation of IB Posix client, following IB API's 
     PosixTestClient example. Name them IbPosixClient.cpp and IbPosixClient.h. 
-    Put them in the project root directory.
+    Put them in the /import directory.
 5. Copy the contents of IB API package's 
     IBJts/cpp/Shared into /import directory
 6. Copy the contents of IB API package's
