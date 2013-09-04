@@ -23,8 +23,9 @@ describe('obj', function() {
 // test is not correct
 describe('obj', function() {
   describe('#disconnect()', function() {
-    it('should return nothing when successfully disconnected', function() {
-      assert.equal(1, obj.disconnect());
+    it('should return false when successfully disconnected', function() {
+      obj.disconnect();
+      assert.equal(false, obj.isConnected());
     })
   })
 })
