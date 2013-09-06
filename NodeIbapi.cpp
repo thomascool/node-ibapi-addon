@@ -2,6 +2,8 @@
 #include <cstring>
 #include <node.h>
 #include "NodeIbapi.h"
+#include "import/Contract.h"
+#include "import/Order.h"
 
 using namespace v8;
 
@@ -31,16 +33,25 @@ void NodeIbapi::Init(Handle<Object> exports) {
     // TODO need to write test, not sure what would be a good one..
     tpl->PrototypeTemplate()->Set(String::NewSymbol("processMsg"),
         FunctionTemplate::New(ProcessMsg)->GetFunction());
- 
 
     // Prototype for requests
     // TODO need to write test   
     tpl->PrototypeTemplate()->Set(String::NewSymbol("reqCurrentTime"),
         FunctionTemplate::New(ReqCurrentTime)->GetFunction());
+    tpl->PrototypeTemplate()->Set(String::NewSymbol("reqMktData"),
+        FunctionTemplate::New(ReqMktData)->GetFunction());
+    tpl->PrototypeTemplate()->Set(String::NewSymbol("placeOrder"),
+        FunctionTemplate::New(PlaceOrder)->GetFunction());
+    tpl->PrototypeTemplate()->Set(String::NewSymbol("cancelOrder"),
+        FunctionTemplate::New(CancelOrder)->GetFunction());
+    tpl->PrototypeTemplate()->Set(String::NewSymbol("getNextOrderId"),
+        FunctionTemplate::New(GetNextOrderId)->GetFunction());
 
     // Prototype for events
     tpl->PrototypeTemplate()->Set(String::NewSymbol("getCurrentTime"),
         FunctionTemplate::New(CurrentTime)->GetFunction());
+    tpl->PrototypeTemplate()->Set(String::NewSymbol("getTickPrice"),
+        FunctionTemplate::New(TickPrice)->GetFunction());
 
     //
     Persistent<Function> constructor = Persistent<Function>::New(tpl->GetFunction());
@@ -103,10 +114,67 @@ Handle<Value> NodeIbapi::ReqCurrentTime(const Arguments& args) {
     return scope.Close(Integer::New(1));
 }
 
+Handle<Value> NodeIbapi::ReqMktData(const Arguments& args) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
+    obj->m_client.reqMktData();
+    return scope.Close(Integer::New(1));
+}
+
+Handle<Value> NodeIbapi::PlaceOrder(const Arguments& args) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
+    if (args.Length() < 9) {
+        ThrowException(Exception::TypeError(String::New("Wrong number of arguments")));
+        return scope.Close(Undefined());
+    }
+    
+    OrderId orderId;
+    Contract contract;
+    Order order;
+
+    orderId = args[0]->IntegerValue();
+    contract.symbol = getChar(args[1]);
+    contract.secType = getChar(args[2]);
+    contract.exchange = getChar(args[3]);
+    contract.currency = getChar(args[4]);
+
+    order.action = getChar(args[5]);
+    order.totalQuantity = args[6]->IntegerValue();
+    order.orderType = getChar(args[7]);
+    order.lmtPrice = args[8]->NumberValue();
+
+    obj->m_client.placeOrder(orderId, contract, order);
+    return scope.Close(Integer::New(1));
+}
+
+Handle<Value> NodeIbapi::CancelOrder(const Arguments& args) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
+    if (args.Length() < 1) {
+        ThrowException(Exception::TypeError(String::New("Wrong number of arguments")));
+        return scope.Close(Undefined());
+    }
+    obj->m_client.cancelOrder(args[0]->IntegerValue());
+    return scope.Close(Integer::New(1));
+}
+
+Handle<Value> NodeIbapi::GetNextOrderId(const Arguments& args) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
+    return scope.Close(Integer::New(obj->m_client.getNextOrderId()));
+}
+
 Handle<Value> NodeIbapi::CurrentTime(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
     return scope.Close(String::New(obj->m_client.getCurrentTime().c_str()));
+}
+
+Handle<Value> NodeIbapi::TickPrice(const Arguments& args) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
+    return scope.Close(String::New(obj->m_client.getTickPrice().c_str()));
 }
 
 // see http://stackoverflow.com/questions/10507323/shortest-way-one-liner-to-get-a-default-argument-out-of-a-v8-function
