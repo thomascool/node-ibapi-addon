@@ -5,6 +5,9 @@
 #include <cstring>
 #include <memory>
 
+#include <queue>
+#include <utility>
+
 class EPosixClientSocket;
 struct ExecutionFilter;
 struct ScannerSubscription;
@@ -21,6 +24,8 @@ public:
     std::string getStoredItem(std::string &storedVal);
     std::string getCurrentTime();
     std::string getTickPrice();
+
+    std::pair<TickerId,std::string> getTickString();
     OrderId getNextOrderId();
 
 // EClientSocket
@@ -144,6 +149,7 @@ private:
 ///// node.js accessible
     std::string m_currentTime;
     std::string m_tickPrice;
+    std::queue<std::pair<TickerId,std::string>> m_tickString;
 };
 
 #endif

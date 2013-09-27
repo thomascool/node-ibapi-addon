@@ -29,6 +29,10 @@ void NodeIbapi::Init(Handle<Object> exports) {
     tpl->PrototypeTemplate()->Set(String::NewSymbol("getTickPrice"),
         FunctionTemplate::New(TickPrice)->GetFunction());
 
+    tpl->PrototypeTemplate()->Set(String::NewSymbol("getTickString"),
+        FunctionTemplate::New(TickString)->GetFunction());
+
+
     /// EClientSocket
     tpl->PrototypeTemplate()->Set(String::NewSymbol("connect"),
         FunctionTemplate::New(Connect)->GetFunction());
@@ -532,6 +536,12 @@ Handle<Value> NodeIbapi::TickPrice(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
     return scope.Close(String::New(obj->m_client.getTickPrice().c_str()));
+}
+Handle<Value> NodeIbapi::TickString(const Arguments& args) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
+    
+    return scope.Close(String::New(obj->m_client.getTickString().second.c_str()));
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -85,6 +85,17 @@ std::string IbPosixClient::getTickPrice() {
     this->m_tickPrice.clear();
     return retVal;
 }
+std::pair<TickerId,std::string> IbPosixClient::getTickString() {
+    std::pair<TickerId,std::string> popped;
+    if (!this->m_tickString.empty()) {
+        popped = this->m_tickString.front();
+        this->m_tickString.pop();
+        return popped;
+    }
+    popped.first = -1;
+    popped.second = "";
+    return popped; 
+}
 
 OrderId IbPosixClient::getNextOrderId() {
     OrderId nextOrder = this->m_orderId;
@@ -239,7 +250,18 @@ void IbPosixClient::tickOptionComputation( TickerId tickerId, TickType tickType,
                                              double optPrice, double pvDividend,
                                              double gamma, double vega, double theta, double undPrice) {}
 void IbPosixClient::tickGeneric(TickerId tickerId, TickType tickType, double value) {}
-void IbPosixClient::tickString(TickerId tickerId, TickType tickType, const IBString& value) {}
+void IbPosixClient::tickString(TickerId tickerId, TickType tickType, const IBString& value) {
+    if (tickType == 48) {
+        std::pair<TickerId,std::string> newData;
+        newData.first = tickerId;
+        newData.second = value;
+        // TODO don't let that queue get too long!
+        if (this->m_tickString.size() > 10000000) {
+            this->m_tickString.pop();
+        }
+        this->m_tickString.push(newData);
+    }
+}
 void IbPosixClient::tickEFP(TickerId tickerId, TickType tickType, double basisPoints, const IBString& formattedBasisPoints,
                                double totalDividends, int holdDays, const IBString& futureExpiry, double dividendImpact, double dividendsToExpiry) {}
 void IbPosixClient::orderStatus( OrderId orderId, const IBString &status, int filled,
