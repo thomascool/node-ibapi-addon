@@ -29,3 +29,7 @@ describe('obj', function() {
     })
   })
 })
+
+
+// write the test for purchase by sending purchase order
+//  and then checking the order status`
