@@ -65,7 +65,7 @@ public:
     void reqScannerParameters();
     void reqScannerSubscription(int tickerId, const ScannerSubscription &subscription);
     void reqCurrentTime();
-    void reqFundamentalData(TickerId reqId, const Contract &contract, const IBString &reportType);
+    void reqFundamentalData(TickerId reqId, const Contract&, const IBString &reportType);
     void cancelFundamentalData(TickerId reqId);
     void calculateImpliedVolatility(TickerId reqId, const Contract &contract, double optionPrice, double underPrice);
     void calculateOptionPrice(TickerId reqId, const Contract &contract, double volatility, double underPrice);

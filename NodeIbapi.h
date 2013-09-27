@@ -115,6 +115,9 @@ private:
 private:
     static char *getChar(v8::Local<v8::Value> value, const char *fallback = "");
 
+    static bool isWrongArgNumber(const v8::Arguments& args, int argNum);
+    static bool isWrongType(bool predicateRes, int argId);
+
     IbPosixClient m_client;
 
 };

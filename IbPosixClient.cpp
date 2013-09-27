@@ -189,8 +189,9 @@ void IbPosixClient::reqScannerSubscription(int tickerId, const ScannerSubscripti
 void IbPosixClient::reqCurrentTime() {
     m_pClient->reqCurrentTime();
 }
-void IbPosixClient::reqFundamentalData(TickerId reqId, const Contract &contract, 
+void IbPosixClient::reqFundamentalData(TickerId reqId, const Contract&, 
     const IBString &reportType) {
+    Contract contract;
     m_pClient->reqFundamentalData(reqId, contract, reportType);
 }
 void IbPosixClient::cancelFundamentalData(TickerId reqId) {

@@ -1,5 +1,6 @@
 #define BUILDING_NODE_EXTENSION
 #include <cstring>
+#include <sstream>
 #include <node.h>
 #include "NodeIbapi.h"
 #include "import/Contract.h"
@@ -136,20 +137,17 @@ Handle<Value> NodeIbapi::Connect(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
 
-    if (args.Length() < 3) {
-        ThrowException(Exception::TypeError(String::New("Wrong number of arguments")));
-        return scope.Close(Undefined());
-    }
-    if (!args[1]->IsNumber() || !args[2]->IsNumber()) {
-        ThrowException(Exception::TypeError(String::New("Wrong input for arguments")));
+    if ( isWrongArgNumber(args,3) || isWrongType(!args[0]->IsString(), 0) ||
+        isWrongType(!args[1]->IsUint32(), 1) || isWrongType(!args[2]->IsInt32(), 2)) {
         return scope.Close(Undefined());
     }
 
     char * host = getChar(args[0],""); 
 
     return scope.Close(
-        Boolean::New(obj->m_client.connect(host, args[1]->Uint32Value(), (int)args[2]->IntegerValue()))
-        );
+            Boolean::New(obj->m_client.connect(host, 
+                    args[1]->Uint32Value(), (int)args[2]->IntegerValue()))
+            );
 }
 
 // TODO disconnect method should return something
@@ -182,6 +180,13 @@ Handle<Value> NodeIbapi::ReqMktData(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
 
+    if ( isWrongArgNumber(args,7) || isWrongType(!args[0]->IsUint32(),0) ||
+        isWrongType(!args[1]->IsString(),1) || isWrongType(!args[2]->IsString(),2) ||
+        isWrongType(!args[3]->IsString(),3) || isWrongType(!args[4]->IsString(),4) ||
+        isWrongType(!args[5]->IsString(),5) || isWrongType(!args[6]->IsBoolean(),6) ) {
+        return scope.Close(Undefined());
+    }
+
     TickerId tickerId = args[0]->IntegerValue();
     Contract contract;
     contract.symbol = getChar(args[1]);
@@ -199,15 +204,25 @@ Handle<Value> NodeIbapi::ReqMktData(const Arguments& args) {
 Handle<Value> NodeIbapi::CancelMktData(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
-    // TODO: placeholder
 
+    if ( isWrongArgNumber(args, 1) || isWrongType(!args[0]->IsUint32(),0)) {
+        return scope.Close(Undefined());
+    }
+
+    TickerId tickerId = args[0]->IntegerValue();
+
+    obj->m_client.cancelMktData(tickerId);
     return scope.Close(Undefined());
 }
 Handle<Value> NodeIbapi::PlaceOrder(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
-    if (args.Length() < 9) {
-        ThrowException(Exception::TypeError(String::New("Wrong number of arguments")));
+
+    if ( isWrongArgNumber(args, 9) || isWrongType(!args[0]->IsUint32(),0) ||
+        isWrongType(!args[1]->IsString(),1) || isWrongType(!args[2]->IsString(),2) ||
+        isWrongType(!args[3]->IsString(),3) || isWrongType(!args[4]->IsString(),4) ||
+        isWrongType(!args[5]->IsString(),5) || isWrongType(!args[6]->IsInt32(),6) ||
+        isWrongType(!args[6]->IsString(),7) || isWrongType(!args[8]->IsNumber(),8) ) {
         return scope.Close(Undefined());
     }
     
@@ -517,6 +532,28 @@ Handle<Value> NodeIbapi::TickPrice(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
     return scope.Close(String::New(obj->m_client.getTickPrice().c_str()));
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//  Helper methods
+///////////////////////////////////////////////////////////////////////////////
+
+bool NodeIbapi::isWrongArgNumber(const Arguments& args, int argNum) {
+    if (args.Length() != argNum ) {
+        ThrowException(Exception::TypeError(String::New("Wrong number of arguments")));
+        return true;
+    }
+    return false;
+}
+
+bool NodeIbapi::isWrongType(bool predicateRes, int argId) {
+    if (predicateRes) {
+        std::ostringstream ss;
+        ss << "Argument " << argId << " is of wrong type.";
+        ThrowException(Exception::TypeError(String::New(ss.str().c_str())));
+        return true;
+    } 
+    return false;
 }
 
 // see http://stackoverflow.com/questions/10507323/shortest-way-one-liner-to-get-a-default-argument-out-of-a-v8-function
