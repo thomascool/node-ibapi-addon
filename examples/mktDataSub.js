@@ -1,4 +1,4 @@
-var addon = require('./build/Release/NodeIbapiAddon');
+var addon = require('../build/Release/NodeIbapiAddon');
 var obj = new addon.NodeIbapi();
 
 var once = false;
@@ -9,8 +9,9 @@ var tickString = '';
 while (obj.isConnected()) {
   obj.processMsg();
   if (!once) {
-    obj.reqMktData(1,"MSFT","STK","SMART","USD","233,mdoff",false);
+    obj.reqMktData(1,"EUR","CASH","IDEALPRO","USD","233,mdoff",false);
     once = true;
+    console.log("EUR Subscribed");
   }
   tickString = obj.getTickString();
 

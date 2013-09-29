@@ -1,4 +1,4 @@
-var addon = require('./build/Release/NodeIbapiAddon');
+var addon = require('../build/Release/NodeIbapiAddon');
 var obj = new addon.NodeIbapi();
 
 obj.connect('127.0.0.1',7496,0);
@@ -38,8 +38,8 @@ while(obj.isConnected()) {
     orderId = orderId + 1;
   }
   if (counter == 20000000) {
-    console.log('canceling order: %d', validorderid);
-    obj.cancelorder(nextorder);
+    console.log('canceling order: %d', orderId-1);
+    obj.cancelOrder(orderId-1);
     counter = 0;
   }
   
