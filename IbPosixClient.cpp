@@ -80,10 +80,15 @@ std::string IbPosixClient::getCurrentTime() {
     return retVal;
 }
 
-std::string IbPosixClient::getTickPrice() {
-    std::string retVal = this->m_tickPrice;
-    this->m_tickPrice.clear();
-    return retVal;
+std::pair<TickerId, std::pair<TickType, double> > IbPosixClient::getTickPrice() {
+    std::pair<TickerId, std::pair<TickType, double> > popped;
+    if (!this->m_tickPrice.empty()) {
+        popped = this->m_tickPrice.front();
+        this->m_tickPrice.pop();
+        return popped;
+    }
+    popped.first = -1;
+    return popped; 
 }
 std::pair<TickerId,std::string> IbPosixClient::getTickString() {
     std::pair<TickerId,std::string> popped;
@@ -244,7 +249,15 @@ void IbPosixClient::cancelAccountSummary( int reqId) {
 
 /////////////////// API EWrapper event methods ////////////////////////////////
 
-void IbPosixClient::tickPrice( TickerId tickerId, TickType field, double price, int canAutoExecute) {}
+void IbPosixClient::tickPrice( TickerId tickerId, TickType field, double price, int canAutoExecute) {
+        std::pair<TickerId, std::pair<TickType, double> > newData;
+        std::pair<TickType, double> fieldPrice;
+        newData.first = tickerId;
+        fieldPrice.first = field;
+        fieldPrice.second = price;
+        newData.second = fieldPrice;
+        this->m_tickPrice.push(newData);
+}
 void IbPosixClient::tickSize( TickerId tickerId, TickType field, int size) {}
 void IbPosixClient::tickOptionComputation( TickerId tickerId, TickType tickType, double impliedVol, double delta,
                                              double optPrice, double pvDividend,
@@ -255,10 +268,6 @@ void IbPosixClient::tickString(TickerId tickerId, TickType tickType, const IBStr
         std::pair<TickerId,std::string> newData;
         newData.first = tickerId;
         newData.second = value;
-        // TODO don't let that queue get too long!
-        if (this->m_tickString.size() > 10000000) {
-            this->m_tickString.pop();
-        }
         this->m_tickString.push(newData);
     }
 }

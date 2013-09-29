@@ -23,7 +23,7 @@ public:
 // accessors
     std::string getStoredItem(std::string &storedVal);
     std::string getCurrentTime();
-    std::string getTickPrice();
+    std::pair<TickerId, std::pair<TickType, double> > getTickPrice();
 
     std::pair<TickerId,std::string> getTickString();
     OrderId getNextOrderId();
@@ -148,7 +148,7 @@ private:
 
 ///// node.js accessible
     std::string m_currentTime;
-    std::string m_tickPrice;
+    std::queue< std::pair<TickerId, std::pair<TickType, double> > > m_tickPrice;
     std::queue< std::pair<TickerId,std::string> > m_tickString;
 };
 
