@@ -7,6 +7,7 @@ obj.connect('127.0.0.1',7496,0);
 var tickString = '';
 
 while (obj.isConnected()) {
+  obj.checkMessages();
   obj.processMsg();
   if (!once) {
     obj.reqMktData(1,"EUR","CASH","IDEALPRO","USD","233,mdoff",false);

@@ -290,7 +290,7 @@ Handle<Value> NodeIbapi::CheckMessages(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
     // TODO: placeholder
-
+    obj->m_client.checkMessages();
     return scope.Close(Undefined());
 }
 Handle<Value> NodeIbapi::ReqContractDetails(const Arguments& args) {
