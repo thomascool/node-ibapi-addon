@@ -226,7 +226,7 @@ Handle<Value> NodeIbapi::PlaceOrder(const Arguments& args) {
         isWrongType(!args[1]->IsString(),1) || isWrongType(!args[2]->IsString(),2) ||
         isWrongType(!args[3]->IsString(),3) || isWrongType(!args[4]->IsString(),4) ||
         isWrongType(!args[5]->IsString(),5) || isWrongType(!args[6]->IsInt32(),6) ||
-        isWrongType(!args[6]->IsString(),7) || isWrongType(!args[8]->IsNumber(),8) ) {
+        isWrongType(!args[7]->IsString(),7) || isWrongType(!args[8]->IsNumber(),8) ) {
         return scope.Close(Undefined());
     }
     
