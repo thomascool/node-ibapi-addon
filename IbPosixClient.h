@@ -149,7 +149,7 @@ private:
 ///// node.js accessible
     std::string m_currentTime;
     std::string m_tickPrice;
-    std::queue<std::pair<TickerId,std::string>> m_tickString;
+    std::queue< std::pair<TickerId,std::string> > m_tickString;
 };
 
 #endif
