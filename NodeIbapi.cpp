@@ -251,8 +251,7 @@ Handle<Value> NodeIbapi::PlaceOrder(const Arguments& args) {
 Handle<Value> NodeIbapi::CancelOrder(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
-    if (args.Length() < 1) {
-        ThrowException(Exception::TypeError(String::New("Wrong number of arguments")));
+    if (isWrongArgNumber(args, 1)) {
         return scope.Close(Undefined());
     }
     obj->m_client.cancelOrder(args[0]->IntegerValue());
@@ -289,7 +288,6 @@ Handle<Value> NodeIbapi::ReqIds(const Arguments& args) {
 Handle<Value> NodeIbapi::CheckMessages(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
-    // TODO: placeholder
     obj->m_client.checkMessages();
     return scope.Close(Undefined());
 }
@@ -545,6 +543,20 @@ Handle<Value> NodeIbapi::TickPrice(const Arguments& args) {
     retTickPrice->Set(2, Number::New(newTickPrice.second.second));
  
     return scope.Close(retTickPrice);
+}
+Handle<Value> NodeIbapi::TickSize(const Arguments& args) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
+
+    std::pair<TickerId, std::pair<TickType, int> > newTickSize;
+    newTickSize = obj->m_client.getTickSize();
+
+    Handle<Array> retTickSize = Array::New(3);
+    retTickSize->Set(0, Integer::New(newTickSize.first));
+    retTickSize->Set(1, Integer::New(newTickSize.second.first));
+    retTickSize->Set(2, Integer::New(newTickSize.second.second));
+
+    return scope.Close(retTickSize);
 }
 Handle<Value> NodeIbapi::TickString(const Arguments& args) {
     HandleScope scope;
