@@ -28,6 +28,8 @@ void NodeIbapi::Init(Handle<Object> exports) {
         FunctionTemplate::New(CurrentTime)->GetFunction());
     tpl->PrototypeTemplate()->Set(String::NewSymbol("getTickPrice"),
         FunctionTemplate::New(TickPrice)->GetFunction());
+    tpl->PrototypeTemplate()->Set(String::NewSymbol("getTickSize"),
+        FunctionTemplate::New(TickSize)->GetFunction());
 
     tpl->PrototypeTemplate()->Set(String::NewSymbol("getTickString"),
         FunctionTemplate::New(TickString)->GetFunction());

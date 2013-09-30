@@ -5,7 +5,7 @@ var once = false;
 obj.connect('127.0.0.1',7496,0);
 
 var tickPrice;
-
+var tickSize;
 while (obj.isConnected()) {
   obj.checkMessages();
   obj.processMsg();
@@ -15,10 +15,14 @@ while (obj.isConnected()) {
     console.log("EUR Subscribed");
   }
   tickPrice = obj.getTickPrice();
-
+  tickSize = obj.getTickSize();
   if (tickPrice[0] != -1) {
-    console.log(tickPrice[0].toString() + " " + 
+    console.log( "TickPrice: " + tickPrice[0].toString() + " " + 
       tickPrice[1].toString() + " " + tickPrice[2].toString());
+  }
+  if (tickSize[0] != -1) {
+    console.log( "TickSize: " + tickSize[0].toString() + " " + 
+      tickSize[1].toString() + " " + tickSize[2].toString());
   }
 
 }
