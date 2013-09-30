@@ -4,7 +4,7 @@ var obj = new addon.NodeIbapi();
 var once = false;
 obj.connect('127.0.0.1',7496,0);
 
-var tickPrice = '';
+var tickPrice;
 
 while (obj.isConnected()) {
   obj.checkMessages();
@@ -16,9 +16,9 @@ while (obj.isConnected()) {
   }
   tickPrice = obj.getTickPrice();
 
-  if (tickPrice != '') {
-    console.log(tickPrice);
-    tickPrice = '';
+  if (tickPrice[0] != -1) {
+    console.log(tickPrice[0].toString() + " " + 
+      tickPrice[1].toString() + " " + tickPrice[2].toString());
   }
 
 }

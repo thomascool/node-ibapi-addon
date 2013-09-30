@@ -538,18 +538,13 @@ Handle<Value> NodeIbapi::TickPrice(const Arguments& args) {
 
     std::pair<TickerId, std::pair<TickType, double> > newTickPrice;
     newTickPrice = obj->m_client.getTickPrice();
- 
-    std::ostringstream ss;
-    // TODO better data exchange to javascript components
-    if (newTickPrice.first > -1) {
-        ss << "TickerId:" << newTickPrice.first << "_TickType:"
-            << newTickPrice.second.first << "_Price:" << newTickPrice.second.second;
-    }
-    else {
-        ss << "";
-    }
 
-    return scope.Close(String::New(ss.str().c_str()));
+    Handle<Array> retTickPrice = Array::New(3);
+    retTickPrice->Set(0, Integer::New(newTickPrice.first));
+    retTickPrice->Set(1, Integer::New(newTickPrice.second.first));
+    retTickPrice->Set(2, Number::New(newTickPrice.second.second));
+ 
+    return scope.Close(retTickPrice);
 }
 Handle<Value> NodeIbapi::TickString(const Arguments& args) {
     HandleScope scope;
