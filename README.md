@@ -16,7 +16,8 @@ Installation:
 -------------
 
 1. Make sure to have node-gyp installed
-2. Make sure to have v8.h and node.h in the work directory
+2. Make sure to have v8.h and node.h in the work directory - this should not 
+    be necessary with properly set up latest stable release (0.10.20)
 3. Get the IB API package from Interactive Brokers
 4. Copy the contents of IB API package's 
     IBJts/cpp/Shared into /import directory
