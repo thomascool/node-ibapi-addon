@@ -7,6 +7,7 @@
 
 #include <queue>
 #include <utility>
+#include "EWrapperStore.h"
 
 class EPosixClientSocket;
 struct ExecutionFilter;
@@ -21,12 +22,10 @@ public:
     void processMessages();
 
 // accessors
-    std::string getStoredItem(std::string &storedVal);
     std::string getCurrentTime();
-    std::pair<TickerId, std::pair<TickType, double> > getTickPrice();
-    std::pair<TickerId, std::pair<TickType, int> > getTickSize();
-
-    std::pair<TickerId,std::string> getTickString();
+    TickPriceData getTickPrice();
+    TickSizeData getTickSize();
+    TickStringData getTickString();
     OrderId getNextOrderId();
 
 // EClientSocket
@@ -149,9 +148,9 @@ private:
 
 ///// node.js accessible
     std::string m_currentTime;
-    std::queue< std::pair<TickerId, std::pair<TickType, double> > > m_tickPrice;
-    std::queue< std::pair<TickerId, std::pair<TickType, int> > > m_tickSize;
-    std::queue< std::pair<TickerId,std::string> > m_tickString;
+    std::queue< TickPriceData > m_tickPrice;
+    std::queue< TickSizeData > m_tickSize;
+    std::queue< TickStringData > m_tickString;
 };
 
 #endif

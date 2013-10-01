@@ -536,13 +536,14 @@ Handle<Value> NodeIbapi::TickPrice(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
 
-    std::pair<TickerId, std::pair<TickType, double> > newTickPrice;
+    TickPriceData newTickPrice;
     newTickPrice = obj->m_client.getTickPrice();
 
-    Handle<Array> retTickPrice = Array::New(3);
-    retTickPrice->Set(0, Integer::New(newTickPrice.first));
-    retTickPrice->Set(1, Integer::New(newTickPrice.second.first));
-    retTickPrice->Set(2, Number::New(newTickPrice.second.second));
+    Handle<Array> retTickPrice = Array::New(4);
+    retTickPrice->Set(0, Integer::New(newTickPrice.tickerId));
+    retTickPrice->Set(1, Integer::New(newTickPrice.field));
+    retTickPrice->Set(2, Number::New(newTickPrice.price));
+    retTickPrice->Set(3, Integer::New(newTickPrice.canAutoExecute));
  
     return scope.Close(retTickPrice);
 }
@@ -550,13 +551,13 @@ Handle<Value> NodeIbapi::TickSize(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
 
-    std::pair<TickerId, std::pair<TickType, int> > newTickSize;
+    TickSizeData newTickSize;
     newTickSize = obj->m_client.getTickSize();
 
     Handle<Array> retTickSize = Array::New(3);
-    retTickSize->Set(0, Integer::New(newTickSize.first));
-    retTickSize->Set(1, Integer::New(newTickSize.second.first));
-    retTickSize->Set(2, Integer::New(newTickSize.second.second));
+    retTickSize->Set(0, Integer::New(newTickSize.tickerId));
+    retTickSize->Set(1, Integer::New(newTickSize.field));
+    retTickSize->Set(2, Integer::New(newTickSize.size));
 
     return scope.Close(retTickSize);
 }
@@ -564,7 +565,7 @@ Handle<Value> NodeIbapi::TickString(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
     
-    return scope.Close(String::New(obj->m_client.getTickString().second.c_str()));
+    return scope.Close(String::New(obj->m_client.getTickString().value.c_str()));
 }
 
 ///////////////////////////////////////////////////////////////////////////////

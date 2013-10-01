@@ -80,34 +80,34 @@ std::string IbPosixClient::getCurrentTime() {
     return retVal;
 }
 
-std::pair<TickerId, std::pair<TickType, double> > IbPosixClient::getTickPrice() {
-    std::pair<TickerId, std::pair<TickType, double> > popped;
+TickPriceData IbPosixClient::getTickPrice() {
+    TickPriceData popped;
     if (!this->m_tickPrice.empty()) {
         popped = this->m_tickPrice.front();
         this->m_tickPrice.pop();
         return popped;
     }
-    popped.first = -1;
+    popped.tickerId = -1;
     return popped; 
 }
-std::pair<TickerId, std::pair<TickType, int> > IbPosixClient::getTickSize() {
-    std::pair<TickerId, std::pair<TickType, int> > popped;
+TickSizeData IbPosixClient::getTickSize() {
+    TickSizeData popped;
     if (!this->m_tickSize.empty()) {
         popped = this->m_tickSize.front();
         this->m_tickSize.pop();
         return popped;
     }
-    popped.first = -1;
+    popped.tickerId = -1;
     return popped; 
 }
-std::pair<TickerId,std::string> IbPosixClient::getTickString() {
-    std::pair<TickerId,std::string> popped;
+TickStringData IbPosixClient::getTickString() {
+    TickStringData popped;
     if (!this->m_tickString.empty()) {
         popped = this->m_tickString.front();
         this->m_tickString.pop();
         return popped;
     }
-    popped.first = -1;
+    popped.tickerId = -1;
     return popped; 
 }
 
@@ -259,21 +259,18 @@ void IbPosixClient::cancelAccountSummary( int reqId) {
 /////////////////// API EWrapper event methods ////////////////////////////////
 
 void IbPosixClient::tickPrice( TickerId tickerId, TickType field, double price, int canAutoExecute) {
-    std::pair<TickerId, std::pair<TickType, double> > newData;
-    std::pair<TickType, double> fieldPrice;
-    newData.first = tickerId;
-    fieldPrice.first = field;
-    fieldPrice.second = price;
-    newData.second = fieldPrice;
+    TickPriceData newData;
+    newData.tickerId = tickerId;
+    newData.field = field;
+    newData.price = price;
+    newData.canAutoExecute = canAutoExecute;
     this->m_tickPrice.push(newData);
 }
 void IbPosixClient::tickSize( TickerId tickerId, TickType field, int size) {
-    std::pair<TickerId, std::pair<TickType, int> > newData;
-    std::pair<TickType, int> fieldSize;
-    newData.first = tickerId;
-    fieldSize.first = field;
-    fieldSize.second = size;
-    newData.second = fieldSize;
+    TickSizeData newData;
+    newData.tickerId = tickerId;
+    newData.field = field;
+    newData.size = size;
     this->m_tickSize.push(newData);
 }
 void IbPosixClient::tickOptionComputation( TickerId tickerId, TickType tickType, double impliedVol, double delta,
@@ -282,9 +279,10 @@ void IbPosixClient::tickOptionComputation( TickerId tickerId, TickType tickType,
 void IbPosixClient::tickGeneric(TickerId tickerId, TickType tickType, double value) {}
 void IbPosixClient::tickString(TickerId tickerId, TickType tickType, const IBString& value) {
     if (tickType == 48) {
-        std::pair<TickerId,std::string> newData;
-        newData.first = tickerId;
-        newData.second = value;
+        TickStringData newData;
+        newData.tickerId = tickerId;
+        newData.tickType = tickType;
+        newData.value = value;
         this->m_tickString.push(newData);
     }
 }
