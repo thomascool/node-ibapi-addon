@@ -624,7 +624,7 @@ Handle<Value> NodeIbapi::TickEFP(const Arguments& args) {
     retTickEFP->Set(5, Integer::New(newTickEFP.holdDays));
     retTickEFP->Set(6, String::New(newTickEFP.futureExpiry.c_str()));
     retTickEFP->Set(7, Number::New(newTickEFP.dividendImpact));
-    retTickEFP->Set(7, Number::New(newTickEFP.dividendsToExpiry));
+    retTickEFP->Set(8, Number::New(newTickEFP.dividendsToExpiry));
     return scope.Close(retTickEFP);
 }
 Handle<Value> NodeIbapi::OrderStatus(const Arguments& args) {
