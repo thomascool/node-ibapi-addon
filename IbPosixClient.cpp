@@ -82,9 +82,9 @@ std::string IbPosixClient::getCurrentTime() {
 
 TickPriceData IbPosixClient::getTickPrice() {
     TickPriceData popped;
-    if (!this->m_tickPrice.empty()) {
-        popped = this->m_tickPrice.front();
-        this->m_tickPrice.pop();
+    if (!this->m_tickPrices.empty()) {
+        popped = this->m_tickPrices.front();
+        this->m_tickPrices.pop();
         return popped;
     }
     popped.tickerId = -1;
@@ -92,22 +92,62 @@ TickPriceData IbPosixClient::getTickPrice() {
 }
 TickSizeData IbPosixClient::getTickSize() {
     TickSizeData popped;
-    if (!this->m_tickSize.empty()) {
-        popped = this->m_tickSize.front();
-        this->m_tickSize.pop();
+    if (!this->m_tickSizes.empty()) {
+        popped = this->m_tickSizes.front();
+        this->m_tickSizes.pop();
         return popped;
     }
     popped.tickerId = -1;
     return popped; 
 }
-TickStringData IbPosixClient::getTickString() {
-    TickStringData popped;
-    if (!this->m_tickString.empty()) {
-        popped = this->m_tickString.front();
-        this->m_tickString.pop();
+TickOptionComputationData IbPosixClient::getTickOptionComputation() {
+    TickOptionComputationData popped;
+    if (!this->m_tickOptionComps.empty()) {
+        popped = this->m_tickOptionComps.front();
+        this->m_tickOptionComps.pop();
         return popped;
     }
     popped.tickerId = -1;
+    return popped; 
+}
+TickGenericData IbPosixClient::getTickGeneric() {
+    TickGenericData popped;
+    if (!this->m_tickGenerics.empty()) {
+        popped = this->m_tickGenerics.front();
+        this->m_tickGenerics.pop();
+        return popped;
+    }
+    popped.tickerId = -1;
+    return popped;     
+}
+TickStringData IbPosixClient::getTickString() {
+    TickStringData popped;
+    if (!this->m_tickStrings.empty()) {
+        popped = this->m_tickStrings.front();
+        this->m_tickStrings.pop();
+        return popped;
+    }
+    popped.tickerId = -1;
+    return popped; 
+}
+TickEFPData IbPosixClient::getTickEFP() {
+    TickEFPData popped;
+    if (!this->m_tickEFPs.empty()) {
+        popped = this->m_tickEFPs.front();
+        this->m_tickEFPs.pop();
+        return popped;
+    }
+    popped.tickerId = -1;
+    return popped; 
+}
+OrderStatusData IbPosixClient::getOrderStatus() {
+    OrderStatusData popped;
+    if (!this->m_orderStatuses.empty()) {
+        popped = this->m_orderStatuses.front();
+        this->m_orderStatuses.pop();
+        return popped;
+    }
+    popped.orderId = -1;
     return popped; 
 }
 
@@ -208,7 +248,8 @@ void IbPosixClient::cancelScannerSubscription(int tickerId) {
 void IbPosixClient::reqScannerParameters() {
     m_pClient->reqScannerParameters();
 }
-void IbPosixClient::reqScannerSubscription(int tickerId, const ScannerSubscription &subscription) {
+void IbPosixClient::reqScannerSubscription(int tickerId, 
+        const ScannerSubscription &subscription) {
     m_pClient->reqScannerSubscription(tickerId, subscription);
 }
 void IbPosixClient::reqCurrentTime() {
@@ -222,12 +263,13 @@ void IbPosixClient::reqFundamentalData(TickerId reqId, const Contract&,
 void IbPosixClient::cancelFundamentalData(TickerId reqId) {
     m_pClient->cancelFundamentalData(reqId);
 }
-void IbPosixClient::calculateImpliedVolatility(TickerId reqId, const Contract &contract, 
-        double optionPrice, double underPrice) {
-    m_pClient->calculateImpliedVolatility(reqId, contract, optionPrice, underPrice);
+void IbPosixClient::calculateImpliedVolatility(TickerId reqId, 
+        const Contract &contract, double optionPrice, double underPrice) {
+    m_pClient->calculateImpliedVolatility(reqId, contract, optionPrice, 
+            underPrice);
 }
-void IbPosixClient::calculateOptionPrice(TickerId reqId, const Contract &contract, 
-    double volatility, double underPrice) {
+void IbPosixClient::calculateOptionPrice(TickerId reqId, 
+        const Contract &contract, double volatility, double underPrice) {
     m_pClient->calculateOptionPrice(reqId, contract, volatility, underPrice);
 }
 void IbPosixClient::cancelCalculateImpliedVolatility(TickerId reqId) {
@@ -248,7 +290,8 @@ void IbPosixClient::reqPositions() {
 void IbPosixClient::cancelPositions() {
     m_pClient->cancelPositions();
 }
-void IbPosixClient::reqAccountSummary( int reqId, const IBString& groupName, const IBString& tags) {
+void IbPosixClient::reqAccountSummary( int reqId, const IBString& groupName, 
+        const IBString& tags) {
     m_pClient->reqAccountSummary(reqId, groupName, tags);
 }
 void IbPosixClient::cancelAccountSummary( int reqId) {
@@ -258,42 +301,97 @@ void IbPosixClient::cancelAccountSummary( int reqId) {
 
 /////////////////// API EWrapper event methods ////////////////////////////////
 
-void IbPosixClient::tickPrice( TickerId tickerId, TickType field, double price, int canAutoExecute) {
+void IbPosixClient::tickPrice( TickerId tickerId, TickType field, double price,
+        int canAutoExecute) {
     TickPriceData newData;
     newData.tickerId = tickerId;
     newData.field = field;
     newData.price = price;
     newData.canAutoExecute = canAutoExecute;
-    this->m_tickPrice.push(newData);
+    this->m_tickPrices.push(newData);
 }
 void IbPosixClient::tickSize( TickerId tickerId, TickType field, int size) {
     TickSizeData newData;
     newData.tickerId = tickerId;
     newData.field = field;
     newData.size = size;
-    this->m_tickSize.push(newData);
+    this->m_tickSizes.push(newData);
 }
-void IbPosixClient::tickOptionComputation( TickerId tickerId, TickType tickType, double impliedVol, double delta,
-                                             double optPrice, double pvDividend,
-                                             double gamma, double vega, double theta, double undPrice) {}
-void IbPosixClient::tickGeneric(TickerId tickerId, TickType tickType, double value) {}
-void IbPosixClient::tickString(TickerId tickerId, TickType tickType, const IBString& value) {
+// TODO NOT TESTED
+void IbPosixClient::tickOptionComputation( TickerId tickerId, 
+        TickType tickType, double impliedVol, double delta, double optPrice, 
+        double pvDividend, double gamma, double vega, double theta, 
+        double undPrice) {
+    TickOptionComputationData newData;
+    newData.tickerId = tickerId;
+    newData.tickType = tickType;
+    newData.impliedVol = impliedVol;
+    newData.delta = delta;
+    newData.optPrice = optPrice;
+    newData.pvDividend = pvDividend;
+    newData.gamma = gamma;
+    newData.vega = vega;
+    newData.theta = theta;
+    newData.undPrice = undPrice;
+    this->m_tickOptionComps.push(newData);
+}
+// TODO NOT TESTED
+void IbPosixClient::tickGeneric(TickerId tickerId, TickType tickType, double value) {
+    TickGenericData newData;
+    newData.tickerId = tickerId;
+    newData.tickType = tickType;
+    newData.value = value;
+    this->m_tickGenerics.push(newData);
+}
+// TODO NOT TESTED
+void IbPosixClient::tickString(TickerId tickerId, TickType tickType, 
+        const IBString& value) {
     if (tickType == 48) {
         TickStringData newData;
         newData.tickerId = tickerId;
         newData.tickType = tickType;
         newData.value = value;
-        this->m_tickString.push(newData);
+        this->m_tickStrings.push(newData);
     }
 }
-void IbPosixClient::tickEFP(TickerId tickerId, TickType tickType, double basisPoints, const IBString& formattedBasisPoints,
-                               double totalDividends, int holdDays, const IBString& futureExpiry, double dividendImpact, double dividendsToExpiry) {}
-void IbPosixClient::orderStatus( OrderId orderId, const IBString &status, int filled,
-       int remaining, double avgFillPrice, int permId, int parentId,
-       double lastFillPrice, int clientId, const IBString& whyHeld) {
+// TODO NOT TESTED
+void IbPosixClient::tickEFP(TickerId tickerId, TickType tickType, 
+        double basisPoints, const IBString& formattedBasisPoints, 
+        double totalDividends, int holdDays, const IBString& futureExpiry, 
+        double dividendImpact, double dividendsToExpiry) {
+    TickEFPData newData;
+    newData.tickerId = tickerId;
+    newData.tickType = tickType;
+    newData.basisPoints = basisPoints;
+    newData.formattedBasisPoints = formattedBasisPoints;
+    newData.totalDividends = totalDividends;
+    newData.holdDays = holdDays;
+    newData.futureExpiry = futureExpiry;
+    newData.dividendImpact = dividendImpact;
+    newData.dividendsToExpiry = dividendsToExpiry;
+    this->m_tickEFPs.push(newData);
 
 }
-void IbPosixClient::openOrder( OrderId orderId, const Contract&, const Order&, const OrderState& ostate) {}
+// TODO NOT TESTED
+void IbPosixClient::orderStatus( OrderId orderId, const IBString &status, 
+        int filled, int remaining, double avgFillPrice, int permId, 
+        int parentId, double lastFillPrice, int clientId, 
+        const IBString& whyHeld) {
+    OrderStatusData newData;
+    newData.orderId = orderId;
+    newData.status = status;
+    newData.filled = filled;
+    newData.remaining = remaining;
+    newData.avgFillPrice = avgFillPrice;
+    newData.permId = permId;
+    newData.parentId = parentId;
+    newData.lastFillPrice = lastFillPrice;
+    newData.clientId = clientId;
+    newData.whyHeld = whyHeld;
+    this->m_orderStatuses.push(newData);
+}
+void IbPosixClient::openOrder( OrderId orderId, const Contract&, const Order&, 
+        const OrderState& ostate) {}
 void IbPosixClient::openOrderEnd() {}
 void IbPosixClient::winError( const IBString &str, int lastError) {}
 void IbPosixClient::connectionClosed() {}

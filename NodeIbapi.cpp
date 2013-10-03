@@ -30,9 +30,17 @@ void NodeIbapi::Init(Handle<Object> exports) {
         FunctionTemplate::New(TickPrice)->GetFunction());
     tpl->PrototypeTemplate()->Set(String::NewSymbol("getTickSize"),
         FunctionTemplate::New(TickSize)->GetFunction());
-
+    tpl->PrototypeTemplate()->Set(String::NewSymbol("getTickOptionComputation"),
+        FunctionTemplate::New(TickOptionComputation)->GetFunction());
+    tpl->PrototypeTemplate()->Set(String::NewSymbol("getTickGeneric"),
+        FunctionTemplate::New(TickGeneric)->GetFunction());
     tpl->PrototypeTemplate()->Set(String::NewSymbol("getTickString"),
         FunctionTemplate::New(TickString)->GetFunction());
+    tpl->PrototypeTemplate()->Set(String::NewSymbol("getTickEFP"),
+        FunctionTemplate::New(TickEFP)->GetFunction());
+    tpl->PrototypeTemplate()->Set(String::NewSymbol("getOrderStatus"),
+        FunctionTemplate::New(OrderStatus)->GetFunction());
+
 
 
     /// EClientSocket
@@ -561,11 +569,83 @@ Handle<Value> NodeIbapi::TickSize(const Arguments& args) {
 
     return scope.Close(retTickSize);
 }
+Handle<Value> NodeIbapi::TickOptionComputation(const Arguments& args) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
+
+    TickOptionComputationData newTickOpt;
+    newTickOpt = obj->m_client.getTickOptionComputation();
+
+    Handle<Array> retTickOpt = Array::New(10);
+    retTickOpt->Set(0, Integer::New(newTickOpt.tickerId));
+    retTickOpt->Set(1, Integer::New(newTickOpt.tickType));
+    retTickOpt->Set(2, Number::New(newTickOpt.impliedVol));
+    retTickOpt->Set(3, Number::New(newTickOpt.delta));
+    retTickOpt->Set(4, Number::New(newTickOpt.optPrice));
+    retTickOpt->Set(5, Number::New(newTickOpt.pvDividend));
+    retTickOpt->Set(6, Number::New(newTickOpt.gamma));
+    retTickOpt->Set(7, Number::New(newTickOpt.vega));
+    retTickOpt->Set(8, Number::New(newTickOpt.theta));
+    retTickOpt->Set(9, Number::New(newTickOpt.undPrice));
+    return scope.Close(retTickOpt);
+}
+Handle<Value> NodeIbapi::TickGeneric(const Arguments& args) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
+
+    TickGenericData newTickGen;
+    newTickGen = obj->m_client.getTickGeneric();
+
+    Handle<Array> retTickGen = Array::New(3);
+    retTickGen->Set(0, Integer::New(newTickGen.tickerId));
+    retTickGen->Set(1, Integer::New(newTickGen.tickType));
+    retTickGen->Set(2, Number::New(newTickGen.value));
+    return scope.Close(retTickGen);
+}
 Handle<Value> NodeIbapi::TickString(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
     
     return scope.Close(String::New(obj->m_client.getTickString().value.c_str()));
+}
+Handle<Value> NodeIbapi::TickEFP(const Arguments& args) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
+
+    TickEFPData newTickEFP;
+    newTickEFP = obj->m_client.getTickEFP();
+
+    Handle<Array> retTickEFP = Array::New(9);
+    retTickEFP->Set(0, Integer::New(newTickEFP.tickerId));
+    retTickEFP->Set(1, Integer::New(newTickEFP.tickType));
+    retTickEFP->Set(2, Number::New(newTickEFP.basisPoints));
+    retTickEFP->Set(3, String::New(newTickEFP.formattedBasisPoints.c_str()));
+    retTickEFP->Set(4, Number::New(newTickEFP.totalDividends));
+    retTickEFP->Set(5, Integer::New(newTickEFP.holdDays));
+    retTickEFP->Set(6, String::New(newTickEFP.futureExpiry.c_str()));
+    retTickEFP->Set(7, Number::New(newTickEFP.dividendImpact));
+    retTickEFP->Set(7, Number::New(newTickEFP.dividendsToExpiry));
+    return scope.Close(retTickEFP);
+}
+Handle<Value> NodeIbapi::OrderStatus(const Arguments& args) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
+
+    OrderStatusData newOrderStatus;
+    newOrderStatus = obj->m_client.getOrderStatus();
+
+    Handle<Array> retOrderStatus = Array::New(10);
+    retOrderStatus->Set(0, Integer::New(newOrderStatus.orderId));
+    retOrderStatus->Set(1, String::New(newOrderStatus.status.c_str()));
+    retOrderStatus->Set(2, Integer::New(newOrderStatus.filled));
+    retOrderStatus->Set(3, Integer::New(newOrderStatus.remaining));
+    retOrderStatus->Set(4, Number::New(newOrderStatus.avgFillPrice));
+    retOrderStatus->Set(5, Integer::New(newOrderStatus.permId));
+    retOrderStatus->Set(6, Integer::New(newOrderStatus.parentId));
+    retOrderStatus->Set(7, Number::New(newOrderStatus.lastFillPrice));
+    retOrderStatus->Set(8, Integer::New(newOrderStatus.clientId));
+    retOrderStatus->Set(9, String::New(newOrderStatus.whyHeld.c_str()));
+    return scope.Close(retOrderStatus);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

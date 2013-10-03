@@ -25,7 +25,12 @@ public:
     std::string getCurrentTime();
     TickPriceData getTickPrice();
     TickSizeData getTickSize();
+    TickOptionComputationData getTickOptionComputation();
+    TickGenericData getTickGeneric();
     TickStringData getTickString();
+    TickEFPData getTickEFP();
+    OrderStatusData getOrderStatus();
+
     OrderId getNextOrderId();
 
 // EClientSocket
@@ -148,9 +153,13 @@ private:
 
 ///// node.js accessible
     std::string m_currentTime;
-    std::queue< TickPriceData > m_tickPrice;
-    std::queue< TickSizeData > m_tickSize;
-    std::queue< TickStringData > m_tickString;
+    std::queue< TickPriceData > m_tickPrices;
+    std::queue< TickSizeData > m_tickSizes;
+    std::queue< TickOptionComputationData > m_tickOptionComps;
+    std::queue< TickGenericData > m_tickGenerics;
+    std::queue< TickEFPData > m_tickEFPs;
+    std::queue< OrderStatusData > m_orderStatuses;
+    std::queue< TickStringData > m_tickStrings;
 };
 
 #endif
