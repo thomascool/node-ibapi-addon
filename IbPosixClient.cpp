@@ -150,6 +150,47 @@ OrderStatusData IbPosixClient::getOrderStatus() {
     popped.orderId = -1;
     return popped; 
 }
+OpenOrderData IbPosixClient::getOpenOrder() {
+    OpenOrderData popped;
+    if (!this->m_openOrders.empty()) {
+        popped = this->m_openOrders.front();
+        this->m_openOrders.pop();
+        return popped;
+    }
+    popped.orderId = -1;
+    return popped; 
+}
+UpdateAccountValueData IbPosixClient::getUpdateAccountValue() {
+    UpdateAccountValueData popped;
+    if (!this->m_updateAccountValues.empty()) {
+        popped = this->m_updateAccountValues.front();
+        this->m_updateAccountValues.pop();
+        return popped;
+    }
+    popped.accountName = "";
+    return popped;
+}
+UpdatePortfolioData IbPosixClient::getUpdatePortfolio() {
+    UpdatePortfolioData popped;
+    if (!this->m_updatePortfolios.empty()) {
+        popped = this->m_updatePortfolios.front();
+        this->m_updatePortfolios.pop();
+        return popped;
+    }
+    popped.accountName = "";
+    return popped;
+}
+UpdateAccountTimeData IbPosixClient::getUpdateAccountTime() {
+    UpdateAccountTimeData popped;
+    if (!this->m_updateAccountTimes.empty()) {
+        popped = this->m_updateAccountTimes.front();
+        this->m_updateAccountTimes.pop();
+        return popped;
+    }
+    popped.timeStamp = "";
+    return popped;
+}
+
 
 OrderId IbPosixClient::getNextOrderId() {
     OrderId nextOrder = this->m_orderId;
@@ -390,17 +431,46 @@ void IbPosixClient::orderStatus( OrderId orderId, const IBString &status,
     newData.whyHeld = whyHeld;
     this->m_orderStatuses.push(newData);
 }
+// TODO NOT TESTED
+// No idea how to handle contract and order
 void IbPosixClient::openOrder( OrderId orderId, const Contract&, const Order&, 
-        const OrderState& ostate) {}
+        const OrderState& ostate) {
+    OpenOrderData newData;
+    newData.orderId = orderId;
+    newData.orderState = ostate;
+    this->m_openOrders.push(newData);
+}
 void IbPosixClient::openOrderEnd() {}
 void IbPosixClient::winError( const IBString &str, int lastError) {}
 void IbPosixClient::connectionClosed() {}
 void IbPosixClient::updateAccountValue(const IBString& key, const IBString& val,
-                                          const IBString& currency, const IBString& accountName) {}
+                                          const IBString& currency, const IBString& accountName) {
+    UpdateAccountValueData newData;
+    newData.key = key;
+    newData.val = val;
+    newData.currency = currency;
+    newData.accountName = accountName;
+    this->m_updateAccountValues.push(newData);
+}
 void IbPosixClient::updatePortfolio(const Contract& contract, int position,
         double marketPrice, double marketValue, double averageCost,
-        double unrealizedPNL, double realizedPNL, const IBString& accountName){}
-void IbPosixClient::updateAccountTime(const IBString& timeStamp) {}
+        double unrealizedPNL, double realizedPNL, const IBString& accountName){
+    UpdatePortfolioData newData;
+    newData.contract = contract;
+    newData.position = position;
+    newData.marketPrice = marketPrice;
+    newData.marketValue = marketValue;
+    newData.averageCost = averageCost;
+    newData.unrealizedPNL = unrealizedPNL;
+    newData.realizedPNL = realizedPNL;
+    newData.accountName = accountName;
+    this->m_updatePortfolios.push(newData);
+}
+void IbPosixClient::updateAccountTime(const IBString& timeStamp) {
+    UpdateAccountTimeData newData;
+    newData.timeStamp = timeStamp;
+    this->m_updateAccountTimes.push(newData);
+}
 void IbPosixClient::accountDownloadEnd(const IBString& accountName) {}
 void IbPosixClient::nextValidId( OrderId orderId) {
     m_orderId = orderId;

@@ -30,6 +30,10 @@ public:
     TickStringData getTickString();
     TickEFPData getTickEFP();
     OrderStatusData getOrderStatus();
+    OpenOrderData getOpenOrder();
+    UpdateAccountValueData getUpdateAccountValue();
+    UpdatePortfolioData getUpdatePortfolio();
+    UpdateAccountTimeData getUpdateAccountTime();
 
     OrderId getNextOrderId();
 
@@ -157,9 +161,14 @@ private:
     std::queue< TickSizeData > m_tickSizes;
     std::queue< TickOptionComputationData > m_tickOptionComps;
     std::queue< TickGenericData > m_tickGenerics;
+    std::queue< TickStringData > m_tickStrings;
     std::queue< TickEFPData > m_tickEFPs;
     std::queue< OrderStatusData > m_orderStatuses;
-    std::queue< TickStringData > m_tickStrings;
+    std::queue< OpenOrderData > m_openOrders;
+
+    std::queue< UpdateAccountValueData > m_updateAccountValues;
+    std::queue< UpdatePortfolioData > m_updatePortfolios;
+    std::queue< UpdateAccountTimeData > m_updateAccountTimes;
 };
 
 #endif

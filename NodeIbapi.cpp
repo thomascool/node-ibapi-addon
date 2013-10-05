@@ -40,8 +40,10 @@ void NodeIbapi::Init(Handle<Object> exports) {
         FunctionTemplate::New(TickEFP)->GetFunction());
     tpl->PrototypeTemplate()->Set(String::NewSymbol("getOrderStatus"),
         FunctionTemplate::New(OrderStatus)->GetFunction());
-
-
+    tpl->PrototypeTemplate()->Set(String::NewSymbol("getOpenOrder"),
+        FunctionTemplate::New(OpenOrder)->GetFunction());
+    tpl->PrototypeTemplate()->Set(String::NewSymbol("getUpdateAccountValue"),
+        FunctionTemplate::New(UpdateAccountValue)->GetFunction());
 
     /// EClientSocket
     tpl->PrototypeTemplate()->Set(String::NewSymbol("connect"),
@@ -270,8 +272,7 @@ Handle<Value> NodeIbapi::CancelOrder(const Arguments& args) {
 Handle<Value> NodeIbapi::ReqOpenOrders(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
-    // TODO: placeholder
-
+    obj->m_client.reqOpenOrders();
     return scope.Close(Undefined());
 }
 Handle<Value> NodeIbapi::ReqAccountUpdates(const Arguments& args) {
@@ -647,6 +648,42 @@ Handle<Value> NodeIbapi::OrderStatus(const Arguments& args) {
     retOrderStatus->Set(9, String::New(newOrderStatus.whyHeld.c_str()));
     return scope.Close(retOrderStatus);
 }
+Handle<Value> NodeIbapi::OpenOrder(const Arguments& args) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
+
+    OpenOrderData newOpenOrder;
+    newOpenOrder = obj->m_client.getOpenOrder();
+
+    // TODO for the time being
+    Handle<Array> retOpenOrder = Array::New(10);
+    retOpenOrder->Set(0, Integer::New(newOpenOrder.orderId));
+    retOpenOrder->Set(1, String::New(newOpenOrder.orderState.status.c_str()));
+    retOpenOrder->Set(2, String::New(newOpenOrder.orderState.initMargin.c_str()));
+    retOpenOrder->Set(3, String::New(newOpenOrder.orderState.maintMargin.c_str()));
+    retOpenOrder->Set(4, String::New(newOpenOrder.orderState.equityWithLoan.c_str()));
+    retOpenOrder->Set(5, Number::New(newOpenOrder.orderState.commission));
+    retOpenOrder->Set(6, Number::New(newOpenOrder.orderState.minCommission));
+    retOpenOrder->Set(7, Number::New(newOpenOrder.orderState.maxCommission));
+    retOpenOrder->Set(8, String::New(newOpenOrder.orderState.commissionCurrency.c_str()));
+    retOpenOrder->Set(9, String::New(newOpenOrder.orderState.warningText.c_str()));
+    return scope.Close(retOpenOrder);
+}
+Handle<Value> NodeIbapi::UpdateAccountValue(const Arguments& args) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
+
+    UpdateAccountValueData newUpdateAccountValue;
+    newUpdateAccountValue = obj->m_client.getUpdateAccountValue();
+
+    Handle<Array> retUpdateAccountValue = Array::New(4);
+    retUpdateAccountValue->Set(0, String::New(newUpdateAccountValue.key.c_str()));
+    retUpdateAccountValue->Set(1, String::New(newUpdateAccountValue.val.c_str()));
+    retUpdateAccountValue->Set(2, String::New(newUpdateAccountValue.currency.c_str()));
+    retUpdateAccountValue->Set(4, String::New(newUpdateAccountValue.accountName.c_str()));
+    return scope.Close(retUpdateAccountValue);
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //  Helper methods

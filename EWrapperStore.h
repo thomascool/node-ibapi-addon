@@ -74,7 +74,6 @@ struct OpenOrderData {
     OrderState orderState;
 };
 struct OpenOrderEndData {
-;
 };
 struct WinErrorData {
     IBString str;
