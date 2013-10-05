@@ -1,3 +1,7 @@
+// In this example, we will try to submit a market data subscription
+//  to EUR/USD and get the TickPrice and TickSize events from the
+//  IB Cash Data Server
+
 var addon = require('../build/Release/NodeIbapiAddon');
 var obj = new addon.NodeIbapi();
 

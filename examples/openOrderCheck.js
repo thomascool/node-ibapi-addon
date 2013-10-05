@@ -1,12 +1,16 @@
+// In this example, we will try to submit an order, and see the 
+//  orderStatus as it is being sent by the IB server.
+
 var addon = require('../build/Release/NodeIbapiAddon');
 var obj = new addon.NodeIbapi();
 
-var once = false;
 obj.connect('127.0.0.1',7496,0);
 
+var validOrderId;
 var orderStatus;
-var orderId;
+var orderId = -1;
 var counter = 0;
+var once = false;
 
 while (obj.isConnected()) {
   obj.checkMessages();
