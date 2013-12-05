@@ -5,6 +5,8 @@ Interactive Brokers API addon for Node.js
 
 Author: Jae Yang
 
+For direct JavaScript implementation of IB API for Node.js, please visit Pilwon Huh's [node-ib] (https://github.com/pilwon/node-ib).
+
 
 Change Notes:
 -------------
@@ -32,13 +34,9 @@ Tests:
 ------
 Uses mocha, so install it.
 
-TODO:
+Issues:
 -----
 * See issues list in https://github.com/dchem/node-ibapi-addon/issues?state=open
-* Implement additional methods in IbPosixClient and wrap it for node in NodeIbapi
-* Better way to pull external dependencies
-* Better way to handle IB_USE_STD_STRING
-* Write more tests
 
 License
 -------
