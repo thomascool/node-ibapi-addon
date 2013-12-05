@@ -59,6 +59,8 @@ void NodeIbapi::Init(Handle<Object> exports) {
         FunctionTemplate::New(CancelMktData)->GetFunction());
     tpl->PrototypeTemplate()->Set(String::NewSymbol("placeSimpleOrder"),
         FunctionTemplate::New(PlaceSimpleOrder)->GetFunction());
+    tpl->PrototypeTemplate()->Set(String::NewSymbol("placeOrder"),
+        FunctionTemplate::New(PlaceOrder)->GetFunction());
     tpl->PrototypeTemplate()->Set(String::NewSymbol("cancelOrder"),
         FunctionTemplate::New(CancelOrder)->GetFunction());
     tpl->PrototypeTemplate()->Set(String::NewSymbol("reqOpenOrders"),
@@ -258,6 +260,32 @@ Handle<Value> NodeIbapi::PlaceSimpleOrder(const Arguments& args) {
     order.totalQuantity = args[7]->IntegerValue();
     order.orderType = getChar(args[8]);
     order.lmtPrice = args[9]->NumberValue();
+
+    obj->m_client.placeOrder(orderId, contract, order);
+    return scope.Close(Undefined());
+}
+Handle<Value> NodeIbapi::PlaceOrder(const Arguments& args) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
+
+
+    OrderId orderId;
+    Contract contract;
+    Order order;
+
+    orderId = args[0]->IntegerValue();
+    Handle<Object> ibContract = Handle<Object>::Cast(args[1]);
+
+    contract.symbol = getChar(ibContract->Get(String::New("symbol")));
+    contract.secType = getChar(ibContract->Get(String::New("secType")));
+    contract.exchange = getChar(ibContract->Get(String::New("exchange")));
+    contract.primaryExchange = getChar(ibContract->Get(String::New("primaryExchange")));
+    contract.currency = getChar(ibContract->Get(String::New("currency")));
+
+    order.action = getChar(args[2]);
+    order.totalQuantity = args[3]->IntegerValue();
+    order.orderType = getChar(args[4]);
+    order.lmtPrice = args[5]->NumberValue();
 
     obj->m_client.placeOrder(orderId, contract, order);
     return scope.Close(Undefined());

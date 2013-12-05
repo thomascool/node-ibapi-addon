@@ -16,7 +16,7 @@ while (obj.isConnected()) {
   if (!once) {
     obj.reqMktData(1,"EUR","CASH","IDEALPRO","USD","165",false);
     once = true;
-    console.log("EUR Subscribed");
+    console.log("EUR/USD Subscribed");
   }
   tickPrice = obj.getTickPrice();
   tickSize = obj.getTickSize();

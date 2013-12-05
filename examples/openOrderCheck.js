@@ -1,3 +1,6 @@
+// In this example, we will try to place a limit order and to 
+//  receive the orderStatus, as well as to poll for openOrders.
+
 var addon = require('../build/Release/NodeIbapiAddon');
 var obj = new addon.NodeIbapi();
 
@@ -14,6 +17,7 @@ var once = false;
 while (obj.isConnected()) {
   obj.checkMessages();
   obj.processMsg();
+  
   orderStatus = obj.getOrderStatus();
   openOrder = obj.getOpenOrder();
 
