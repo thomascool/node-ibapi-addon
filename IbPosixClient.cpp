@@ -513,7 +513,7 @@ void IbPosixClient::deltaNeutralValidation(int reqId, const UnderComp& underComp
 void IbPosixClient::tickSnapshotEnd(int reqId) {}
 void IbPosixClient::marketDataType(TickerId reqId, int marketDataType) {}
 void IbPosixClient::commissionReport( const CommissionReport& commissionReport) {}
-void IbPosixClient::position( const IBString& account, const Contract& contract, int position) {}
+void IbPosixClient::position( const IBString& account, const Contract& contract, int position, double avgCost) {}
 void IbPosixClient::positionEnd() {}
 void IbPosixClient::accountSummary( int reqId, const IBString& account, const IBString& tag, const IBString& value, const IBString& curency) {}
 void IbPosixClient::accountSummaryEnd( int reqId) {}

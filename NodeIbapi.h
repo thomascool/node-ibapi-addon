@@ -27,7 +27,7 @@ private:
     static v8::Handle<v8::Value> IsConnected(const v8::Arguments& args);
     static v8::Handle<v8::Value> ReqMktData(const v8::Arguments& args);
     static v8::Handle<v8::Value> CancelMktData(const v8::Arguments& args);
-    static v8::Handle<v8::Value> PlaceOrder(const v8::Arguments& args);
+    static v8::Handle<v8::Value> PlaceSimpleOrder(const v8::Arguments& args);
     static v8::Handle<v8::Value> CancelOrder(const v8::Arguments& args);
     static v8::Handle<v8::Value> ReqOpenOrders(const v8::Arguments& args); 
     static v8::Handle<v8::Value> ReqAccountUpdates(const v8::Arguments& args);

@@ -1,10 +1,10 @@
-#define BUILDING_NODE_EXTENSION
 #include <cstring>
 #include <sstream>
 #include <node.h>
 #include "NodeIbapi.h"
 #include "import/Contract.h"
 #include "import/Order.h"
+#include "import/Execution.h"
 
 using namespace v8;
 
@@ -57,8 +57,8 @@ void NodeIbapi::Init(Handle<Object> exports) {
         FunctionTemplate::New(ReqMktData)->GetFunction());
     tpl->PrototypeTemplate()->Set(String::NewSymbol("cancelMktData"),
         FunctionTemplate::New(CancelMktData)->GetFunction());
-    tpl->PrototypeTemplate()->Set(String::NewSymbol("placeOrder"),
-        FunctionTemplate::New(PlaceOrder)->GetFunction());
+    tpl->PrototypeTemplate()->Set(String::NewSymbol("placeSimpleOrder"),
+        FunctionTemplate::New(PlaceSimpleOrder)->GetFunction());
     tpl->PrototypeTemplate()->Set(String::NewSymbol("cancelOrder"),
         FunctionTemplate::New(CancelOrder)->GetFunction());
     tpl->PrototypeTemplate()->Set(String::NewSymbol("reqOpenOrders"),
@@ -162,7 +162,7 @@ Handle<Value> NodeIbapi::Connect(const Arguments& args) {
 
     return scope.Close(
             Boolean::New(obj->m_client.connect(host, 
-                    args[1]->Uint32Value(), (int)args[2]->IntegerValue()))
+                    args[1]->Uint32Value(), args[2]->Int32Value()))
             );
 }
 
@@ -230,15 +230,16 @@ Handle<Value> NodeIbapi::CancelMktData(const Arguments& args) {
     obj->m_client.cancelMktData(tickerId);
     return scope.Close(Undefined());
 }
-Handle<Value> NodeIbapi::PlaceOrder(const Arguments& args) {
+Handle<Value> NodeIbapi::PlaceSimpleOrder(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
 
-    if ( isWrongArgNumber(args, 9) || isWrongType(!args[0]->IsUint32(),0) ||
+    if ( isWrongArgNumber(args, 10) || isWrongType(!args[0]->IsUint32(),0) ||
         isWrongType(!args[1]->IsString(),1) || isWrongType(!args[2]->IsString(),2) ||
         isWrongType(!args[3]->IsString(),3) || isWrongType(!args[4]->IsString(),4) ||
-        isWrongType(!args[5]->IsString(),5) || isWrongType(!args[6]->IsInt32(),6) ||
-        isWrongType(!args[7]->IsString(),7) || isWrongType(!args[8]->IsNumber(),8) ) {
+        isWrongType(!args[5]->IsString(),5) || isWrongType(!args[6]->IsString(),6) || 
+        isWrongType(!args[7]->IsInt32(),7) ||
+        isWrongType(!args[8]->IsString(),8) || isWrongType(!args[9]->IsNumber(),9) ) {
         return scope.Close(Undefined());
     }
     
@@ -250,12 +251,13 @@ Handle<Value> NodeIbapi::PlaceOrder(const Arguments& args) {
     contract.symbol = getChar(args[1]);
     contract.secType = getChar(args[2]);
     contract.exchange = getChar(args[3]);
-    contract.currency = getChar(args[4]);
+    contract.primaryExchange = getChar(args[4]);
+    contract.currency = getChar(args[5]);
 
-    order.action = getChar(args[5]);
-    order.totalQuantity = args[6]->IntegerValue();
-    order.orderType = getChar(args[7]);
-    order.lmtPrice = args[8]->NumberValue();
+    order.action = getChar(args[6]);
+    order.totalQuantity = args[7]->IntegerValue();
+    order.orderType = getChar(args[8]);
+    order.lmtPrice = args[9]->NumberValue();
 
     obj->m_client.placeOrder(orderId, contract, order);
     return scope.Close(Undefined());
@@ -263,7 +265,7 @@ Handle<Value> NodeIbapi::PlaceOrder(const Arguments& args) {
 Handle<Value> NodeIbapi::CancelOrder(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
-    if (isWrongArgNumber(args, 1)) {
+    if (isWrongArgNumber(args, 1) || isWrongType(!args[0]->IsUint32(),0)) {
         return scope.Close(Undefined());
     }
     obj->m_client.cancelOrder(args[0]->IntegerValue());
@@ -278,22 +280,43 @@ Handle<Value> NodeIbapi::ReqOpenOrders(const Arguments& args) {
 Handle<Value> NodeIbapi::ReqAccountUpdates(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
-    // TODO: placeholder
+    if (isWrongArgNumber(args, 2) || isWrongType(!args[0]->IsBoolean(),0)
+        || isWrongType(!args[1]->IsString(),1)) {
+        return scope.Close(Undefined());
+    }
+    bool subscribe = args[0]->BooleanValue();;
+    IBString acctCode = getChar(args[1]);
 
+    obj->m_client.reqAccountUpdates(subscribe,acctCode);
     return scope.Close(Undefined());
 }
 Handle<Value> NodeIbapi::ReqExecutions(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
-    // TODO: placeholder
+    if (isWrongArgNumber(args,8)) {
+        return scope.Close(Undefined());
+    }
+    int reqId = args[0]->Int32Value();
+    ExecutionFilter filter;
+    filter.m_clientId = args[1]->IntegerValue();
+    filter.m_acctCode = getChar(args[2]);
+    filter.m_time = getChar(args[3]);
+    filter.m_symbol = getChar(args[4]);
+    filter.m_secType = getChar(args[5]);
+    filter.m_exchange = getChar(args[6]);
+    filter.m_side = getChar(args[7]);
 
+    obj->m_client.reqExecutions(reqId,filter);
     return scope.Close(Undefined());
 }
 Handle<Value> NodeIbapi::ReqIds(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
-    // TODO: placeholder
-
+    if (isWrongArgNumber(args,1)) {
+        return scope.Close(Undefined());
+    }
+    int numIds = args[0]->Int32Value();
+    obj->m_client.reqIds(numIds);
     return scope.Close(Undefined());
 }
 Handle<Value> NodeIbapi::CheckMessages(const Arguments& args) {

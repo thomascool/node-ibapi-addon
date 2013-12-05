@@ -20,9 +20,9 @@ Installation:
     be necessary with properly set up latest stable release (0.10.20)
 3. Get the IB API package from Interactive Brokers
 4. Copy the contents of IB API package's 
-    IBJts/cpp/Shared into /import directory
+    IBJts/source/PosixClient/Shared into /import directory
 5. Copy the contents of IB API package's
-    IBJts/cpp/PosixSocketClient into /import directory
+    IBJts/source/PosixClient/src into /import directory
 6. Add #define IB_USE_STD_STRING into the following files in /import directory:
     EClientSocketBase.cpp
     EPosixClientSocket.cpp
