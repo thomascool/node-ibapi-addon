@@ -31,6 +31,10 @@ public:
     TickEFPData getTickEFP();
     OrderStatusData getOrderStatus();
     OpenOrderData getOpenOrder();
+
+    WinErrorData getWinError();
+    ErrorData getError();
+
     UpdateAccountValueData getUpdateAccountValue();
     UpdatePortfolioData getUpdatePortfolio();
     UpdateAccountTimeData getUpdateAccountTime();
@@ -165,6 +169,10 @@ private:
     std::queue< TickEFPData > m_tickEFPs;
     std::queue< OrderStatusData > m_orderStatuses;
     std::queue< OpenOrderData > m_openOrders;
+
+    std::queue< WinErrorData > m_winErrors;
+
+    std::queue< ErrorData > m_errors;
 
     std::queue< UpdateAccountValueData > m_updateAccountValues;
     std::queue< UpdatePortfolioData > m_updatePortfolios;

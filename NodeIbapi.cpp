@@ -42,6 +42,10 @@ void NodeIbapi::Init(Handle<Object> exports) {
         FunctionTemplate::New(OrderStatus)->GetFunction());
     tpl->PrototypeTemplate()->Set(String::NewSymbol("getOpenOrder"),
         FunctionTemplate::New(OpenOrder)->GetFunction());
+    tpl->PrototypeTemplate()->Set(String::NewSymbol("getWinError"),
+        FunctionTemplate::New(WinError)->GetFunction());
+    tpl->PrototypeTemplate()->Set(String::NewSymbol("getError"),
+        FunctionTemplate::New(Error)->GetFunction());
     tpl->PrototypeTemplate()->Set(String::NewSymbol("getUpdateAccountValue"),
         FunctionTemplate::New(UpdateAccountValue)->GetFunction());
 
@@ -198,23 +202,23 @@ Handle<Value> NodeIbapi::ReqMktData(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
 
-    if ( isWrongArgNumber(args,7) || isWrongType(!args[0]->IsUint32(),0) ||
-        isWrongType(!args[1]->IsString(),1) || isWrongType(!args[2]->IsString(),2) ||
-        isWrongType(!args[3]->IsString(),3) || isWrongType(!args[4]->IsString(),4) ||
-        isWrongType(!args[5]->IsString(),5) || isWrongType(!args[6]->IsBoolean(),6) ) {
+    if ( isWrongArgNumber(args,4) ) {
         return scope.Close(Undefined());
     }
 
     TickerId tickerId = args[0]->IntegerValue();
     Contract contract;
-    contract.symbol = getChar(args[1]);
-    contract.secType = getChar(args[2]);
-    contract.exchange = getChar(args[3]);
-    contract.currency = getChar(args[4]);
+ 
+    Handle<Object> ibContract = Handle<Object>::Cast(args[1]);
+    contract.symbol = getChar(ibContract->Get(String::New("symbol")));
+    contract.secType = getChar(ibContract->Get(String::New("secType")));
+    contract.exchange = getChar(ibContract->Get(String::New("exchange")));
+    contract.primaryExchange = getChar(ibContract->Get(String::New("primaryExchange")));
+    contract.currency = getChar(ibContract->Get(String::New("currency")));
 
-    IBString genericTick = getChar(args[5]);
+    IBString genericTick = getChar(args[2]);
 
-    bool snapShot = args[6]->BooleanValue();
+    bool snapShot = args[3]->BooleanValue();
 
     obj->m_client.reqMktData(tickerId, contract, genericTick, snapShot);
     return scope.Close(Undefined());
@@ -268,6 +272,9 @@ Handle<Value> NodeIbapi::PlaceOrder(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
 
+    if ( isWrongArgNumber(args,6) ) {
+        return scope.Close(Undefined());
+    }
 
     OrderId orderId;
     Contract contract;
@@ -719,6 +726,33 @@ Handle<Value> NodeIbapi::OpenOrder(const Arguments& args) {
     retOpenOrder->Set(8, String::New(newOpenOrder.orderState.commissionCurrency.c_str()));
     retOpenOrder->Set(9, String::New(newOpenOrder.orderState.warningText.c_str()));
     return scope.Close(retOpenOrder);
+}
+Handle<Value> NodeIbapi::WinError(const Arguments& args) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
+
+    WinErrorData newWinError;
+    newWinError = obj->m_client.getWinError();
+
+    Handle<Array> retWinError = Array::New(2);
+    retWinError->Set(0, String::New(newWinError.str.c_str()));
+    retWinError->Set(1, Integer::New(newWinError.lastError));
+
+    return scope.Close(retWinError);
+}
+Handle<Value> NodeIbapi::Error(const Arguments& args) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
+
+    ErrorData newError;
+    newError = obj->m_client.getError();
+
+    Handle<Array> retError = Array::New(3);
+    retError->Set(0, Integer::New(newError.id));
+    retError->Set(1, Integer::New(newError.errorCode));
+    retError->Set(2, String::New(newError.errorString.c_str()));
+
+    return scope.Close(retError);
 }
 Handle<Value> NodeIbapi::UpdateAccountValue(const Arguments& args) {
     HandleScope scope;

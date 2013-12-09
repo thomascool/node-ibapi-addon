@@ -160,6 +160,29 @@ OpenOrderData IbPosixClient::getOpenOrder() {
     popped.orderId = -1;
     return popped; 
 }
+
+WinErrorData IbPosixClient::getWinError() {
+    WinErrorData popped;
+    if (!this->m_winErrors.empty()) {
+        popped = this->m_winErrors.front();
+        this->m_winErrors.pop();
+        return popped;
+    }
+    popped.str = "";
+    return popped;
+}
+
+ErrorData IbPosixClient::getError() {
+    ErrorData popped;
+    if (!this->m_errors.empty()) {
+        popped = this->m_errors.front();
+        this->m_errors.pop();
+        return popped;
+    }
+    popped.id = -1;
+    return popped;
+}
+
 UpdateAccountValueData IbPosixClient::getUpdateAccountValue() {
     UpdateAccountValueData popped;
     if (!this->m_updateAccountValues.empty()) {
@@ -441,7 +464,12 @@ void IbPosixClient::openOrder( OrderId orderId, const Contract&, const Order&,
     this->m_openOrders.push(newData);
 }
 void IbPosixClient::openOrderEnd() {}
-void IbPosixClient::winError( const IBString &str, int lastError) {}
+void IbPosixClient::winError( const IBString &str, int lastError) {
+    WinErrorData newData;
+    newData.str = str;
+    newData.lastError = lastError;
+    this->m_winErrors.push(newData);
+}
 void IbPosixClient::connectionClosed() {}
 void IbPosixClient::updateAccountValue(const IBString& key, const IBString& val,
                                           const IBString& currency, const IBString& accountName) {
@@ -481,6 +509,11 @@ void IbPosixClient::contractDetailsEnd( int reqId) {}
 void IbPosixClient::execDetails( int reqId, const Contract& contract, const Execution& execution) {}
 void IbPosixClient::execDetailsEnd( int reqId) {}
 void IbPosixClient::error( const int id, const int errorCode, const IBString errorString) {
+    ErrorData newData;
+    newData.id = id;
+    newData.errorCode = errorCode;
+    newData.errorString = errorString;
+    this->m_errors.push(newData);
     if (id == -1 && errorCode == 1100)
         disconnect();
 }

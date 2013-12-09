@@ -13,10 +13,14 @@ var orderId = -1;
 var counter = 0;
 var validOrderId;
 var once = false;
+var clientError;
+var srvError;
 
 while (obj.isConnected()) {
   obj.checkMessages();
   obj.processMsg();
+  clientError = obj.getWinError();
+  srvError = obj.getError();
   
   orderStatus = obj.getOrderStatus();
   openOrder = obj.getOpenOrder();
@@ -26,6 +30,13 @@ while (obj.isConnected()) {
     orderId = validOrderId;
     console.log('Next valid order Id: %d',validOrderId);
     once = true;
+  }
+  if (clientError[0] != "") {
+    console.log('Client error');
+  }
+  if (srvError[0] != -1) {
+    console.log('Error: ' + srvError[0].toString() + ' - ' + 
+      srvError[1].toString() + ' - ' + srvError[2].toString());
   }
 
   // order status right after submittal
