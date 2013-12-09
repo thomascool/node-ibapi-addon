@@ -4,15 +4,14 @@
 var addon = require('../build/Release/NodeIbapiAddon');
 var obj = new addon.NodeIbapi();
 
-obj.connect('127.0.0.1',7496,1);
+obj.connect('127.0.0.1',7496,0);
 
-var validOrderId;
 var orderStatus;
 var openOrder;
 var orderId = -1;
 var counter = 0;
 var validOrderId;
-var once = false;
+var ready = false;
 var clientError;
 var srvError;
 
@@ -21,16 +20,7 @@ while (obj.isConnected()) {
   obj.processMsg();
   clientError = obj.getWinError();
   srvError = obj.getError();
-  
-  orderStatus = obj.getOrderStatus();
-  openOrder = obj.getOpenOrder();
 
-  if (!once && counter == 500000) {
-    validOrderId = obj.getNextOrderId();
-    orderId = validOrderId;
-    console.log('Next valid order Id: %d',validOrderId);
-    once = true;
-  }
   if (clientError[0] != "") {
     console.log('Client error');
   }
@@ -38,6 +28,19 @@ while (obj.isConnected()) {
     console.log('Error: ' + srvError[0].toString() + ' - ' + 
       srvError[1].toString() + ' - ' + srvError[2].toString());
   }
+
+  if (counter == 20000 && !ready) {
+    validOrderId = obj.getNextOrderId();
+    if (validOrderId > -1) {
+      ready = true;
+      orderId = validOrderId;
+      counter = 0;
+    }
+    obj.reqIds(1);
+  }
+  
+  orderStatus = obj.getOrderStatus();
+  openOrder = obj.getOpenOrder();
 
   // order status right after submittal
   if (orderStatus[0] > -1) {

@@ -283,11 +283,17 @@ Handle<Value> NodeIbapi::PlaceOrder(const Arguments& args) {
     orderId = args[0]->IntegerValue();
     Handle<Object> ibContract = Handle<Object>::Cast(args[1]);
 
-    contract.symbol = getChar(ibContract->Get(String::New("symbol")));
-    contract.secType = getChar(ibContract->Get(String::New("secType")));
+    // checks if order is being submitted through Conract ID from 
+    //  contract specification
+    contract.conId = ibContract->Get(String::New("conId"))->IntegerValue();
     contract.exchange = getChar(ibContract->Get(String::New("exchange")));
-    contract.primaryExchange = getChar(ibContract->Get(String::New("primaryExchange")));
-    contract.currency = getChar(ibContract->Get(String::New("currency")));
+    if (contract.conId == 0) {
+        contract.symbol = getChar(ibContract->Get(String::New("symbol")));
+        contract.secType = getChar(ibContract->Get(String::New("secType")));
+        
+        contract.primaryExchange = getChar(ibContract->Get(String::New("primaryExchange")));
+        contract.currency = getChar(ibContract->Get(String::New("currency")));
+    }
 
     order.action = getChar(args[2]);
     order.totalQuantity = args[3]->IntegerValue();
