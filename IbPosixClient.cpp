@@ -160,6 +160,16 @@ OpenOrderData IbPosixClient::getOpenOrder() {
     popped.orderId = -1;
     return popped; 
 }
+RealtimeBarData IbPosixClient::getRealtimeBar() {
+    RealtimeBarData popped;
+    if (!this->m_realtimeBars.empty()) {
+        popped = this->m_realtimeBars.front();
+        this->m_realtimeBars.pop();
+        return popped;
+    }
+    popped.reqId = -1;
+    return popped;
+}
 
 WinErrorData IbPosixClient::getWinError() {
     WinErrorData popped;
@@ -531,8 +541,20 @@ void IbPosixClient::scannerData(int reqId, int rank, const ContractDetails &cont
        const IBString &distance, const IBString &benchmark, const IBString &projection,
        const IBString &legsStr) {}
 void IbPosixClient::scannerDataEnd(int reqId) {}
-void IbPosixClient::realtimeBar(TickerId reqId, long time, double open, double high, double low, double close,
-                                   long volume, double wap, int count) {}
+void IbPosixClient::realtimeBar(TickerId reqId, long itime, double open, double high, double low, double close,
+                                   long volume, double wap, int count) {
+    RealtimeBarData newData;
+    newData.reqId = reqId;
+    newData.time = itime;
+    newData.open = open;
+    newData.high = high;
+    newData.low = low;
+    newData.close = close;
+    newData.volume = volume;
+    newData.wap = wap;
+    newData.count = count;
+    this->m_realtimeBars.push(newData);
+}
 void IbPosixClient::currentTime( long time) {
     time_t t = (time_t)time;
     struct tm * timeinfo = localtime ( &t);

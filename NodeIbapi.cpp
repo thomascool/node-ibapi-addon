@@ -42,6 +42,8 @@ void NodeIbapi::Init(Handle<Object> exports) {
         FunctionTemplate::New(OrderStatus)->GetFunction());
     tpl->PrototypeTemplate()->Set(String::NewSymbol("getOpenOrder"),
         FunctionTemplate::New(OpenOrder)->GetFunction());
+    tpl->PrototypeTemplate()->Set(String::NewSymbol("getRealtimeBar"),
+        FunctionTemplate::New(RealtimeBar)->GetFunction());
     tpl->PrototypeTemplate()->Set(String::NewSymbol("getWinError"),
         FunctionTemplate::New(WinError)->GetFunction());
     tpl->PrototypeTemplate()->Set(String::NewSymbol("getError"),
@@ -105,7 +107,7 @@ void NodeIbapi::Init(Handle<Object> exports) {
         FunctionTemplate::New(ExerciseOptions)->GetFunction());
     tpl->PrototypeTemplate()->Set(String::NewSymbol("cancelHistoricalData"),
         FunctionTemplate::New(CancelHistoricalData)->GetFunction());
-    tpl->PrototypeTemplate()->Set(String::NewSymbol("reqRealTimeBars"),
+    tpl->PrototypeTemplate()->Set(String::NewSymbol("reqRealtimeBars"),
         FunctionTemplate::New(ReqRealTimeBars)->GetFunction());
     tpl->PrototypeTemplate()->Set(String::NewSymbol("cancelRealTimeBars"),
         FunctionTemplate::New(CancelRealTimeBars)->GetFunction());
@@ -210,11 +212,17 @@ Handle<Value> NodeIbapi::ReqMktData(const Arguments& args) {
     Contract contract;
  
     Handle<Object> ibContract = Handle<Object>::Cast(args[1]);
-    contract.symbol = getChar(ibContract->Get(String::New("symbol")));
-    contract.secType = getChar(ibContract->Get(String::New("secType")));
+    // checks if order is being submitted through Conract ID from 
+    //  contract specification
+    contract.conId = ibContract->Get(String::New("conId"))->IntegerValue();
     contract.exchange = getChar(ibContract->Get(String::New("exchange")));
-    contract.primaryExchange = getChar(ibContract->Get(String::New("primaryExchange")));
-    contract.currency = getChar(ibContract->Get(String::New("currency")));
+    if (contract.conId == 0) {
+        contract.symbol = getChar(ibContract->Get(String::New("symbol")));
+        contract.secType = getChar(ibContract->Get(String::New("secType")));
+        
+        contract.primaryExchange = getChar(ibContract->Get(String::New("primaryExchange")));
+        contract.currency = getChar(ibContract->Get(String::New("currency")));
+    }
 
     IBString genericTick = getChar(args[2]);
 
@@ -467,14 +475,43 @@ Handle<Value> NodeIbapi::CancelHistoricalData(const Arguments& args) {
 Handle<Value> NodeIbapi::ReqRealTimeBars(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
-    // TODO: placeholder
+    if ( isWrongArgNumber(args,5) ) {
+        return scope.Close(Undefined());
+    }
+
+    TickerId tickerId = args[0]->IntegerValue();
+    Contract contract;
+ 
+    Handle<Object> ibContract = Handle<Object>::Cast(args[1]);
+    // checks if order is being submitted through Conract ID from 
+    //  contract specification
+    contract.conId = ibContract->Get(String::New("conId"))->IntegerValue();
+    contract.exchange = getChar(ibContract->Get(String::New("exchange")));
+    if (contract.conId == 0) {
+        contract.symbol = getChar(ibContract->Get(String::New("symbol")));
+        contract.secType = getChar(ibContract->Get(String::New("secType")));
+        
+        contract.primaryExchange = getChar(ibContract->Get(String::New("primaryExchange")));
+        contract.currency = getChar(ibContract->Get(String::New("currency")));
+    }
+
+    int barSize = args[2]->IntegerValue();
+    IBString whatToShow = getChar(args[3]);
+    bool useRTH = args[4]->BooleanValue();
+    obj->m_client.reqRealTimeBars(tickerId, contract, barSize, whatToShow, useRTH);
 
     return scope.Close(Undefined());
 }
 Handle<Value> NodeIbapi::CancelRealTimeBars(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
-    // TODO: placeholder
+
+    if ( isWrongArgNumber(args,1) ) {
+        return scope.Close(Undefined());
+    }
+
+    TickerId tickerId = args[0]->IntegerValue();
+    obj->m_client.cancelRealTimeBars(tickerId);
 
     return scope.Close(Undefined());
 }
@@ -733,6 +770,26 @@ Handle<Value> NodeIbapi::OpenOrder(const Arguments& args) {
     retOpenOrder->Set(9, String::New(newOpenOrder.orderState.warningText.c_str()));
     return scope.Close(retOpenOrder);
 }
+Handle<Value> NodeIbapi::RealtimeBar(const Arguments& args) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
+
+    RealtimeBarData newRealtimeBar;
+    newRealtimeBar = obj->m_client.getRealtimeBar();
+
+    Handle<Array> retRealtimeBar = Array::New(9);
+    retRealtimeBar->Set(0, Integer::New(newRealtimeBar.reqId));
+    retRealtimeBar->Set(1, Integer::New(newRealtimeBar.time));
+    retRealtimeBar->Set(2, Number::New(newRealtimeBar.open));
+    retRealtimeBar->Set(3, Number::New(newRealtimeBar.high));
+    retRealtimeBar->Set(4, Number::New(newRealtimeBar.low));
+    retRealtimeBar->Set(5, Number::New(newRealtimeBar.close));
+    retRealtimeBar->Set(6, Integer::New(newRealtimeBar.volume));
+    retRealtimeBar->Set(7, Number::New(newRealtimeBar.wap));
+    retRealtimeBar->Set(8, Integer::New(newRealtimeBar.count));
+    return scope.Close(retRealtimeBar);
+}
+
 Handle<Value> NodeIbapi::WinError(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
