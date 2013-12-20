@@ -13,7 +13,25 @@ var ready = false;
 var clientError;
 var srvError;
 
+var time = process.hrtime();
+var diff = process.hrtime(time);
+var funqueue = []; // function queue
+
+var addReqId = function () {
+  obj.reqIds(1);
+}
+
 while(obj.isConnected()) {
+  diff = process.hrtime(time);
+  
+  // timed function queue
+  if (diff[1] > 21000000) {
+    time = process.hrtime();
+    if (funqueue[0] != null) {
+      (funqueue.shift())();
+    }
+  }
+
   obj.checkMessages();
   obj.processMsg();
   clientError = obj.getWinError();
@@ -27,14 +45,15 @@ while(obj.isConnected()) {
       srvError[1].toString() + ' - ' + srvError[2].toString());
   }
 
-  if (counter == 20000 && !ready) {
-    validOrderId = obj.getNextOrderId();
-    if (validOrderId > -1) {
+ // retrieve validOrderId
+  validOrderId = obj.getNextOrderId();
+  if (validOrderId < 0 && !once) {
+    once = true;
+    funqueue.push(addReqId);
+  }
+  if (validOrderId > 0 && !ready) {
       ready = true;
       orderId = validOrderId;
-      counter = 0;
-    }
-    obj.reqIds(1);
   }
   
   // submit an order through fully described contract

@@ -2,12 +2,13 @@
 var addon = require('../build/Release/NodeIbapiAddon');
 var obj = new addon.NodeIbapi();
 
-obj.connect('127.0.0.1',7496,0);
+obj.connect('127.0.0.1',7496,1);
 
 var validOrderId = -1;
 var orderId = -1;
 var counter = 0;
 var ready = false;
+var once = false;
 
 var clientError;
 var srvError;
@@ -15,6 +16,10 @@ var srvError;
 var time = process.hrtime();
 var diff = process.hrtime(time);
 var funqueue = []; // function queue
+
+var addReqId = function () {
+  obj.reqIds(1);
+}
 
 while(obj.isConnected()) {
   diff = process.hrtime(time);
@@ -43,18 +48,18 @@ while(obj.isConnected()) {
   }
 
   // retrieve validOrderId
-  if (counter == 20000 && !ready) {
-    validOrderId = obj.getNextOrderId();
-    if (validOrderId > -1) {
+  validOrderId = obj.getNextOrderId();
+  if (validOrderId < 0 && !once) {
+    once = true;
+    funqueue.push(addReqId);
+  }
+  if (validOrderId > 0 && !ready) {
       ready = true;
       orderId = validOrderId;
-      counter = 0;
-    }
-    obj.reqIds(1);
   }
   
   // implement your functionalities here
-  if (counter == 50000 && ready) {
+  if (ready) {
     console.log('Next valid order Id: %d',validOrderId);
     obj.disconnect();
   }
