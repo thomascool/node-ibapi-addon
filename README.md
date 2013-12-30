@@ -1,19 +1,18 @@
 node-ibapi-addon
 ================
 
-Interactive Brokers API addon for Node.js
-Compatible with API 9.69
+Interactive Brokers API addon for Node.js compatible with IB API 9.69
 
-Author: Jae Yang
+Author: Jae Yang - [dchem] (https://github.com/dchem/)
 
 For direct JavaScript implementation of IB API for Node.js, please visit Pilwon Huh's [node-ib] (https://github.com/pilwon/node-ib).
 
 
 ### Change Notes:
 
-2013-12-29 - 0.0.3 - Added EventEmitter support
-2013-09-26 - 0.0.2 - EClientSocket hooks and EWrapper hooks
-2013-09-02 - 0.0.1 - Initial commit - connect, disconnect, isConnected works
+* 2013-12-29 - 0.0.3 - Added EventEmitter support
+* 2013-09-26 - 0.0.2 - EClientSocket hooks and EWrapper hooks
+* 2013-09-02 - 0.0.1 - Initial commit - connect, disconnect, isConnected works
 
 ### Installation:
 
