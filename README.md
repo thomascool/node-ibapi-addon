@@ -28,12 +28,14 @@ For direct JavaScript implementation of IB API for Node.js, please visit Pilwon 
 6. node-gyp configure build
 
 ### Addon Wrapper Commands
-processMsg() is a POSIX implementation of network message handler
 ```js
+// Msg processor
+//  a POSIX implementation of network message handler
 .processMsg()
-```
-Following commands are used for getting the incoming data from the msg queue 
-```js
+
+// Getters
+//  Following commands are used for getting the incoming data from 
+//  the msg queue 
 .getNextOrderId()
 .getTickPrice()
 .getTickSize()
@@ -47,26 +49,26 @@ Following commands are used for getting the incoming data from the msg queue
 .getWinError()
 .getError()
 .getUpdateAccountValue()
-```
 
-Following commands are used for requesting specific action through IB API
-```js
-.connect()
+// IB API Commands
+//  Following commands are used for requesting specific action 
+//  through IB API
+.connect(host,port,clientId)
 .disconnect()
 .isConnected()
-.reqMktData()
-.cancelMktData()
-.placeSimpleOrder()
-.placeOrder()
-.cancelOrder()
+.reqMktData(reqId, contract, genericTickType, snapShot)
+.cancelMktData(reqId)
+.placeSimpleOrder(orderId, symbol, secType, exchange, primaryExchange, currency, action, quantity, orderType, price)
+.placeOrder(orderId, contract, action, quantity, orderType, price)
+.cancelOrder(orderId)
 .reqOpenOrders()
-.reqAccountUpdates()
-.reqExecutions()
-.reqIds()
+.reqAccountUpdates(subscribe, acctCode)
+.reqExecutions(reqId, clientId, acctCode, time, symbol, secType, exchange, side)
+.reqIds(1)
 .checkMessages()
 
-.reqRealtimeBars()
-.cancelRealTimeBars()
+.reqRealtimeBars(tickerId, contract, barSize, whatToShow, useRTH)
+.cancelRealTimeBars(tickerId)
 ```
 
 ### JS Extended Wrapper Commands
@@ -80,11 +82,11 @@ The following commands are extended commands in nodeibapi.js if one were to use 
 
 ### JS Extended Wrapper Events
 ```js
-.on('clientError', function (clientError) {})
-.on('srvError', function (srvError) {})
-.on('disconnected', function () {})
-.on('connected', function() {})
-.on('connectionFail' function() {})
+.on('clientError', function (clientError))
+.on('srvError', function (srvError))
+.on('disconnected', function ())
+.on('connected', function())
+.on('connectionFail' function())
 ```
 
 ### Tests:
