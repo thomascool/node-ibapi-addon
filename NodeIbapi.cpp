@@ -38,6 +38,11 @@ void NodeIbapi::Init(Handle<Object> exports) {
         FunctionTemplate::New(TickString)->GetFunction());
     tpl->PrototypeTemplate()->Set(String::NewSymbol("getTickEFP"),
         FunctionTemplate::New(TickEFP)->GetFunction());
+    tpl->PrototypeTemplate()->Set(String::NewSymbol("getTickSnapshotEnd"),
+        FunctionTemplate::New(TickSnapshotEnd)->GetFunction());
+    tpl->PrototypeTemplate()->Set(String::NewSymbol("getMarketDataType"),
+        FunctionTemplate::New(MarketDataType)->GetFunction());
+
     tpl->PrototypeTemplate()->Set(String::NewSymbol("getOrderStatus"),
         FunctionTemplate::New(OrderStatus)->GetFunction());
     tpl->PrototypeTemplate()->Set(String::NewSymbol("getOpenOrder"),
@@ -728,6 +733,27 @@ Handle<Value> NodeIbapi::TickEFP(const Arguments& args) {
     retTickEFP->Set(7, Number::New(newTickEFP.dividendImpact));
     retTickEFP->Set(8, Number::New(newTickEFP.dividendsToExpiry));
     return scope.Close(retTickEFP);
+}
+Handle<Value> NodeIbapi::TickSnapshotEnd(const Arguments& args) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
+
+    TickSnapshotEndData newTickSnapshotEnd;
+    newTickSnapshotEnd = obj->m_client.getTickSnapshotEnd();
+    Handle<Array> retTickSnapshotEnd = Array::New(1);
+    retTickSnapshotEnd->Set(0, Integer::New(newTickSnapshotEnd.reqId));
+    return scope.Close(retTickSnapshotEnd);
+}
+Handle<Value> NodeIbapi::MarketDataType(const Arguments& args) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
+
+    MarketDataTypeData newMarketDataType;
+    newMarketDataType = obj->m_client.getMarketDataType();
+    Handle<Array> retMarketDataType = Array::New(2);
+    retMarketDataType->Set(0, Integer::New(newMarketDataType.reqId));
+    retMarketDataType->Set(1, Integer::New(newMarketDataType.marketDataType));
+    return scope.Close(retMarketDataType);
 }
 Handle<Value> NodeIbapi::OrderStatus(const Arguments& args) {
     HandleScope scope;

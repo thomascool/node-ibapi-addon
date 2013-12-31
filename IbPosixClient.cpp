@@ -140,6 +140,26 @@ TickEFPData IbPosixClient::getTickEFP() {
     popped.tickerId = -1;
     return popped; 
 }
+TickSnapshotEndData IbPosixClient::getTickSnapshotEnd() {
+    TickSnapshotEndData popped;
+    if (!this->m_tickSnapshotEnds.empty()) {
+        popped = this->m_tickSnapshotEnds.front();
+        this->m_tickSnapshotEnds.pop();
+        return popped;
+    }
+    popped.reqId = -1;
+    return popped;
+}
+MarketDataTypeData IbPosixClient::getMarketDataType() {
+    MarketDataTypeData popped;
+    if (!this->m_marketDataTypes.empty()) {
+        popped = this->m_marketDataTypes.front();
+        this->m_marketDataTypes.pop();
+        return popped;
+    }
+    popped.reqId = -1;
+    return popped;
+}
 OrderStatusData IbPosixClient::getOrderStatus() {
     OrderStatusData popped;
     if (!this->m_orderStatuses.empty()) {
@@ -420,13 +440,11 @@ void IbPosixClient::tickGeneric(TickerId tickerId, TickType tickType, double val
 // TODO NOT TESTED
 void IbPosixClient::tickString(TickerId tickerId, TickType tickType, 
         const IBString& value) {
-    if (tickType == 48) {
-        TickStringData newData;
-        newData.tickerId = tickerId;
-        newData.tickType = tickType;
-        newData.value = value;
-        this->m_tickStrings.push(newData);
-    }
+    TickStringData newData;
+    newData.tickerId = tickerId;
+    newData.tickType = tickType;
+    newData.value = value;
+    this->m_tickStrings.push(newData);
 }
 // TODO NOT TESTED
 void IbPosixClient::tickEFP(TickerId tickerId, TickType tickType, 

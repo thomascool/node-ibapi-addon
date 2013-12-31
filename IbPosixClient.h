@@ -29,6 +29,9 @@ public:
     TickGenericData getTickGeneric();
     TickStringData getTickString();
     TickEFPData getTickEFP();
+    TickSnapshotEndData getTickSnapshotEnd();
+    MarketDataTypeData getMarketDataType();
+
     OrderStatusData getOrderStatus();
     OpenOrderData getOpenOrder();
     RealtimeBarData getRealtimeBar();
@@ -168,6 +171,9 @@ private:
     std::queue< TickGenericData > m_tickGenerics;
     std::queue< TickStringData > m_tickStrings;
     std::queue< TickEFPData > m_tickEFPs;
+    std::queue< TickSnapshotEndData > m_tickSnapshotEnds;
+    std::queue< MarketDataTypeData > m_marketDataTypes;
+
     std::queue< OrderStatusData > m_orderStatuses;
     std::queue< OpenOrderData > m_openOrders;
     std::queue< RealtimeBarData > m_realtimeBars;
