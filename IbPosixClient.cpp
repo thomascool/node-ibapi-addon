@@ -13,7 +13,6 @@
 
 IbPosixClient::IbPosixClient()
     : m_pClient(new EPosixClientSocket(this))
-    , m_orderId(0)
 {
 }
 
@@ -245,9 +244,15 @@ UpdateAccountTimeData IbPosixClient::getUpdateAccountTime() {
 }
 
 
-OrderId IbPosixClient::getNextOrderId() {
-    OrderId nextOrder = this->m_orderId;
-    return nextOrder;
+OrderId IbPosixClient::getNextValidId() {
+    OrderId popped;
+    if (!this->m_validId.empty()) {
+        popped = this->m_validId.front();
+        this->m_validId.pop();
+        return popped;
+    }
+    popped = -1;
+    return popped;
 }
 
 /////////////////// API EPosixClientSocket method for node access /////////////
@@ -528,7 +533,7 @@ void IbPosixClient::updateAccountTime(const IBString& timeStamp) {
 }
 void IbPosixClient::accountDownloadEnd(const IBString& accountName) {}
 void IbPosixClient::nextValidId( OrderId orderId) {
-    m_orderId = orderId;
+    this->m_validId.push(orderId);
 }
 void IbPosixClient::contractDetails( int reqId, const ContractDetails& contractDetails) {}
 void IbPosixClient::bondContractDetails( int reqId, const ContractDetails& contractDetails) {}

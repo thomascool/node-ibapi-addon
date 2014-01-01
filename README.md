@@ -65,7 +65,7 @@ obj.connectToIb('127.0.0.1',7496,0);
 // Getters
 //  Following commands are used for getting the incoming data from 
 //  the msg queue 
-.getNextOrderId()
+.getNextValidId()
 .getTickPrice()
 .getTickSize()
 .getTickOptionComputation()
@@ -116,6 +116,7 @@ The following commands are extended commands in nodeibapi.js if one were to use 
 // processIbMsg events - returns arrays
 .on('clientError', function (clientError))
 .on('srvError', function (srvError))
+.on('nextValidId' function (nextValidId))
 .on('tickPrice', function (tickPrice))
 .on('tickSize', function (tickSize))
 .on('tickOptionComputation', function(tickOptionComputation))

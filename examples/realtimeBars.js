@@ -8,9 +8,6 @@ var obj = new addon.NodeIbapi();
 var processIbMsg = function () {
   obj.processIbMsg();
 }
-var addReqId = function () {
-  obj.addReqId(1);
-}
 var doReqFunc = function () {
   obj.doReqFunc();
 }
@@ -39,16 +36,22 @@ obj.on('connected', function () {
   console.log('connected');
   obj.funcQueue.push(addEurUsd);
   obj.funcQueue.push(addMsft);
+  setInterval(processIbMsg,0.1);
 })
-
-obj.on('realtimeBar', function (data) {
+.once('nextValidId', function (data) {
+  orderId = data;
+  setInterval(doReqFunc,100);
+})
+.on('realtimeBar', function (data) {
   console.log( "RealtimeBar: " + data[0].toString() + " " + 
     data[1].toString() + " " + data[2].toString() + " " + 
     data[3].toString() + " " + data[4].toString() + " " +
     data[5].toString() + " " + data[6].toString() + " " + 
     data[7].toString() + " " + data[8].toString());
 })
+.on('disconnected', function () {
+  console.log('disconnected');
+  process.exit(1);
+})
 
-setInterval(processIbMsg,0.1);
-setInterval(doReqFunc,100);
 obj.connectToIb('127.0.0.1',7496,0);

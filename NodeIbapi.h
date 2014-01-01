@@ -19,7 +19,7 @@ private:
     static v8::Handle<v8::Value> ProcessMsg(const v8::Arguments& args);
 
     // Getters
-    static v8::Handle<v8::Value> GetNextOrderId(const v8::Arguments& args);
+    static v8::Handle<v8::Value> GetNextValidId(const v8::Arguments& args);
 
     // EClientSocket
     static v8::Handle<v8::Value> Connect(const v8::Arguments& args);

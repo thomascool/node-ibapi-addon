@@ -43,7 +43,7 @@ public:
     UpdatePortfolioData getUpdatePortfolio();
     UpdateAccountTimeData getUpdateAccountTime();
 
-    OrderId getNextOrderId();
+    OrderId getNextValidId();
 
 // EClientSocket
 
@@ -161,7 +161,6 @@ public:
 
 private:
     std::auto_ptr<EPosixClientSocket> m_pClient;
-    OrderId m_orderId;
 
 ///// node.js accessible
     std::string m_currentTime;
@@ -184,6 +183,8 @@ private:
     std::queue< UpdateAccountValueData > m_updateAccountValues;
     std::queue< UpdatePortfolioData > m_updatePortfolios;
     std::queue< UpdateAccountTimeData > m_updateAccountTimes;
+    std::queue< OrderId > m_validId;
+
 };
 
 #endif

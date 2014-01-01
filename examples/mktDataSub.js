@@ -13,9 +13,6 @@ var ibcontract = require('../lib/contract');
 var processIbMsg = function () {
   obj.processIbMsg();
 }
-var addReqId = function () {
-  obj.addReqId(1);
-}
 var doReqFunc = function () {
   obj.doReqFunc();
 }
@@ -41,31 +38,34 @@ var subscribeMsft = function () {
   obj.reqMktData(3,msftContract,"165",false);
 }
 
-obj.on('tickPrice', function (data) {
-  console.log( "TickPrice: " + data[0].toString() + " " + 
-    data[1].toString() + " " + data[2].toString());
-})
-obj.on('tickSize', function (data) {
-  console.log( "TickSize: " + data[0].toString() + " " + 
-    data[1].toString() + " " + data[2].toString());
-})
-obj.on('clientError', function (data) {
-  console.log('Client error' + data[1].toString());
-})
-obj.on('srvError', function (data) {
-  console.log('Error: ' + data[0].toString() + ' - ' + 
-    data[1].toString() + ' - ' + data[2].toString());
-})
 obj.on('connected', function () {
   console.log('connected');
+  setInterval(processIbMsg,0.1);
   obj.funcQueue.push(subscribeEurUsd);
   obj.funcQueue.push(subscribeMsft);
 })
-obj.on('disconnected', function () {
+.once('nextValidId', function (data) {
+  orderId = data;
+  setInterval(doReqFunc,100);
+})
+.on('tickPrice', function (data) {
+  console.log( "TickPrice: " + data[0].toString() + " " + 
+    data[1].toString() + " " + data[2].toString());
+})
+.on('tickSize', function (data) {
+  console.log( "TickSize: " + data[0].toString() + " " + 
+    data[1].toString() + " " + data[2].toString());
+})
+.on('clientError', function (data) {
+  console.log('Client error' + data[1].toString());
+})
+.on('srvError', function (data) {
+  console.log('Error: ' + data[0].toString() + ' - ' + 
+    data[1].toString() + ' - ' + data[2].toString());
+})
+.on('disconnected', function () {
   console.log('disconnected');
   process.exit(1);
 })
-setInterval(processIbMsg,0.1);
-setInterval(doReqFunc,100);
 
 obj.connectToIb('127.0.0.1',7496,0);

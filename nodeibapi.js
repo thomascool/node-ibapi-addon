@@ -25,6 +25,7 @@ addon.NodeIbapi.prototype.processIbMsg = function () {
   
   clientError = this.getWinError();
   srvError = this.getError();
+  nextValidId = this.getNextValidId();
   
   tickPrice = this.getTickPrice();
   tickSize = this.getTickSize();
@@ -78,6 +79,10 @@ addon.NodeIbapi.prototype.processIbMsg = function () {
   }
   if (realtimeBar[0] > -1) {
     this.emit('realtimeBar', realtimeBar);
+  }
+
+  if (nextValidId > -1) {
+    this.emit('nextValidId', nextValidId);
   }
 
   if (!this.isConnected())

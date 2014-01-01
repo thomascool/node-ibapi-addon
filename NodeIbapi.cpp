@@ -22,8 +22,8 @@ void NodeIbapi::Init(Handle<Object> exports) {
     tpl->PrototypeTemplate()->Set(String::NewSymbol("processMsg"),
         FunctionTemplate::New(ProcessMsg)->GetFunction());
     /// getters
-    tpl->PrototypeTemplate()->Set(String::NewSymbol("getNextOrderId"),
-        FunctionTemplate::New(GetNextOrderId)->GetFunction());
+    tpl->PrototypeTemplate()->Set(String::NewSymbol("getNextValidId"),
+        FunctionTemplate::New(GetNextValidId)->GetFunction());
     tpl->PrototypeTemplate()->Set(String::NewSymbol("getCurrentTime"),
         FunctionTemplate::New(CurrentTime)->GetFunction());
     tpl->PrototypeTemplate()->Set(String::NewSymbol("getTickPrice"),
@@ -635,10 +635,10 @@ Handle<Value> NodeIbapi::CancelAccountSummary(const Arguments& args) {
 
 
 
-Handle<Value> NodeIbapi::GetNextOrderId(const Arguments& args) {
+Handle<Value> NodeIbapi::GetNextValidId(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
-    return scope.Close(Integer::New(obj->m_client.getNextOrderId()));
+    return scope.Close(Integer::New(obj->m_client.getNextValidId()));
 }
 
 Handle<Value> NodeIbapi::CurrentTime(const Arguments& args) {

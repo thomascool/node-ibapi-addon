@@ -4,9 +4,6 @@ var obj = new addon.NodeIbapi();
 var ibcontract = require('../lib/contract');
 
 var orderId = -1;
-var validOrderId = -1;
-var once = false;
-var ready = false;
 
 var processIbMsg = function () {
   obj.processIbMsg();
@@ -30,57 +27,43 @@ msftContract2.conId = 272093; // you can look this up from Contract Details in T
 msftContract2.exchange = 'SMART';
 
 var placeMsftOrder = function (contract, oId) {
-  if (oId > -1 && ready) {
-    console.log('Next valid order Id: %d',oId);
-    console.log("Placing order for MSFT");
-    obj.placeOrder(oId,contract, 
-      "BUY", 1000, "LMT", 0.11);
-  } 
+  console.log('Next valid order Id: %d',oId);
+  console.log("Placing order for MSFT");
+  obj.placeOrder(oId,contract, 
+    "BUY", 1000, "LMT", 0.11);
 }
-
 var cancelPrevOrder = function (oId) {
-    console.log('canceling order: %d', oId);
-    obj.cancelOrder(oId);
+  console.log('canceling order: %d', oId);
+  obj.cancelOrder(oId);
 }
 
-var doLoop = function () {
-  // retrieve validOrderId
-  validOrderId = obj.getNextOrderId();
-  if (validOrderId < 0 && !once) {
-    once = true;
-    obj.funcQueue.push(addReqId);
-  }
-  if (validOrderId > 0 && !ready) {
-      ready = true;
-      orderId = validOrderId;
-  }
-}
-
-obj.on('clientError', function (data) {
+obj.on('connected', function () {
+  console.log('connected');
+  setInterval(processIbMsg,0.1);
+})
+.on('clientError', function (data) {
   console.log('Client error' + data[1].toString());
 })
-obj.on('srvError', function (data) {
+.on('srvError', function (data) {
   console.log('Error: ' + data[0].toString() + ' - ' + 
     data[1].toString() + ' - ' + data[2].toString());
 })
-obj.on('connected', function () {
-   console.log('connected');
+.once('nextValidId', function (data) {
+  orderId = data;
+  setInterval(doReqFunc,100);
+  setInterval(function () {
+    obj.funcQueue.push(placeMsftOrder(msftContract1, orderId));
+    obj.funcQueue.push(cancelPrevOrder(orderId));
+    orderId = orderId + 1;
+    obj.funcQueue.push(placeMsftOrder(msftContract2, orderId));
+    obj.funcQueue.push(cancelPrevOrder(orderId));
+    orderId = orderId + 1;
+  },5000);
 })
-obj.on('disconnected', function () {
+.on('disconnected', function () {
   console.log('disconnected');
   process.exit(1);
 })
 
-setInterval(processIbMsg,0.1);
-setInterval(doLoop,1);
-setInterval(doReqFunc,100);
-setInterval(function () {
-  obj.funcQueue.push(placeMsftOrder(msftContract1, orderId));
-  obj.funcQueue.push(cancelPrevOrder(orderId));
-  orderId = orderId + 1;
-  obj.funcQueue.push(placeMsftOrder(msftContract2, orderId));
-  obj.funcQueue.push(cancelPrevOrder(orderId));
-  orderId = orderId + 1;
-},5000);
 
 obj.connectToIb('127.0.0.1',7496,0);
