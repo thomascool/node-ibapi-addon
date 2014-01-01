@@ -213,13 +213,13 @@ Handle<Value> NodeIbapi::ReqMktData(const Arguments& args) {
         return scope.Close(Undefined());
     }
 
-    TickerId tickerId = args[0]->IntegerValue();
+    TickerId tickerId = args[0]->Int32Value();
     Contract contract;
  
     Handle<Object> ibContract = Handle<Object>::Cast(args[1]);
     // checks if order is being submitted through Conract ID from 
     //  contract specification
-    contract.conId = ibContract->Get(String::New("conId"))->IntegerValue();
+    contract.conId = ibContract->Get(String::New("conId"))->Int32Value();
     contract.exchange = getChar(ibContract->Get(String::New("exchange")));
     if (contract.conId == 0) {
         contract.symbol = getChar(ibContract->Get(String::New("symbol")));
@@ -244,7 +244,7 @@ Handle<Value> NodeIbapi::CancelMktData(const Arguments& args) {
         return scope.Close(Undefined());
     }
 
-    TickerId tickerId = args[0]->IntegerValue();
+    TickerId tickerId = args[0]->Int32Value();
 
     obj->m_client.cancelMktData(tickerId);
     return scope.Close(Undefined());
@@ -266,7 +266,7 @@ Handle<Value> NodeIbapi::PlaceSimpleOrder(const Arguments& args) {
     Contract contract;
     Order order;
 
-    orderId = args[0]->IntegerValue();
+    orderId = args[0]->Int32Value();
     contract.symbol = getChar(args[1]);
     contract.secType = getChar(args[2]);
     contract.exchange = getChar(args[3]);
@@ -274,7 +274,7 @@ Handle<Value> NodeIbapi::PlaceSimpleOrder(const Arguments& args) {
     contract.currency = getChar(args[5]);
 
     order.action = getChar(args[6]);
-    order.totalQuantity = args[7]->IntegerValue();
+    order.totalQuantity = args[7]->Int32Value();
     order.orderType = getChar(args[8]);
     order.lmtPrice = args[9]->NumberValue();
 
@@ -293,12 +293,12 @@ Handle<Value> NodeIbapi::PlaceOrder(const Arguments& args) {
     Contract contract;
     Order order;
 
-    orderId = args[0]->IntegerValue();
+    orderId = args[0]->Int32Value();
     Handle<Object> ibContract = Handle<Object>::Cast(args[1]);
 
     // checks if order is being submitted through Conract ID from 
     //  contract specification
-    contract.conId = ibContract->Get(String::New("conId"))->IntegerValue();
+    contract.conId = ibContract->Get(String::New("conId"))->Int32Value();
     contract.exchange = getChar(ibContract->Get(String::New("exchange")));
     if (contract.conId == 0) {
         contract.symbol = getChar(ibContract->Get(String::New("symbol")));
@@ -309,7 +309,7 @@ Handle<Value> NodeIbapi::PlaceOrder(const Arguments& args) {
     }
 
     order.action = getChar(args[2]);
-    order.totalQuantity = args[3]->IntegerValue();
+    order.totalQuantity = args[3]->Int32Value();
     order.orderType = getChar(args[4]);
     order.lmtPrice = args[5]->NumberValue();
 
@@ -322,7 +322,7 @@ Handle<Value> NodeIbapi::CancelOrder(const Arguments& args) {
     if (isWrongArgNumber(args, 1) || isWrongType(!args[0]->IsUint32(),0)) {
         return scope.Close(Undefined());
     }
-    obj->m_client.cancelOrder(args[0]->IntegerValue());
+    obj->m_client.cancelOrder(args[0]->Int32Value());
     return scope.Close(Undefined());
 }
 Handle<Value> NodeIbapi::ReqOpenOrders(const Arguments& args) {
@@ -352,7 +352,7 @@ Handle<Value> NodeIbapi::ReqExecutions(const Arguments& args) {
     }
     int reqId = args[0]->Int32Value();
     ExecutionFilter filter;
-    filter.m_clientId = args[1]->IntegerValue();
+    filter.m_clientId = args[1]->Int32Value();
     filter.m_acctCode = getChar(args[2]);
     filter.m_time = getChar(args[3]);
     filter.m_symbol = getChar(args[4]);
@@ -484,13 +484,13 @@ Handle<Value> NodeIbapi::ReqRealTimeBars(const Arguments& args) {
         return scope.Close(Undefined());
     }
 
-    TickerId tickerId = args[0]->IntegerValue();
+    TickerId tickerId = args[0]->Int32Value();
     Contract contract;
  
     Handle<Object> ibContract = Handle<Object>::Cast(args[1]);
     // checks if order is being submitted through Conract ID from 
     //  contract specification
-    contract.conId = ibContract->Get(String::New("conId"))->IntegerValue();
+    contract.conId = ibContract->Get(String::New("conId"))->Int32Value();
     contract.exchange = getChar(ibContract->Get(String::New("exchange")));
     if (contract.conId == 0) {
         contract.symbol = getChar(ibContract->Get(String::New("symbol")));
@@ -500,7 +500,7 @@ Handle<Value> NodeIbapi::ReqRealTimeBars(const Arguments& args) {
         contract.currency = getChar(ibContract->Get(String::New("currency")));
     }
 
-    int barSize = args[2]->IntegerValue();
+    int barSize = args[2]->Int32Value();
     IBString whatToShow = getChar(args[3]);
     bool useRTH = args[4]->BooleanValue();
     obj->m_client.reqRealTimeBars(tickerId, contract, barSize, whatToShow, useRTH);
@@ -515,7 +515,7 @@ Handle<Value> NodeIbapi::CancelRealTimeBars(const Arguments& args) {
         return scope.Close(Undefined());
     }
 
-    TickerId tickerId = args[0]->IntegerValue();
+    TickerId tickerId = args[0]->Int32Value();
     obj->m_client.cancelRealTimeBars(tickerId);
 
     return scope.Close(Undefined());

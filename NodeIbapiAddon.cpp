@@ -1,5 +1,3 @@
-#define BUILDING_NODE_EXTENSION
-#define IB_USE_STD_STRING
 #include <node.h>
 #include "NodeIbapi.h"
 
