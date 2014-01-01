@@ -482,7 +482,6 @@ void IbPosixClient::orderStatus( OrderId orderId, const IBString &status,
     newData.whyHeld = whyHeld;
     this->m_orderStatuses.push(newData);
 }
-// TODO NOT TESTED
 // No idea how to handle contract and order
 void IbPosixClient::openOrder( OrderId orderId, const Contract&, const Order&, 
         const OrderState& ostate) {

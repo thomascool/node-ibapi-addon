@@ -1,4 +1,5 @@
 // This is a bare-bones setting for the scripts using node-ibapi-addon
+//  if you were to use a whileloop instead
 var addon = require('../build/Release/NodeIbapiAddon');
 var obj = new addon.NodeIbapi();
 
