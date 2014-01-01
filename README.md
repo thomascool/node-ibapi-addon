@@ -27,6 +27,35 @@ For direct JavaScript implementation of IB API for Node.js, please visit Pilwon 
     EPosixClientSocket.cpp
 6. node-gyp configure build
 
+### Usage
+```js
+var addon = require('../nodeibapi').addon;
+var obj = new addon.NodeIbapi();
+
+var processIbMsg = function () {
+  obj.processIbMsg();
+}
+var addReqId = function () {
+  obj.addReqId(1);
+}
+var doReqFunc = function () {
+  obj.doReqFunc();
+}
+obj.on('connected', function () {
+  console.log('connected');
+  obj.funcQueue.push(addReqId);
+})
+obj.on('disconnected', function () {
+  console.log('disconnected');
+  process.exit(1);
+})
+
+setInterval(processIbMsg,0.1);
+setInterval(doReqFunc,100);
+
+obj.connectToIb('127.0.0.1',7496,0);
+```
+
 ### Addon Wrapper Commands
 ```js
 // Msg processor
@@ -43,6 +72,8 @@ For direct JavaScript implementation of IB API for Node.js, please visit Pilwon 
 .getTickGeneric()
 .getTickString()
 .getTickEFP()
+.getTickSnapshotEnd()
+.getMarketDataType()
 .getOrderStatus()
 .getOpenOrder()
 .getRealtimeBar()
@@ -82,9 +113,23 @@ The following commands are extended commands in nodeibapi.js if one were to use 
 
 ### JS Extended Wrapper Events
 ```js
+// processIbMsg events - returns arrays
 .on('clientError', function (clientError))
 .on('srvError', function (srvError))
+.on('tickPrice', function (tickPrice))
+.on('tickSize', function (tickSize))
+.on('tickOptionComputation', function(tickOptionComputation))
+.on('tickGeneric', function(tickGeneric))
+.on('tickString', function(tickString))
+.on('tickEFP', function(tickEFP))
+.on('tickSnapshotEnd', function(tickSnapshotEnd))
+.on('marketDataType', function(marketDataType))
+.on('orderStatus', function(orderStatus))
+.on('openOrder', function(openOrder))
+.on('realtimeBar', function(realtimeBar))
 .on('disconnected', function ())
+
+// connectToIb events
 .on('connected', function())
 .on('connectionFail' function())
 ```

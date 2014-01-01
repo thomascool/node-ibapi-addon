@@ -5,8 +5,6 @@
 var addon = require('../nodeibapi').addon;
 var obj = new addon.NodeIbapi();
 
-var orderStatus;
-var openOrder;
 var orderId = -1;
 var counter = 0;
 var validOrderId;
@@ -56,19 +54,6 @@ var doLoop = function () {
   if (validOrderId > 0 && !ready) {
       ready = true;
       orderId = validOrderId;
-  }
-
-  orderStatus = obj.getOrderStatus();
-  openOrder = obj.getOpenOrder();
-
-  // order status right after submittal
-  if (orderStatus[0] > -1) {
-    obj.emit('orderStatus',orderStatus);
-  }
-
-  // check open order
-  if (openOrder[0] > -1) {
-    obj.emit('openOrder',openOrder);
   }
 }
 

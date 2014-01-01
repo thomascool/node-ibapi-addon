@@ -20,11 +20,6 @@ var doReqFunc = function () {
   obj.doReqFunc();
 }
 
-var tickPrice;
-var tickSize;
-var clientError;
-var srvError;
-
 var eurusd = ibcontract.createContract();
 eurusd.symbol = 'EUR';
 eurusd.secType = 'CASH';
@@ -46,24 +41,13 @@ var subscribeMsft = function () {
   obj.reqMktData(3,msftContract,"165",false);
 }
 
-var doLoop = function () {
-  tickPrice = obj.getTickPrice();
-  tickSize = obj.getTickSize();
-  if (tickPrice[0] != -1) {
-    obj.emit('tickPrice',tickPrice);
-  }
-  if (tickSize[0] != -1) {
-    obj.emit('tickSize',tickSize);
-  }
-};
-
 obj.on('tickPrice', function (data) {
-  console.log( "TickPrice: " + tickPrice[0].toString() + " " + 
-    tickPrice[1].toString() + " " + tickPrice[2].toString());
+  console.log( "TickPrice: " + data[0].toString() + " " + 
+    data[1].toString() + " " + data[2].toString());
 })
 obj.on('tickSize', function (data) {
-  console.log( "TickSize: " + tickSize[0].toString() + " " + 
-    tickSize[1].toString() + " " + tickSize[2].toString());
+  console.log( "TickSize: " + data[0].toString() + " " + 
+    data[1].toString() + " " + data[2].toString());
 })
 obj.on('clientError', function (data) {
   console.log('Client error' + data[1].toString());
@@ -82,7 +66,6 @@ obj.on('disconnected', function () {
   process.exit(1);
 })
 setInterval(processIbMsg,0.1);
-setInterval(doLoop,1);
 setInterval(doReqFunc,100);
 
 obj.connectToIb('127.0.0.1',7496,0);
