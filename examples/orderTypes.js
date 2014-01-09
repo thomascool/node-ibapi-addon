@@ -1,5 +1,5 @@
 // In this example, we will submit orders through different ways
-var addon = require('../nodeibapi').addon;
+var addon = require('../ibapi');
 var obj = new addon.NodeIbapi();
 var ibcontract = require('../lib/contract');
 

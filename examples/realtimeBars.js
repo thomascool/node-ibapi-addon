@@ -1,6 +1,6 @@
 // In this example, we will try to submit a realtimeBar request
 
-var addon = require('../nodeibapi').addon;
+var addon = require('../ibapi');
 var ibcontract = require('../lib/contract');
 
 var obj = new addon.NodeIbapi();

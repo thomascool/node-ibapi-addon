@@ -1,4 +1,4 @@
-var addon = require('../nodeibapi').addon;
+var addon = require('../ibapi');
 var obj = new addon.NodeIbapi();
 
 var orderId = -1;

@@ -2,7 +2,7 @@
 //  receive the orderStatus, as well as to poll for openOrders.
 // This example will use Node.js's built in event handlers
 
-var addon = require('../nodeibapi').addon;
+var addon = require('../ibapi');
 var obj = new addon.NodeIbapi();
 
 var orderId = -1;

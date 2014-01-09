@@ -96,4 +96,4 @@ addon.NodeIbapi.prototype.connectToIb = function (host,port,clientId) {
     this.emit('connectionFail');
 }
 
-exports.addon = addon;
+exports = module.exports = addon;
