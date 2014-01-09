@@ -12,6 +12,7 @@ For direct JavaScript implementation of IB API for Node.js, please visit Pilwon 
 
 ### Change Notes:
 
+* 2013-01-09 - 0.0.4 - get commands outputs JS objects
 * 2013-12-29 - 0.0.3 - Added EventEmitter support
 * 2013-09-26 - 0.0.2 - EClientSocket hooks and EWrapper hooks
 * 2013-09-02 - 0.0.1 - Initial commit - connect, disconnect, isConnected works
