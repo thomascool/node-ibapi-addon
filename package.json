@@ -1,6 +1,6 @@
 {
   "name": "ibapi-addon",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "IB API addon for NodeJS ",
   "main": "nodeibapi.js",
   "directories": {

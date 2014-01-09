@@ -6,4 +6,5 @@ cp ./IBJts/source/PosixClient/Shared/* .
 cp ./IBJts/source/PosixClient/src/* .
 sed -i '4i#define IB_USE_STD_STRING' EClientSocketBase.cpp
 sed -i '4i#define IB_USE_STD_STRING' EPosixClientSocket.cpp
+node-gyp rebuild
 popd
