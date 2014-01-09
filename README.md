@@ -29,7 +29,7 @@ For direct JavaScript implementation of IB API for Node.js, please visit Pilwon 
 
 ### Usage
 ```js
-var addon = require('nodeibapi').addon;
+var addon = require('ibapi');
 var obj = new addon.NodeIbapi();
 
 var orderId = -1;
