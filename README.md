@@ -108,7 +108,7 @@ obj.connectToIb('127.0.0.1',7496,0);
 ```
 
 ### JS Extended Wrapper Commands
-The following commands are extended commands in nodeibapi.js if one were to use it.
+The following commands are extended commands in ibapi.js if one were to use it.
 ```js
 .addReqId()
 .doReqFunc()
