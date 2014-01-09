@@ -1,7 +1,7 @@
 {
   "name": "ibapi",
   "version": "0.0.3",
-  "description": "IB API addon for NodeJS ",
+  "description": "Interactive Brokers API addon for NodeJS ",
   "main": "ibapi.js",
   "directories": {
     "test": "test"
