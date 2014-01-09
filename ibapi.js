@@ -40,44 +40,44 @@ addon.NodeIbapi.prototype.processIbMsg = function () {
   openOrder = this.getOpenOrder();
   realtimeBar = this.getRealtimeBar();
 
-  if (clientError[0] != "") {
+  if (clientError.str != "") {
     this.emit('clientError',clientError);
   }
-  if (srvError[0] != -1) {
+  if (srvError.id != -1) {
     this.emit('srvError',srvError);
   }
-  if (tickPrice[0] != -1) {
+  if (tickPrice.tickerId != -1) {
     this.emit('tickPrice',tickPrice);
   }
-  if (tickSize[0] != -1) {
+  if (tickSize.tickerId != -1) {
     this.emit('tickSize',tickSize);
   }
-  if (tickOptionComp[0] != -1) {
+  if (tickOptionComp.tickerId != -1) {
     this.emit('tickOptionComputation',tickOptionComp);
   }
-  if (tickGeneric[0] != -1) {
+  if (tickGeneric.tickerId != -1) {
     this.emit('tickGeneric',tickGeneric);
   }
-  if (tickString[0] != -1) {
+  if (tickString.tickerId != -1) {
     this.emit('tickString', tickString);
   }
-  if (tickEFP[0] != -1) {
+  if (tickEFP.tickerId != -1) {
     this.emit('tickEFP', tickEFP);
   }
-  if (tickSnapshotEnd[0] != -1) {
+  if (tickSnapshotEnd.reqId != -1) {
     this.emit('tickSnapshotEnd', tickSnapshotEnd);
   }
-  if (marketDataType[0] != -1) {
+  if (marketDataType.reqId != -1) {
     this.emit('marketDataType', marketDataType);
   }
 
-  if (orderStatus[0] > -1) {
+  if (orderStatus.orderId > -1) {
     this.emit('orderStatus',orderStatus);
   }
-  if (openOrder[0] > -1) {
+  if (openOrder.orderId > -1) {
     this.emit('openOrder',openOrder);
   }
-  if (realtimeBar[0] > -1) {
+  if (realtimeBar.reqId > -1) {
     this.emit('realtimeBar', realtimeBar);
   }
 

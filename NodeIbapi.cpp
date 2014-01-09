@@ -23,7 +23,7 @@ void NodeIbapi::Init(Handle<Object> exports) {
         FunctionTemplate::New(ProcessMsg)->GetFunction());
     /// getters
     tpl->PrototypeTemplate()->Set(String::NewSymbol("getNextValidId"),
-        FunctionTemplate::New(GetNextValidId)->GetFunction());
+        FunctionTemplate::New(NextValidId)->GetFunction());
     tpl->PrototypeTemplate()->Set(String::NewSymbol("getCurrentTime"),
         FunctionTemplate::New(CurrentTime)->GetFunction());
     tpl->PrototypeTemplate()->Set(String::NewSymbol("getTickPrice"),
@@ -635,7 +635,7 @@ Handle<Value> NodeIbapi::CancelAccountSummary(const Arguments& args) {
 
 
 
-Handle<Value> NodeIbapi::GetNextValidId(const Arguments& args) {
+Handle<Value> NodeIbapi::NextValidId(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
     return scope.Close(Integer::New(obj->m_client.getNextValidId()));
@@ -654,11 +654,15 @@ Handle<Value> NodeIbapi::TickPrice(const Arguments& args) {
     TickPriceData newTickPrice;
     newTickPrice = obj->m_client.getTickPrice();
 
-    Handle<Array> retTickPrice = Array::New(4);
-    retTickPrice->Set(0, Integer::New(newTickPrice.tickerId));
-    retTickPrice->Set(1, Integer::New(newTickPrice.field));
-    retTickPrice->Set(2, Number::New(newTickPrice.price));
-    retTickPrice->Set(3, Integer::New(newTickPrice.canAutoExecute));
+    Handle<Object> retTickPrice = Object::New();
+    retTickPrice->Set(String::NewSymbol("tickerId"), 
+        Integer::New(newTickPrice.tickerId));
+    retTickPrice->Set(String::NewSymbol("field"), 
+        Integer::New(newTickPrice.field));
+    retTickPrice->Set(String::NewSymbol("price"), 
+        Number::New(newTickPrice.price));
+    retTickPrice->Set(String::NewSymbol("canAutoExecute"), 
+        Integer::New(newTickPrice.canAutoExecute));
  
     return scope.Close(retTickPrice);
 }
@@ -669,10 +673,10 @@ Handle<Value> NodeIbapi::TickSize(const Arguments& args) {
     TickSizeData newTickSize;
     newTickSize = obj->m_client.getTickSize();
 
-    Handle<Array> retTickSize = Array::New(3);
-    retTickSize->Set(0, Integer::New(newTickSize.tickerId));
-    retTickSize->Set(1, Integer::New(newTickSize.field));
-    retTickSize->Set(2, Integer::New(newTickSize.size));
+    Handle<Object> retTickSize = Object::New();
+    retTickSize->Set(String::NewSymbol("tickerId"), Integer::New(newTickSize.tickerId));
+    retTickSize->Set(String::NewSymbol("field"), Integer::New(newTickSize.field));
+    retTickSize->Set(String::NewSymbol("size"), Integer::New(newTickSize.size));
 
     return scope.Close(retTickSize);
 }
@@ -683,17 +687,17 @@ Handle<Value> NodeIbapi::TickOptionComputation(const Arguments& args) {
     TickOptionComputationData newTickOpt;
     newTickOpt = obj->m_client.getTickOptionComputation();
 
-    Handle<Array> retTickOpt = Array::New(10);
-    retTickOpt->Set(0, Integer::New(newTickOpt.tickerId));
-    retTickOpt->Set(1, Integer::New(newTickOpt.tickType));
-    retTickOpt->Set(2, Number::New(newTickOpt.impliedVol));
-    retTickOpt->Set(3, Number::New(newTickOpt.delta));
-    retTickOpt->Set(4, Number::New(newTickOpt.optPrice));
-    retTickOpt->Set(5, Number::New(newTickOpt.pvDividend));
-    retTickOpt->Set(6, Number::New(newTickOpt.gamma));
-    retTickOpt->Set(7, Number::New(newTickOpt.vega));
-    retTickOpt->Set(8, Number::New(newTickOpt.theta));
-    retTickOpt->Set(9, Number::New(newTickOpt.undPrice));
+    Handle<Object> retTickOpt = Object::New();
+    retTickOpt->Set(String::NewSymbol("tickerId"), Integer::New(newTickOpt.tickerId));
+    retTickOpt->Set(String::NewSymbol("tickType"), Integer::New(newTickOpt.tickType));
+    retTickOpt->Set(String::NewSymbol("impliedVol"), Number::New(newTickOpt.impliedVol));
+    retTickOpt->Set(String::NewSymbol("delta"), Number::New(newTickOpt.delta));
+    retTickOpt->Set(String::NewSymbol("optPrice"), Number::New(newTickOpt.optPrice));
+    retTickOpt->Set(String::NewSymbol("pvDividend"), Number::New(newTickOpt.pvDividend));
+    retTickOpt->Set(String::NewSymbol("gamma"), Number::New(newTickOpt.gamma));
+    retTickOpt->Set(String::NewSymbol("vega"), Number::New(newTickOpt.vega));
+    retTickOpt->Set(String::NewSymbol("theta"), Number::New(newTickOpt.theta));
+    retTickOpt->Set(String::NewSymbol("undPrice"), Number::New(newTickOpt.undPrice));
     return scope.Close(retTickOpt);
 }
 Handle<Value> NodeIbapi::TickGeneric(const Arguments& args) {
@@ -703,10 +707,10 @@ Handle<Value> NodeIbapi::TickGeneric(const Arguments& args) {
     TickGenericData newTickGen;
     newTickGen = obj->m_client.getTickGeneric();
 
-    Handle<Array> retTickGen = Array::New(3);
-    retTickGen->Set(0, Integer::New(newTickGen.tickerId));
-    retTickGen->Set(1, Integer::New(newTickGen.tickType));
-    retTickGen->Set(2, Number::New(newTickGen.value));
+    Handle<Object> retTickGen = Object::New();
+    retTickGen->Set(String::NewSymbol("tickerId"), Integer::New(newTickGen.tickerId));
+    retTickGen->Set(String::NewSymbol("tickType"), Integer::New(newTickGen.tickType));
+    retTickGen->Set(String::NewSymbol("value"), Number::New(newTickGen.value));
     return scope.Close(retTickGen);
 }
 Handle<Value> NodeIbapi::TickString(const Arguments& args) {
@@ -716,10 +720,10 @@ Handle<Value> NodeIbapi::TickString(const Arguments& args) {
     TickStringData newTickStr;
     newTickStr = obj->m_client.getTickString();
 
-    Handle<Array> retTickStr = Array::New(3);
-    retTickStr->Set(0, Integer::New(newTickStr.tickerId));
-    retTickStr->Set(1, Integer::New(newTickStr.tickType));
-    retTickStr->Set(2, String::New(newTickStr.value.c_str()));
+    Handle<Object> retTickStr = Object::New();
+    retTickStr->Set(String::NewSymbol("tickerId"), Integer::New(newTickStr.tickerId));
+    retTickStr->Set(String::NewSymbol("tickType"), Integer::New(newTickStr.tickType));
+    retTickStr->Set(String::NewSymbol("value"), String::New(newTickStr.value.c_str()));
     return scope.Close(retTickStr);
 }
 Handle<Value> NodeIbapi::TickEFP(const Arguments& args) {
@@ -729,16 +733,16 @@ Handle<Value> NodeIbapi::TickEFP(const Arguments& args) {
     TickEFPData newTickEFP;
     newTickEFP = obj->m_client.getTickEFP();
 
-    Handle<Array> retTickEFP = Array::New(9);
-    retTickEFP->Set(0, Integer::New(newTickEFP.tickerId));
-    retTickEFP->Set(1, Integer::New(newTickEFP.tickType));
-    retTickEFP->Set(2, Number::New(newTickEFP.basisPoints));
-    retTickEFP->Set(3, String::New(newTickEFP.formattedBasisPoints.c_str()));
-    retTickEFP->Set(4, Number::New(newTickEFP.totalDividends));
-    retTickEFP->Set(5, Integer::New(newTickEFP.holdDays));
-    retTickEFP->Set(6, String::New(newTickEFP.futureExpiry.c_str()));
-    retTickEFP->Set(7, Number::New(newTickEFP.dividendImpact));
-    retTickEFP->Set(8, Number::New(newTickEFP.dividendsToExpiry));
+    Handle<Object> retTickEFP = Object::New();
+    retTickEFP->Set(String::NewSymbol("tickerId"), Integer::New(newTickEFP.tickerId));
+    retTickEFP->Set(String::NewSymbol("tickType"), Integer::New(newTickEFP.tickType));
+    retTickEFP->Set(String::NewSymbol("basisPoints"), Number::New(newTickEFP.basisPoints));
+    retTickEFP->Set(String::NewSymbol("formattedBasisPoints"), String::New(newTickEFP.formattedBasisPoints.c_str()));
+    retTickEFP->Set(String::NewSymbol("totalDividends"), Number::New(newTickEFP.totalDividends));
+    retTickEFP->Set(String::NewSymbol("holdDays"), Integer::New(newTickEFP.holdDays));
+    retTickEFP->Set(String::NewSymbol("futureExpiry"), String::New(newTickEFP.futureExpiry.c_str()));
+    retTickEFP->Set(String::NewSymbol("dividendImpact"), Number::New(newTickEFP.dividendImpact));
+    retTickEFP->Set(String::NewSymbol("dividendsToExpiry"), Number::New(newTickEFP.dividendsToExpiry));
     return scope.Close(retTickEFP);
 }
 Handle<Value> NodeIbapi::TickSnapshotEnd(const Arguments& args) {
@@ -747,8 +751,8 @@ Handle<Value> NodeIbapi::TickSnapshotEnd(const Arguments& args) {
 
     TickSnapshotEndData newTickSnapshotEnd;
     newTickSnapshotEnd = obj->m_client.getTickSnapshotEnd();
-    Handle<Array> retTickSnapshotEnd = Array::New(1);
-    retTickSnapshotEnd->Set(0, Integer::New(newTickSnapshotEnd.reqId));
+    Handle<Object> retTickSnapshotEnd = Object::New();
+    retTickSnapshotEnd->Set(String::NewSymbol("reqId"), Integer::New(newTickSnapshotEnd.reqId));
     return scope.Close(retTickSnapshotEnd);
 }
 Handle<Value> NodeIbapi::MarketDataType(const Arguments& args) {
@@ -757,9 +761,9 @@ Handle<Value> NodeIbapi::MarketDataType(const Arguments& args) {
 
     MarketDataTypeData newMarketDataType;
     newMarketDataType = obj->m_client.getMarketDataType();
-    Handle<Array> retMarketDataType = Array::New(2);
-    retMarketDataType->Set(0, Integer::New(newMarketDataType.reqId));
-    retMarketDataType->Set(1, Integer::New(newMarketDataType.marketDataType));
+    Handle<Object> retMarketDataType = Object::New();
+    retMarketDataType->Set(String::NewSymbol("reqId"), Integer::New(newMarketDataType.reqId));
+    retMarketDataType->Set(String::NewSymbol("marketDataType"), Integer::New(newMarketDataType.marketDataType));
     return scope.Close(retMarketDataType);
 }
 Handle<Value> NodeIbapi::OrderStatus(const Arguments& args) {
@@ -769,17 +773,17 @@ Handle<Value> NodeIbapi::OrderStatus(const Arguments& args) {
     OrderStatusData newOrderStatus;
     newOrderStatus = obj->m_client.getOrderStatus();
 
-    Handle<Array> retOrderStatus = Array::New(10);
-    retOrderStatus->Set(0, Integer::New(newOrderStatus.orderId));
-    retOrderStatus->Set(1, String::New(newOrderStatus.status.c_str()));
-    retOrderStatus->Set(2, Integer::New(newOrderStatus.filled));
-    retOrderStatus->Set(3, Integer::New(newOrderStatus.remaining));
-    retOrderStatus->Set(4, Number::New(newOrderStatus.avgFillPrice));
-    retOrderStatus->Set(5, Integer::New(newOrderStatus.permId));
-    retOrderStatus->Set(6, Integer::New(newOrderStatus.parentId));
-    retOrderStatus->Set(7, Number::New(newOrderStatus.lastFillPrice));
-    retOrderStatus->Set(8, Integer::New(newOrderStatus.clientId));
-    retOrderStatus->Set(9, String::New(newOrderStatus.whyHeld.c_str()));
+    Handle<Object> retOrderStatus = Object::New();
+    retOrderStatus->Set(String::NewSymbol("orderId"), Integer::New(newOrderStatus.orderId));
+    retOrderStatus->Set(String::NewSymbol("status"), String::New(newOrderStatus.status.c_str()));
+    retOrderStatus->Set(String::NewSymbol("filled"), Integer::New(newOrderStatus.filled));
+    retOrderStatus->Set(String::NewSymbol("remaining"), Integer::New(newOrderStatus.remaining));
+    retOrderStatus->Set(String::NewSymbol("avgFillPrice"), Number::New(newOrderStatus.avgFillPrice));
+    retOrderStatus->Set(String::NewSymbol("permId"), Integer::New(newOrderStatus.permId));
+    retOrderStatus->Set(String::NewSymbol("parentId"), Integer::New(newOrderStatus.parentId));
+    retOrderStatus->Set(String::NewSymbol("lastFillPrice"), Number::New(newOrderStatus.lastFillPrice));
+    retOrderStatus->Set(String::NewSymbol("clientId"), Integer::New(newOrderStatus.clientId));
+    retOrderStatus->Set(String::NewSymbol("whyHeld"), String::New(newOrderStatus.whyHeld.c_str()));
     return scope.Close(retOrderStatus);
 }
 Handle<Value> NodeIbapi::OpenOrder(const Arguments& args) {
@@ -790,17 +794,17 @@ Handle<Value> NodeIbapi::OpenOrder(const Arguments& args) {
     newOpenOrder = obj->m_client.getOpenOrder();
 
     // TODO for the time being
-    Handle<Array> retOpenOrder = Array::New(10);
-    retOpenOrder->Set(0, Integer::New(newOpenOrder.orderId));
-    retOpenOrder->Set(1, String::New(newOpenOrder.orderState.status.c_str()));
-    retOpenOrder->Set(2, String::New(newOpenOrder.orderState.initMargin.c_str()));
-    retOpenOrder->Set(3, String::New(newOpenOrder.orderState.maintMargin.c_str()));
-    retOpenOrder->Set(4, String::New(newOpenOrder.orderState.equityWithLoan.c_str()));
-    retOpenOrder->Set(5, Number::New(newOpenOrder.orderState.commission));
-    retOpenOrder->Set(6, Number::New(newOpenOrder.orderState.minCommission));
-    retOpenOrder->Set(7, Number::New(newOpenOrder.orderState.maxCommission));
-    retOpenOrder->Set(8, String::New(newOpenOrder.orderState.commissionCurrency.c_str()));
-    retOpenOrder->Set(9, String::New(newOpenOrder.orderState.warningText.c_str()));
+    Handle<Object> retOpenOrder = Object::New();
+    retOpenOrder->Set(String::NewSymbol("orderId"), Integer::New(newOpenOrder.orderId));
+    retOpenOrder->Set(String::NewSymbol("status"), String::New(newOpenOrder.orderState.status.c_str()));
+    retOpenOrder->Set(String::NewSymbol("initMargin"), String::New(newOpenOrder.orderState.initMargin.c_str()));
+    retOpenOrder->Set(String::NewSymbol("maintMargin"), String::New(newOpenOrder.orderState.maintMargin.c_str()));
+    retOpenOrder->Set(String::NewSymbol("equityWithLoan"), String::New(newOpenOrder.orderState.equityWithLoan.c_str()));
+    retOpenOrder->Set(String::NewSymbol("commission"), Number::New(newOpenOrder.orderState.commission));
+    retOpenOrder->Set(String::NewSymbol("minCommission"), Number::New(newOpenOrder.orderState.minCommission));
+    retOpenOrder->Set(String::NewSymbol("maxCommission"), Number::New(newOpenOrder.orderState.maxCommission));
+    retOpenOrder->Set(String::NewSymbol("commissionCurrency"), String::New(newOpenOrder.orderState.commissionCurrency.c_str()));
+    retOpenOrder->Set(String::NewSymbol("warningText"), String::New(newOpenOrder.orderState.warningText.c_str()));
     return scope.Close(retOpenOrder);
 }
 Handle<Value> NodeIbapi::RealtimeBar(const Arguments& args) {
@@ -810,16 +814,16 @@ Handle<Value> NodeIbapi::RealtimeBar(const Arguments& args) {
     RealtimeBarData newRealtimeBar;
     newRealtimeBar = obj->m_client.getRealtimeBar();
 
-    Handle<Array> retRealtimeBar = Array::New(9);
-    retRealtimeBar->Set(0, Integer::New(newRealtimeBar.reqId));
-    retRealtimeBar->Set(1, Integer::New(newRealtimeBar.time));
-    retRealtimeBar->Set(2, Number::New(newRealtimeBar.open));
-    retRealtimeBar->Set(3, Number::New(newRealtimeBar.high));
-    retRealtimeBar->Set(4, Number::New(newRealtimeBar.low));
-    retRealtimeBar->Set(5, Number::New(newRealtimeBar.close));
-    retRealtimeBar->Set(6, Integer::New(newRealtimeBar.volume));
-    retRealtimeBar->Set(7, Number::New(newRealtimeBar.wap));
-    retRealtimeBar->Set(8, Integer::New(newRealtimeBar.count));
+    Handle<Object> retRealtimeBar = Object::New();
+    retRealtimeBar->Set(String::NewSymbol("reqId"), Integer::New(newRealtimeBar.reqId));
+    retRealtimeBar->Set(String::NewSymbol("time"), Integer::New(newRealtimeBar.time));
+    retRealtimeBar->Set(String::NewSymbol("open"), Number::New(newRealtimeBar.open));
+    retRealtimeBar->Set(String::NewSymbol("high"), Number::New(newRealtimeBar.high));
+    retRealtimeBar->Set(String::NewSymbol("low"), Number::New(newRealtimeBar.low));
+    retRealtimeBar->Set(String::NewSymbol("close"), Number::New(newRealtimeBar.close));
+    retRealtimeBar->Set(String::NewSymbol("volume"), Integer::New(newRealtimeBar.volume));
+    retRealtimeBar->Set(String::NewSymbol("wap"), Number::New(newRealtimeBar.wap));
+    retRealtimeBar->Set(String::NewSymbol("count"), Integer::New(newRealtimeBar.count));
     return scope.Close(retRealtimeBar);
 }
 
@@ -830,9 +834,9 @@ Handle<Value> NodeIbapi::WinError(const Arguments& args) {
     WinErrorData newWinError;
     newWinError = obj->m_client.getWinError();
 
-    Handle<Array> retWinError = Array::New(2);
-    retWinError->Set(0, String::New(newWinError.str.c_str()));
-    retWinError->Set(1, Integer::New(newWinError.lastError));
+    Handle<Object> retWinError = Object::New();
+    retWinError->Set(String::NewSymbol("str"), String::New(newWinError.str.c_str()));
+    retWinError->Set(String::NewSymbol("lastError"), Integer::New(newWinError.lastError));
 
     return scope.Close(retWinError);
 }
@@ -843,10 +847,10 @@ Handle<Value> NodeIbapi::Error(const Arguments& args) {
     ErrorData newError;
     newError = obj->m_client.getError();
 
-    Handle<Array> retError = Array::New(3);
-    retError->Set(0, Integer::New(newError.id));
-    retError->Set(1, Integer::New(newError.errorCode));
-    retError->Set(2, String::New(newError.errorString.c_str()));
+    Handle<Object> retError = Object::New();
+    retError->Set(String::NewSymbol("id"), Integer::New(newError.id));
+    retError->Set(String::NewSymbol("errorCode"), Integer::New(newError.errorCode));
+    retError->Set(String::NewSymbol("errorString"), String::New(newError.errorString.c_str()));
 
     return scope.Close(retError);
 }
@@ -857,11 +861,11 @@ Handle<Value> NodeIbapi::UpdateAccountValue(const Arguments& args) {
     UpdateAccountValueData newUpdateAccountValue;
     newUpdateAccountValue = obj->m_client.getUpdateAccountValue();
 
-    Handle<Array> retUpdateAccountValue = Array::New(4);
-    retUpdateAccountValue->Set(0, String::New(newUpdateAccountValue.key.c_str()));
-    retUpdateAccountValue->Set(1, String::New(newUpdateAccountValue.val.c_str()));
-    retUpdateAccountValue->Set(2, String::New(newUpdateAccountValue.currency.c_str()));
-    retUpdateAccountValue->Set(4, String::New(newUpdateAccountValue.accountName.c_str()));
+    Handle<Object> retUpdateAccountValue = Object::New();
+    retUpdateAccountValue->Set(String::NewSymbol("key"), String::New(newUpdateAccountValue.key.c_str()));
+    retUpdateAccountValue->Set(String::NewSymbol("val"), String::New(newUpdateAccountValue.val.c_str()));
+    retUpdateAccountValue->Set(String::NewSymbol("currency"), String::New(newUpdateAccountValue.currency.c_str()));
+    retUpdateAccountValue->Set(String::NewSymbol("accountName"), String::New(newUpdateAccountValue.accountName.c_str()));
     return scope.Close(retUpdateAccountValue);
 }
 

@@ -41,12 +41,12 @@ obj.on('connected', function () {
   console.log('connected');
   setInterval(processIbMsg,0.1);
 })
-.on('clientError', function (data) {
-  console.log('Client error' + data[1].toString());
+.on('clientError', function (clientError) {
+  console.log('Client error' + clientError.id.toString());
 })
-.on('srvError', function (data) {
-  console.log('Error: ' + data[0].toString() + ' - ' + 
-    data[1].toString() + ' - ' + data[2].toString());
+.on('srvError', function (svrError) {
+  console.log('Error: ' + svrError.id.toString() + ' - ' + 
+    svrError.errorCode.toString() + ' - ' + svrError.errorString.toString());
 })
 .once('nextValidId', function (data) {
   orderId = data;

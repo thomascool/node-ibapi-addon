@@ -42,12 +42,25 @@ obj.on('connected', function () {
   orderId = data;
   setInterval(doReqFunc,100);
 })
-.on('realtimeBar', function (data) {
-  console.log( "RealtimeBar: " + data[0].toString() + " " + 
-    data[1].toString() + " " + data[2].toString() + " " + 
-    data[3].toString() + " " + data[4].toString() + " " +
-    data[5].toString() + " " + data[6].toString() + " " + 
-    data[7].toString() + " " + data[8].toString());
+.on('realtimeBar', function (realtimeBar) {
+  console.log( "RealtimeBar: " + 
+      realtimeBar.reqId.toString() + " " +
+      realtimeBar.time.toString() + " " +
+      realtimeBar.open.toString() + " " +
+      realtimeBar.high.toString() + " " +
+      realtimeBar.low.toString() + " " +
+      realtimeBar.close.toString() + " " +
+      realtimeBar.volume.toString() + " " +
+      realtimeBar.wap.toString() + " " +
+      realtimeBar.count.toString()
+  );
+})
+.on('clientError', function (clientError) {
+  console.log('Client error' + clientError.id.toString());
+})
+.on('srvError', function (svrError) {
+  console.log('Error: ' + svrError.id.toString() + ' - ' + 
+    svrError.errorCode.toString() + ' - ' + svrError.errorString.toString());
 })
 .on('disconnected', function () {
   console.log('disconnected');

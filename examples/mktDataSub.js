@@ -48,20 +48,21 @@ obj.on('connected', function () {
   orderId = data;
   setInterval(doReqFunc,100);
 })
-.on('tickPrice', function (data) {
-  console.log( "TickPrice: " + data[0].toString() + " " + 
-    data[1].toString() + " " + data[2].toString());
+.on('tickPrice', function (tickPrice) {
+  console.log( "TickPrice: " + tickPrice.tickerId.toString() + " " + 
+    tickPrice.field.toString() + " " + tickPrice.price.toString() + " " +
+    tickPrice.canAutoExecute.toString());
 })
-.on('tickSize', function (data) {
-  console.log( "TickSize: " + data[0].toString() + " " + 
-    data[1].toString() + " " + data[2].toString());
+.on('tickSize', function (tickSize) {
+  console.log( "TickSize: " + tickSize.tickerId.toString() + " " + 
+    tickSize.field.toString() + " " + tickSize.size.toString());
 })
-.on('clientError', function (data) {
-  console.log('Client error' + data[1].toString());
+.on('clientError', function (clientError) {
+  console.log('Client error' + clientError.id.toString());
 })
-.on('srvError', function (data) {
-  console.log('Error: ' + data[0].toString() + ' - ' + 
-    data[1].toString() + ' - ' + data[2].toString());
+.on('srvError', function (svrError) {
+  console.log('Error: ' + svrError.id.toString() + ' - ' + 
+    svrError.errorCode.toString() + ' - ' + svrError.errorString.toString());
 })
 .on('disconnected', function () {
   console.log('disconnected');

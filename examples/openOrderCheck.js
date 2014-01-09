@@ -47,32 +47,37 @@ obj.on('connected', function () {
   setInterval(function () {obj.funcQueue.push(cancelPrevOrder);},1000);
   setInterval(doReqFunc,200);
 })
-.on('orderStatus',function (data) { 
+.on('orderStatus',function (orderStatus) { 
   console.log("OrderID, status, filled, remaining, avgFillPrice, permId, parentId, lastFillPrice, clientId, whyHeld");
   console.log( 
-    data[0].toString() + " " + data[1].toString() + " " +
-    data[2].toString() + " " + data[3].toString() + " " +
-    data[4].toString() + " " + data[5].toString() + " " +
-    data[6].toString() + " " + data[7].toString() + " " +
-    data[8].toString() + " " + data[9].toString()
+    orderStatus.orderId.toString() + " " + orderStatus.status.toString() + " " +
+    orderStatus.filled.toString() + " " + orderStatus.remaining.toString() + " " +
+    orderStatus.avgFillPrice.toString() + " " + orderStatus.permId.toString() + " " +
+    orderStatus.parentId.toString() + " " + orderStatus.lastFillPrice.toString() + " " +
+    orderStatus.clientId.toString() + " " + orderStatus.whyHeld.toString()
   );
 })
-.on('openOrder', function (data) {
+.on('openOrder', function (openOrder) {
   console.log("OrderId, status, initMargin, maintMargin, equityWithLoan, Commission, minCommission, maxCommission, commissionCurrency, warningText");
   console.log(
-    data[0].toString() + " " + data[1].toString() + " " + 
-    data[2].toString() + " " + data[3].toString() + " " + 
-    data[4].toString() + " " + data[5].toString() + " " + 
-    data[6].toString() + " " + data[7].toString() + " " + 
-    data[8].toString() + " " + data[9].toString()
+      openOrder.orderId.toString() + " " + 
+      openOrder.status.toString() + " " + 
+      openOrder.initMargin.toString() + " " + 
+      openOrder.maintMargin.toString() + " " + 
+      openOrder.equityWithLoan.toString() + " " + 
+      openOrder.commission.toString() + " " + 
+      openOrder.minCommission.toString() + " " + 
+      openOrder.maxCommission.toString() + " " + 
+      openOrder.commissionCurrency.toString() + " " + 
+      openOrder.warningText.toString() 
   );
 })
-.on('clientError', function (data) {
-  console.log('Client error' + data[1].toString());
+.on('clientError', function (clientError) {
+  console.log('Client error' + clientError.id.toString());
 })
-.on('srvError', function (data) {
-  console.log('Error: ' + data[0].toString() + ' - ' + 
-    data[1].toString() + ' - ' + data[2].toString());
+.on('srvError', function (svrError) {
+  console.log('Error: ' + svrError.id.toString() + ' - ' + 
+    svrError.errorCode.toString() + ' - ' + svrError.errorString.toString());
 })
 .on('disconnected', function () {
   console.log('disconnected');
