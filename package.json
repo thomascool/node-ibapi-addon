@@ -1,0 +1,49 @@
+{
+  "name": "ibapi-addon",
+  "version": "0.0.3",
+  "description": "IB API addon for NodeJS ",
+  "main": "nodeibapi.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha",
+    "install": "sh installsh.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dchem/node-ibapi-addon.git"
+  },
+  "keywords": [
+    "interactive",
+    "brokers",
+    "tws",
+    "twsapi",
+    "ib",
+    "finance",
+    "stock",
+    "bond",
+    "option",
+    "forex",
+    "future",
+    "ticker",
+    "symbol",
+    "quote",
+    "market",
+    "data",
+    "automated",
+    "invest",
+    "trade",
+    "trading",
+    "system",
+    "api",
+    "client",
+    "library"
+  ],
+  "author": "Jae Yang",
+  "license": "MIT",
+  "gypfile": true,
+  "bugs": {
+    "url": "https://github.com/dchem/node-ibapi-addon/issues"
+  }
+}

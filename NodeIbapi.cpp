@@ -712,8 +712,15 @@ Handle<Value> NodeIbapi::TickGeneric(const Arguments& args) {
 Handle<Value> NodeIbapi::TickString(const Arguments& args) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>(args.This());
-    
-    return scope.Close(String::New(obj->m_client.getTickString().value.c_str()));
+
+    TickStringData newTickStr;
+    newTickStr = obj->m_client.getTickString();
+
+    Handle<Array> retTickStr = Array::New(3);
+    retTickStr->Set(0, Integer::New(newTickStr.tickerId));
+    retTickStr->Set(1, Integer::New(newTickStr.tickType));
+    retTickStr->Set(2, String::New(newTickStr.value.c_str()));
+    return scope.Close(retTickStr);
 }
 Handle<Value> NodeIbapi::TickEFP(const Arguments& args) {
     HandleScope scope;
