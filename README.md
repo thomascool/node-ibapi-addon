@@ -3,6 +3,8 @@ node-ibapi-addon
 
 Interactive Brokers API addon for Node.js compatible with IB API 9.69
 
+This addon uses the latest stable Interactive Brokers POSIX C++ API.
+
 Author: Jae Yang - [dchem] (https://github.com/dchem/)
 
 For direct JavaScript implementation of IB API for Node.js, please visit Pilwon Huh's [node-ib] (https://github.com/pilwon/node-ib).
@@ -17,15 +19,16 @@ For direct JavaScript implementation of IB API for Node.js, please visit Pilwon 
 ### Installation:
 
 1. Make sure to have node-gyp installed
-2. Get the IB API package from Interactive Brokers
-3. Copy the contents of IB API package's 
+2. Run the install.sh which does the following:
+ * Copy the contents of IB API package's 
     IBJts/source/PosixClient/Shared into /import directory
-4. Copy the contents of IB API package's
+ * Copy the contents of IB API package's
     IBJts/source/PosixClient/src into /import directory
-5. Add #define IB_USE_STD_STRING into the following files in /import directory:
+ * Add #define IB_USE_STD_STRING into the following files in /import directory:
     EClientSocketBase.cpp
     EPosixClientSocket.cpp
-6. node-gyp configure build
+3. ```node-gyp rebuild```
+4. If build fails because you have VS2012, use ```node-gyp --msvs_version=2012 rebuild```
 
 ### Usage
 ```js
@@ -59,6 +62,38 @@ obj.on('connected', function () {
 
 obj.connectToIb('127.0.0.1',7496,0);
 
+```
+### Module Wrapper Commands
+The following commands are extended commands in ibapi.js if one were to use it.
+```js
+.addReqId()
+.doReqFunc()
+.processIbMsg()
+.connectToIb()
+```
+
+### Module Wrapper Events
+```js
+// processIbMsg events - returns arrays
+.on('clientError', function (clientError))
+.on('srvError', function (srvError))
+.on('nextValidId' function (nextValidId))
+.on('tickPrice', function (tickPrice))
+.on('tickSize', function (tickSize))
+.on('tickOptionComputation', function(tickOptionComputation))
+.on('tickGeneric', function(tickGeneric))
+.on('tickString', function(tickString))
+.on('tickEFP', function(tickEFP))
+.on('tickSnapshotEnd', function(tickSnapshotEnd))
+.on('marketDataType', function(marketDataType))
+.on('orderStatus', function(orderStatus))
+.on('openOrder', function(openOrder))
+.on('realtimeBar', function(realtimeBar))
+.on('disconnected', function ())
+
+// connectToIb events
+.on('connected', function())
+.on('connectionFail' function())
 ```
 
 ### Addon Wrapper Commands
@@ -107,38 +142,7 @@ obj.connectToIb('127.0.0.1',7496,0);
 .cancelRealTimeBars(tickerId)
 ```
 
-### JS Extended Wrapper Commands
-The following commands are extended commands in ibapi.js if one were to use it.
-```js
-.addReqId()
-.doReqFunc()
-.processIbMsg()
-.connectToIb()
-```
 
-### JS Extended Wrapper Events
-```js
-// processIbMsg events - returns arrays
-.on('clientError', function (clientError))
-.on('srvError', function (srvError))
-.on('nextValidId' function (nextValidId))
-.on('tickPrice', function (tickPrice))
-.on('tickSize', function (tickSize))
-.on('tickOptionComputation', function(tickOptionComputation))
-.on('tickGeneric', function(tickGeneric))
-.on('tickString', function(tickString))
-.on('tickEFP', function(tickEFP))
-.on('tickSnapshotEnd', function(tickSnapshotEnd))
-.on('marketDataType', function(marketDataType))
-.on('orderStatus', function(orderStatus))
-.on('openOrder', function(openOrder))
-.on('realtimeBar', function(realtimeBar))
-.on('disconnected', function ())
-
-// connectToIb events
-.on('connected', function())
-.on('connectionFail' function())
-```
 
 ### Tests:
 Uses mocha, so install it.
