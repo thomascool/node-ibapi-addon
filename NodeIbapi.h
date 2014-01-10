@@ -29,7 +29,6 @@ private:
     static Handle<Value> IsConnected( const Arguments& args );
     static Handle<Value> ReqMktData( const Arguments& args );
     static Handle<Value> CancelMktData( const Arguments& args );
-    static Handle<Value> PlaceSimpleOrder( const Arguments& args );
     static Handle<Value> PlaceOrder( const Arguments& args );
     static Handle<Value> CancelOrder( const Arguments& args );
     static Handle<Value> ReqOpenOrders( const Arguments& args ); 
@@ -120,6 +119,10 @@ private:
 
     static bool isWrongArgNumber( const Arguments& args, int argNum );
     static bool isWrongType( bool predicateRes, int argId );
+    static void convertContractForIb( Handle<Object> ibContract, 
+                                      Contract &contract );
+    static void convertSubForIb( Handle<Object> scannerSub, 
+                                 ScannerSubscription &subscription );
 
     IbPosixClient m_client;
 

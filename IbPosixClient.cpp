@@ -258,9 +258,8 @@ OrderId IbPosixClient::getNextValidId() {
 }
 
 /////////////////// API EPosixClientSocket method for node access /////////////
-void IbPosixClient::reqMktData( 
-    TickerId tickerId, const Contract &contract, 
-    const IBString &genericTick, bool snapShot ) {
+void IbPosixClient::reqMktData( TickerId tickerId, const Contract &contract, 
+                                const IBString &genericTick, bool snapShot ) {
     m_pClient->reqMktData( tickerId, contract, genericTick, snapShot );
 }
 void IbPosixClient::cancelMktData( TickerId tickerId ) {
@@ -276,8 +275,8 @@ void IbPosixClient::cancelOrder( OrderId orderId ) {
 void IbPosixClient::reqOpenOrders() {
     m_pClient->reqOpenOrders();
 }
-void IbPosixClient::reqAccountUpdates( 
-    bool subscribe, const IBString& acctCode ) {
+void IbPosixClient::reqAccountUpdates( bool subscribe, 
+                                       const IBString& acctCode ) {
     m_pClient->reqAccountUpdates( subscribe, acctCode );
 }
 void IbPosixClient::reqExecutions( int reqId, const ExecutionFilter& filter ) {
@@ -290,7 +289,7 @@ bool IbPosixClient::checkMessages(){
     return m_pClient->checkMessages();
 }
 void IbPosixClient::reqContractDetails( int reqId, const Contract &contract ) {
-    m_pClient->reqContractDetails( reqId,contract );
+    m_pClient->reqContractDetails( reqId, contract );
 }
 void IbPosixClient::reqMktDepth(
     TickerId tickerId, const Contract &contract, int numRows ) {
@@ -327,7 +326,7 @@ void IbPosixClient::replaceFA( faDataType pFaDataType, const IBString& cxml ) {
 void IbPosixClient::reqHistoricalData( TickerId id, const Contract &contract, 
                                        const IBString &endDateTime, 
                                        const IBString &durationStr, 
-                                       const IBString & barSizeSetting, 
+                                       const IBString &barSizeSetting, 
                                        const IBString &whatToShow, 
                                        int useRTH, int formatDate ) {
     m_pClient->reqHistoricalData( id, contract, endDateTime, durationStr, 
@@ -562,9 +561,17 @@ void IbPosixClient::nextValidId( OrderId orderId ) {
 }
 void IbPosixClient::contractDetails( int reqId, 
                                      const ContractDetails& contractDetails ) {
+    ContractDetailsData newData;
+    newData.reqId = reqId;
+    newData.contractDetails = contractDetails;
+    this->m_contractDetails.push( newData );
 }
 void IbPosixClient::bondContractDetails( int reqId, 
         const ContractDetails& contractDetails ) {
+    BondContractDetailsData newData;
+    newData.reqId = reqId;
+    newData.contractDetails = contractDetails;
+    this->m_bondContractDetails.push( newData );
 }
 void IbPosixClient::contractDetailsEnd( int reqId ) {}
 void IbPosixClient::execDetails( int reqId, const Contract& contract, 

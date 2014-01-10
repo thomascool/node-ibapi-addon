@@ -5,6 +5,7 @@
 #include "import/Contract.h"
 #include "import/Order.h"
 #include "import/Execution.h"
+#include "import/ScannerSubscription.h"
 
 using namespace v8;
 
@@ -58,6 +59,9 @@ void NodeIbapi::Init( Handle<Object> exports ) {
         FunctionTemplate::New( Error )->GetFunction() );
     tpl->PrototypeTemplate()->Set( String::NewSymbol( "getUpdateAccountValue" ),
         FunctionTemplate::New( UpdateAccountValue )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getUpdatePortfolio" ),
+        FunctionTemplate::New( UpdatePortfolio )->GetFunction() );
+
 
     /// EClientSocket
     tpl->PrototypeTemplate()->Set( String::NewSymbol( "connect" ),
@@ -70,8 +74,6 @@ void NodeIbapi::Init( Handle<Object> exports ) {
         FunctionTemplate::New( ReqMktData )->GetFunction() );
     tpl->PrototypeTemplate()->Set( String::NewSymbol( "cancelMktData" ),
         FunctionTemplate::New( CancelMktData )->GetFunction() );
-    tpl->PrototypeTemplate()->Set( String::NewSymbol( "placeSimpleOrder" ),
-        FunctionTemplate::New( PlaceSimpleOrder )->GetFunction() );
     tpl->PrototypeTemplate()->Set( String::NewSymbol( "placeOrder" ),
         FunctionTemplate::New( PlaceOrder )->GetFunction() );
     tpl->PrototypeTemplate()->Set( String::NewSymbol( "cancelOrder" ),
@@ -227,21 +229,7 @@ Handle<Value> NodeIbapi::ReqMktData( const Arguments &args ) {
     Contract contract;
  
     Handle<Object> ibContract = Handle<Object>::Cast( args[1] );
-    // checks if order is being submitted through Conract ID from 
-    //  contract specification
-    contract.conId = ibContract->Get( String::New( "conId" ) )->Int32Value();
-    contract.exchange = 
-        getChar( ibContract->Get( String::New( "exchange" ) ) );
-    if ( contract.conId == 0 ) {
-        contract.symbol = 
-            getChar( ibContract->Get( String::New( "symbol" ) ) );
-        contract.secType = 
-            getChar( ibContract->Get( String::New( "secType" ) ) );
-        contract.primaryExchange = 
-            getChar( ibContract->Get( String::New( "primaryExchange" ) ) );
-        contract.currency = 
-            getChar( ibContract->Get( String::New( "currency" ) ) );
-    }
+    convertContractForIb( ibContract, contract ); 
 
     IBString genericTick = getChar( args[2] );
 
@@ -264,43 +252,6 @@ Handle<Value> NodeIbapi::CancelMktData( const Arguments &args ) {
     obj->m_client.cancelMktData( tickerId );
     return scope.Close( Undefined() );
 }
-Handle<Value> NodeIbapi::PlaceSimpleOrder( const Arguments &args ) {
-    HandleScope scope;
-    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-
-    if ( isWrongArgNumber( args, 10 ) || 
-        isWrongType( !args[0]->IsUint32(), 0 ) ||
-        isWrongType( !args[1]->IsString(), 1 ) || 
-        isWrongType( !args[2]->IsString(), 2 ) ||
-        isWrongType( !args[3]->IsString(), 3 ) || 
-        isWrongType( !args[4]->IsString(), 4 ) ||
-        isWrongType( !args[5]->IsString(), 5 ) || 
-        isWrongType( !args[6]->IsString(), 6 ) || 
-        isWrongType( !args[7]->IsInt32(),  7 ) ||
-        isWrongType( !args[8]->IsString(), 8 ) || 
-        isWrongType( !args[9]->IsNumber(), 9 ) ) {
-        return scope.Close( Undefined() );
-    }
-    
-    OrderId orderId;
-    Contract contract;
-    Order order;
-
-    orderId = args[0]->Int32Value();
-    contract.symbol = getChar( args[1] );
-    contract.secType = getChar( args[2] );
-    contract.exchange = getChar( args[3] );
-    contract.primaryExchange = getChar( args[4] );
-    contract.currency = getChar( args[5] );
-
-    order.action = getChar( args[6] );
-    order.totalQuantity = args[7]->Int32Value();
-    order.orderType = getChar( args[8] );
-    order.lmtPrice = args[9]->NumberValue();
-
-    obj->m_client.placeOrder( orderId, contract, order );
-    return scope.Close( Undefined() );
-}
 Handle<Value> NodeIbapi::PlaceOrder( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
@@ -314,24 +265,9 @@ Handle<Value> NodeIbapi::PlaceOrder( const Arguments &args ) {
     Order order;
 
     orderId = args[0]->Int32Value();
+
     Handle<Object> ibContract = Handle<Object>::Cast( args[1] );
-
-    // checks if order is being submitted through Conract ID from 
-    //  contract specification
-    contract.conId = ibContract->Get( String::New( "conId" ) )->Int32Value();
-    contract.exchange = 
-        getChar( ibContract->Get( String::New( "exchange" ) ) );
-
-    if ( contract.conId == 0 ) {
-        contract.symbol = 
-            getChar( ibContract->Get( String::New( "symbol" ) ) );
-        contract.secType = 
-            getChar( ibContract->Get( String::New( "secType" ) ) );
-        contract.primaryExchange = 
-            getChar( ibContract->Get( String::New( "primaryExchange" ) ) );
-        contract.currency = 
-            getChar( ibContract->Get( String::New( "currency" ) ) );
-    }
+    convertContractForIb( ibContract, contract ); 
 
     order.action = getChar( args[2] );
     order.totalQuantity = args[3]->Int32Value();
@@ -344,7 +280,7 @@ Handle<Value> NodeIbapi::PlaceOrder( const Arguments &args ) {
 Handle<Value> NodeIbapi::CancelOrder( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    if ( isWrongArgNumber( args, 1) || 
+    if ( isWrongArgNumber( args, 1 ) || 
          isWrongType( !args[0]->IsUint32(), 0 ) ) {
         return scope.Close( Undefined() );
     }
@@ -374,7 +310,7 @@ Handle<Value> NodeIbapi::ReqAccountUpdates( const Arguments &args ) {
 Handle<Value> NodeIbapi::ReqExecutions( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    if ( isWrongArgNumber( args,8 ) ) {
+    if ( isWrongArgNumber( args, 8 ) ) {
         return scope.Close( Undefined() );
     }
     int reqId = args[0]->Int32Value();
@@ -393,7 +329,7 @@ Handle<Value> NodeIbapi::ReqExecutions( const Arguments &args ) {
 Handle<Value> NodeIbapi::ReqIds( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    if ( isWrongArgNumber( args,1) ) {
+    if ( isWrongArgNumber( args, 1 ) ) {
         return scope.Close( Undefined() );
     }
     int numIds = args[0]->Int32Value();
@@ -409,64 +345,97 @@ Handle<Value> NodeIbapi::CheckMessages( const Arguments &args ) {
 Handle<Value> NodeIbapi::ReqContractDetails( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
+    int reqId = args[0]->Int32Value();
 
+    if ( isWrongArgNumber( args, 2 ) ) {
+        return scope.Close( Undefined() );
+    }
+
+    Contract contract;
+
+    reqId = args[0]->Int32Value();
+    Handle<Object> ibContract = Handle<Object>::Cast( args[1] );
+    convertContractForIb( ibContract, contract ); 
+
+    obj->m_client.reqContractDetails( reqId, contract );
     return scope.Close( Undefined() );
 }
 Handle<Value> NodeIbapi::ReqMktDepth( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
 
+    if ( isWrongArgNumber( args, 3 ) ) {
+        return scope.Close( Undefined() );
+    }
+
+    TickerId tickerId = args[0]->Int32Value();
+    Contract contract;
+ 
+    Handle<Object> ibContract = Handle<Object>::Cast( args[1] );
+    convertContractForIb( ibContract, contract ); 
+
+    int numRows = args[2]->Int32Value();
+
+    obj->m_client.reqMktDepth( tickerId, contract, numRows );
     return scope.Close( Undefined() );
 }
 Handle<Value> NodeIbapi::CancelMktDepth( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
-
+    
+    if ( isWrongArgNumber( args, 1 ) ) {
+        return scope.Close( Undefined() );
+    }
+    TickerId tickerId = args[0]->Int32Value();
+    obj->m_client.cancelMktDepth( tickerId );
     return scope.Close( Undefined() );
 }
 Handle<Value> NodeIbapi::ReqNewsBulletins( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
-
+    if ( isWrongArgNumber( args, 1 ) ) {
+        return scope.Close( Undefined() );
+    }
+    bool allMsgs = args[0]->BooleanValue();
+    obj->m_client.reqNewsBulletins( allMsgs );
     return scope.Close( Undefined() );
 }
 Handle<Value> NodeIbapi::CancelNewsBulletins( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
-
+    obj->m_client.cancelNewsBulletins();
     return scope.Close( Undefined() );
 }
 Handle<Value> NodeIbapi::SetServerLogLevel( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
-
+    if ( isWrongArgNumber( args, 1 ) ) {
+        return scope.Close( Undefined() );
+    }
+    int level = args[0]->Int32Value();
+    obj->m_client.setServerLogLevel( level );
     return scope.Close( Undefined() );
 }
 Handle<Value> NodeIbapi::ReqAutoOpenOrders( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
-
+    if ( isWrongArgNumber( args, 1 ) ) {
+        return scope.Close( Undefined() );
+    }
+    bool bAutoBind = args[0]->BooleanValue();
+    obj->m_client.reqAutoOpenOrders( bAutoBind );
     return scope.Close( Undefined() );
 }
 Handle<Value> NodeIbapi::ReqAllOpenOrders( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
-
+    obj->m_client.reqAllOpenOrders();
     return scope.Close( Undefined() );
 }
 Handle<Value> NodeIbapi::ReqManagedAccts( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
-
+    obj->m_client.reqManagedAccts();
     return scope.Close( Undefined() );
 }
 Handle<Value> NodeIbapi::RequestFA( const Arguments &args ) {
@@ -486,28 +455,78 @@ Handle<Value> NodeIbapi::ReplaceFA( const Arguments &args ) {
 Handle<Value> NodeIbapi::ReqHistoricalData( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
 
+    if ( isWrongArgNumber( args, 8 ) ) {
+        return scope.Close( Undefined() );
+    }
+    TickerId id;
+    Contract contract;
+    IBString endDateTime;
+    IBString durationStr;
+    IBString barSizeSetting;
+    IBString whatToShow;
+    int useRTH;
+    int formatDate;
+
+    id = args[0]->Int32Value();
+
+    Handle<Object> ibContract = Handle<Object>::Cast( args[1] );
+    convertContractForIb( ibContract, contract );
+
+    endDateTime = getChar( args[2] );
+    durationStr = getChar( args[3] );
+    barSizeSetting = getChar( args[4] );
+    whatToShow = getChar( args[5] );
+    useRTH = args[6]->Int32Value();
+    formatDate = args[7]->Int32Value();
+
+    obj->m_client.reqHistoricalData( id, contract, endDateTime, durationStr, 
+                                     barSizeSetting, whatToShow, useRTH, 
+                                     formatDate );
     return scope.Close( Undefined() );
 }
 Handle<Value> NodeIbapi::ExerciseOptions( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
+    
+    if ( isWrongArgNumber( args, 6 ) ) {
+        return scope.Close( Undefined() );
+    }
+    TickerId tickerId;
+    Contract contract;
+    int exerciseAction;
+    int exerciseQuantity;
+    IBString account;
+    int override;
+
+    tickerId = args[0]->Int32Value();
+    Handle<Object> ibContract = Handle<Object>::Cast( args[1] );
+    convertContractForIb( ibContract, contract );
+
+    exerciseAction = args[2]->Int32Value();
+    exerciseQuantity = args[3]->Int32Value();
+    account = getChar( args[4] );
+    override = args[5]->Int32Value();
+
+    obj->m_client.exerciseOptions( tickerId, contract, exerciseAction, 
+                                   exerciseQuantity, account, override );
 
     return scope.Close( Undefined() );
 }
 Handle<Value> NodeIbapi::CancelHistoricalData( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
-
+    if ( isWrongArgNumber( args, 1 ) ) {
+        return scope.Close( Undefined() );
+    }
+    TickerId tickerId = args[0]->Int32Value();
+    obj->m_client.cancelHistoricalData( tickerId );
     return scope.Close( Undefined() );
 }
 Handle<Value> NodeIbapi::ReqRealTimeBars( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    if ( isWrongArgNumber( args,5) ) {
+    if ( isWrongArgNumber( args, 5 ) ) {
         return scope.Close( Undefined() );
     }
 
@@ -515,20 +534,7 @@ Handle<Value> NodeIbapi::ReqRealTimeBars( const Arguments &args ) {
     Contract contract;
  
     Handle<Object> ibContract = Handle<Object>::Cast( args[1] );
-    // checks if order is being submitted through Conract ID from 
-    //  contract specification
-    contract.conId = ibContract->Get( String::New( "conId" ) )->Int32Value();
-    contract.exchange = 
-        getChar( ibContract->Get( String::New( "exchange" ) ) );
-    if ( contract.conId == 0 ) {
-        contract.symbol = getChar( ibContract->Get( String::New( "symbol" ) ) );
-        contract.secType = 
-            getChar( ibContract->Get( String::New( "secType" ) ) );
-        contract.primaryExchange = 
-            getChar( ibContract->Get( String::New( "primaryExchange" ) ) );
-        contract.currency = 
-            getChar( ibContract->Get( String::New( "currency" ) ) );
-    }
+    convertContractForIb( ibContract, contract );
 
     int barSize = args[2]->Int32Value();
     IBString whatToShow = getChar( args[3] );
@@ -541,7 +547,7 @@ Handle<Value> NodeIbapi::CancelRealTimeBars( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
 
-    if ( isWrongArgNumber( args,1 ) ) {
+    if ( isWrongArgNumber( args, 1 ) ) {
         return scope.Close( Undefined() );
     }
 
@@ -553,15 +559,20 @@ Handle<Value> NodeIbapi::CancelRealTimeBars( const Arguments &args ) {
 Handle<Value> NodeIbapi::CancelScannerSubscription( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
+
+    if ( isWrongArgNumber( args, 1 ) ) {
+        return scope.Close( Undefined() );
+    }
+
+    TickerId tickerId = args[0]->Int32Value();
+    obj->m_client.cancelScannerSubscription( tickerId );
 
     return scope.Close( Undefined() );
 }
 Handle<Value> NodeIbapi::ReqScannerParameters( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
-
+    obj->m_client.reqScannerParameters();
     return scope.Close( Undefined() );
 }
 Handle<Value> NodeIbapi::ReqScannerSubscription( const Arguments &args ) {
@@ -963,6 +974,28 @@ Handle<Value> NodeIbapi::UpdateAccountValue( const Arguments &args ) {
         String::New( newUpdateAccountValue.accountName.c_str() ) );
     return scope.Close( retUpdateAccountValue );
 }
+Handle<Value> NodeIbapi::UpdatePortfolio( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    UpdatePortfolioData newUpdatePortfolio;
+    newUpdatePortfolio = obj->m_client.getUpdatePortfolio();
+
+    // Handle<Object> contract = Object::New();
+    // contract->Set( String::NewSymbol( "conId" ), 
+    //     Integer::New( newUpdatePortfolio.contract.conId ) );
+    // contract->Set( String::NewSymbol( "exchange" ),
+    //     String::New( newUpdatePortfolio.contract.exchange ) );
+    // contract->Set( String::NewSymbol( "symbol" ),
+
+
+
+    Handle<Object> retUpdatePortfolio = Object::New();
+    // retUpdatePortfolio->Set( String::NewSymbol( "contract" ),
+    //     String:: )
+
+    return scope.Close( retUpdatePortfolio );
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -989,6 +1022,89 @@ bool NodeIbapi::isWrongType( bool predicateRes, int argId ) {
         return true;
     } 
     return false;
+}
+
+void NodeIbapi::convertContractForIb( Handle<Object> ibContract, 
+                                      Contract &contract ) {
+    // checks if order is being submitted through Conract ID from 
+    //  contract specification
+    contract.conId = ibContract->Get( String::New( "conId" ) )->Int32Value();
+    contract.exchange = 
+        getChar( ibContract->Get( String::New( "exchange" ) ) );
+    if ( contract.conId == 0 ) {
+        contract.symbol = getChar( ibContract->Get( String::New( "symbol" ) ) );
+        contract.secType = 
+            getChar( ibContract->Get( String::New( "secType" ) ) );
+        contract.expiry = 
+            getChar( ibContract->Get( String::New( "expiry" ) ) );
+        contract.strike = 
+            ibContract->Get( String::New( "strike" ) )->NumberValue();
+        contract.right = 
+            getChar( ibContract->Get( String::New( "right" ) ) );
+        contract.multiplier = 
+            getChar( ibContract->Get( String::New( "multiplier" ) ) );
+        contract.primaryExchange = 
+            getChar( ibContract->Get( String::New( "primaryExchange" ) ) );
+        contract.currency = 
+            getChar( ibContract->Get( String::New( "currency" ) ) );
+        contract.localSymbol = 
+            getChar( ibContract->Get( String::New( "localSymbol" ) ) );
+        contract.tradingClass = 
+            getChar( ibContract->Get( String::New( "tradingClass" ) ) );
+        contract.includeExpired = 
+            ibContract->Get( String::New( "includeExpired" ) )->BooleanValue();
+        contract.secIdType = 
+            getChar( ibContract->Get( String::New( "secIdType" ) ) );
+        contract.secId = 
+            getChar( ibContract->Get( String::New( "secId" ) ) );
+    }
+}
+
+void NodeIbapi::convertSubForIb( Handle<Object> scannerSub,
+                                 ScannerSubscription &subscription ) {
+    subscription.numberOfRows = 
+        scannerSub->Get( String::New( "numberOfRows" ) )->Int32Value();
+    subscription.instrument = 
+        getChar( scannerSub->Get( String::New( "instrument" ) ) );
+    subscription.locationCode = 
+        getChar( scannerSub->Get( String::New( "locationCode" ) ) );
+    subscription.scanCode = 
+        getChar( scannerSub->Get( String::New( "scanCode" ) ) );
+    subscription.abovePrice = 
+        scannerSub->Get( String::New( "abovePrice" ) )->NumberValue();
+    subscription.belowPrice = 
+        scannerSub->Get( String::New( "belowPrice" ) )->NumberValue();
+    subscription.aboveVolume = 
+        scannerSub->Get( String::New( "aboveVolume" ) )->Int32Value();
+    subscription.marketCapAbove = 
+        scannerSub->Get( String::New( "marketCapAbove" ) )->NumberValue();
+    subscription.marketCapBelow = 
+        scannerSub->Get( String::New( "marketCapBelow" ) )->NumberValue();
+    subscription.moodyRatingAbove = 
+        getChar( scannerSub->Get( String::New( "moodyRatingAbove" ) ) );
+    subscription.moodyRatingBelow = 
+        getChar( scannerSub->Get( String::New( "moodyRatingBelow" ) ) );
+    subscription.spRatingAbove = 
+        getChar( scannerSub->Get( String::New( "spRatingAbove" ) ) );
+    subscription.spRatingBelow = 
+        getChar( scannerSub->Get( String::New( "spRatingBelow" ) ) );
+    subscription.maturityDateAbove = 
+        getChar( scannerSub->Get( String::New( "maturityDateAbove" ) ) );
+    subscription.maturityDateBelow = 
+        getChar( scannerSub->Get( String::New( "maturityDateBelow" ) ) );
+    subscription.couponRateAbove = 
+        scannerSub->Get( String::New( "couponRateAbove" ) )->NumberValue();
+    subscription.couponRateBelow = 
+        scannerSub->Get( String::New( "couponRateBelow" ) )->NumberValue();
+    subscription.excludeConvertible = 
+        scannerSub->Get( String::New( "excludeConvertible" ) )->Int32Value();
+    subscription.averageOptionVolumeAbove = 
+        scannerSub->Get( 
+            String::New( "averageOptionVolumeAbove" ) )->Int32Value();
+    subscription.scannerSettingPairs = 
+        getChar( scannerSub->Get( String::New( "scannerSettingPairs" ) ) );
+    subscription.stockTypeFilter = 
+        getChar( scannerSub->Get( String::New( "stockTypeFilter" ) ) );
 }
 
 // see http://stackoverflow.com/questions/10507323/shortest-way-one-liner-to-get-a-default-argument-out-of-a-v8-function

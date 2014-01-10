@@ -212,6 +212,8 @@ private:
     std::queue< UpdatePortfolioData > m_updatePortfolios;
     std::queue< UpdateAccountTimeData > m_updateAccountTimes;
     std::queue< OrderId > m_validId;
+    std::queue< ContractDetailsData > m_contractDetails;
+    std::queue< BondContractDetailsData > m_bondContractDetails;
 
 };
 

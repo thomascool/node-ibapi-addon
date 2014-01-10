@@ -4,6 +4,7 @@
 
 var addon = require('../ibapi');
 var obj = new addon.NodeIbapi();
+var ibcontract = require('../lib/contract');
 
 var orderId = -1;
 var counter = 0;
@@ -20,11 +21,17 @@ var doReqFunc = function () {
 var doOpenOrderReq = function () {
   obj.reqOpenOrders();
 }
+var msftContract = ibcontract.createContract();
+msftContract.symbol = 'MSFT';
+msftContract.secType = 'STK';
+msftContract.exchange = 'SMART';
+msftContract.primaryExchange = 'NASDAQ';
+msftContract.currency = 'USD';
+
 var placeThatOrder = function () {
     console.log('Next valid order Id: %d',orderId);
     console.log("Placing order for MSFT");
-    obj.placeSimpleOrder(orderId,"MSFT", "STK", "SMART", "NASDAQ", "USD", 
-      "BUY", 1000, "LMT", 0.11);
+    obj.placeOrder(orderId, msftContract, "BUY", 1000, "LMT", 0.11);
     orderId = orderId + 1;
     isOrderPlaced = true;
 }
