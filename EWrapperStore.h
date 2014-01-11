@@ -74,12 +74,14 @@ struct OpenOrderData {
     OrderState orderState;
 };
 struct OpenOrderEndData {
+    int ended;
 };
 struct WinErrorData {
     IBString str;
     int lastError;
 };
 struct ConnectionClosedData {
+    int closed;
 };
 struct UpdateAccountValueData {
     IBString key;
@@ -224,8 +226,10 @@ struct PositionData {
    IBString account;
    Contract contract;
    int position;
+   double avgCost;
 };
 struct PositionEndData {
+    int ended;
 };
 struct AccountSummaryData {
    int reqId;

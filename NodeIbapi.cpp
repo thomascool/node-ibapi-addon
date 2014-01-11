@@ -578,7 +578,17 @@ Handle<Value> NodeIbapi::ReqScannerParameters( const Arguments &args ) {
 Handle<Value> NodeIbapi::ReqScannerSubscription( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
+
+    if ( isWrongArgNumber( args, 2 ) ) {
+        return scope.Close( Undefined() );
+    }
+
+    TickerId tickerId = args[0]->Int32Value();
+    ScannerSubscription subscription;
+    Handle<Object> ibsub = Handle<Object>::Cast( args[1] );
+    convertSubForIb( ibsub, subscription );
+
+    obj->m_client.reqScannerSubscription( tickerId, subscription );
 
     return scope.Close( Undefined() );
 }
@@ -591,28 +601,71 @@ Handle<Value> NodeIbapi::ReqCurrentTime( const Arguments &args ) {
 Handle<Value> NodeIbapi::ReqFundamentalData( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
+
+    if ( isWrongArgNumber( args, 3 ) ) {
+        return scope.Close( Undefined() );
+    }
+
+    TickerId reqId = args[0]->Int32Value();
+    Contract contract;
+ 
+    Handle<Object> ibContract = Handle<Object>::Cast( args[1] );
+    convertContractForIb( ibContract, contract );
+    IBString reportType = getChar( args[2] );
+
+    obj->m_client.reqFundamentalData( reqId, contract, reportType );
 
     return scope.Close( Undefined() );
 }
 Handle<Value> NodeIbapi::CancelFundamentalData( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
+    if ( isWrongArgNumber( args, 1 ) ) {
+        return scope.Close( Undefined() );
+    }
+
+    TickerId reqId = args[0]->Int32Value();
+    obj->m_client.cancelFundamentalData( reqId );
 
     return scope.Close( Undefined() );
 }
 Handle<Value> NodeIbapi::CalculateImpliedVolatility( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
+    if ( isWrongArgNumber( args, 4 ) ) {
+        return scope.Close( Undefined() );
+    }
+
+    TickerId reqId = args[0]->Int32Value();
+    Contract contract;
+ 
+    Handle<Object> ibContract = Handle<Object>::Cast( args[1] );
+    convertContractForIb( ibContract, contract );
+    double optionPrice = args[2]->NumberValue();
+    double underPrice = args[3]->NumberValue();
+
+    obj->m_client.calculateImpliedVolatility( reqId, contract, optionPrice, 
+                                              underPrice );
 
     return scope.Close( Undefined() );
 }
 Handle<Value> NodeIbapi::CalculateOptionPrice( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
+    if ( isWrongArgNumber( args, 4 ) ) {
+        return scope.Close( Undefined() );
+    }
+
+    TickerId reqId = args[0]->Int32Value();
+    Contract contract;
+ 
+    Handle<Object> ibContract = Handle<Object>::Cast( args[1] );
+    convertContractForIb( ibContract, contract );
+    double volatility = args[2]->NumberValue();
+    double underPrice = args[3]->NumberValue();
+
+    obj->m_client.calculateOptionPrice( reqId, contract, volatility, 
+                                        underPrice );
 
     return scope.Close( Undefined() );
 }
@@ -620,56 +673,82 @@ Handle<Value> NodeIbapi::CancelCalculateImpliedVolatility(
     const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
+    if ( isWrongArgNumber( args, 1 ) ) {
+        return scope.Close( Undefined() );
+    }
+
+    TickerId reqId = args[0]->Int32Value();
+    obj->m_client.cancelCalculateImpliedVolatility( reqId );
 
     return scope.Close( Undefined() );
 }
 Handle<Value> NodeIbapi::CancelCalculateOptionPrice( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
+    if ( isWrongArgNumber( args, 1 ) ) {
+        return scope.Close( Undefined() );
+    }
+
+    TickerId reqId = args[0]->Int32Value();
+    obj->m_client.cancelCalculateOptionPrice( reqId );
 
     return scope.Close( Undefined() );
 }
 Handle<Value> NodeIbapi::ReqGlobalCancel( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
-
+    obj->m_client.reqGlobalCancel();
     return scope.Close( Undefined() );
 }
 Handle<Value> NodeIbapi::ReqMarketDataType( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
+    if ( isWrongArgNumber( args, 1 ) ) {
+        return scope.Close( Undefined() );
+    }
+
+    int marketDataType = args[0]->Int32Value();
+    obj->m_client.reqMarketDataType( marketDataType );
 
     return scope.Close( Undefined() );
 }
 Handle<Value> NodeIbapi::ReqPositions( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
+    obj->m_client.reqPositions();
 
     return scope.Close( Undefined() );
 }
 Handle<Value> NodeIbapi::CancelPositions( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
+    obj->m_client.cancelPositions();
 
     return scope.Close( Undefined() );
 }
 Handle<Value> NodeIbapi::ReqAccountSummary( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
+    if ( isWrongArgNumber( args, 3 ) ) {
+        return scope.Close( Undefined() );
+    }
+
+    int reqId = args[0]->Int32Value();
+    IBString groupName = getChar( args[1] ); 
+    IBString tags = getChar( args[2] );
+    obj->m_client.reqAccountSummary( reqId, groupName, tags );
 
     return scope.Close( Undefined() );
 }
 Handle<Value> NodeIbapi::CancelAccountSummary( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    // TODO: placeholder
+    if ( isWrongArgNumber( args, 1 ) ) {
+        return scope.Close( Undefined() );
+    }
+
+    int reqId = args[0]->Int32Value();
+    obj->m_client.cancelAccountSummary( reqId );
 
     return scope.Close( Undefined() );
 }
@@ -1001,6 +1080,19 @@ Handle<Value> NodeIbapi::UpdatePortfolio( const Arguments &args ) {
 ///////////////////////////////////////////////////////////////////////////////
 //  Helper methods
 ///////////////////////////////////////////////////////////////////////////////
+// see http://stackoverflow.com/questions/10507323/
+//  shortest-way-one-liner-to-get-a-default-argument-out-of-a-v8-function
+char *NodeIbapi::getChar( v8::Local<v8::Value> value, const char *fallback ) {
+    if ( value->IsString() ) {
+        v8::String::AsciiValue string( value );
+        char *str  = ( char * ) malloc( string.length() + 1 );
+        std::strcpy( str, *string );
+        return str;
+    }
+    char *str = ( char * ) malloc( std::strlen( fallback ) + 1 );
+    std::strcpy( str, fallback );
+    return str;
+}
 
 bool NodeIbapi::isWrongArgNumber( const Arguments &args, int argNum ) {
     if ( args.Length() != argNum ) {
@@ -1062,24 +1154,45 @@ void NodeIbapi::convertContractForIb( Handle<Object> ibContract,
 
 void NodeIbapi::convertSubForIb( Handle<Object> scannerSub,
                                  ScannerSubscription &subscription ) {
-    subscription.numberOfRows = 
+
+    int numberOfRows =  
         scannerSub->Get( String::New( "numberOfRows" ) )->Int32Value();
+    double abovePrice =  
+        scannerSub->Get( String::New( "abovePrice" ) )->NumberValue();
+    double belowPrice =  
+        scannerSub->Get( String::New( "belowPrice" ) )->NumberValue();
+    int aboveVolume =  
+        scannerSub->Get( String::New( "aboveVolume" ) )->Int32Value();
+    double marketCapAbove = 
+        scannerSub->Get( String::New( "marketCapAbove" ) )->NumberValue();
+    double marketCapBelow = 
+        scannerSub->Get( String::New( "marketCapBelow" ) )->NumberValue();
+    double couponRateAbove = 
+        scannerSub->Get( String::New( "couponRateAbove" ) )->NumberValue();
+    double couponRateBelow = 
+        scannerSub->Get( String::New( "couponRateBelow" ) )->NumberValue();
+
+    if ( numberOfRows > 0 )
+        subscription.numberOfRows = numberOfRows;
+    if ( abovePrice > 0 )
+        subscription.abovePrice = abovePrice;
+    if ( belowPrice > 0 )
+        subscription.belowPrice = belowPrice;
+    if ( marketCapAbove > 0 )
+        subscription.marketCapAbove = marketCapAbove;
+    if ( marketCapBelow > 0 )
+        subscription.marketCapBelow = marketCapBelow;
+    if ( couponRateAbove > 0 )
+        subscription.couponRateAbove = couponRateAbove;
+    if ( couponRateBelow > 0 )
+        subscription.couponRateBelow = couponRateBelow;
+
     subscription.instrument = 
         getChar( scannerSub->Get( String::New( "instrument" ) ) );
     subscription.locationCode = 
         getChar( scannerSub->Get( String::New( "locationCode" ) ) );
     subscription.scanCode = 
         getChar( scannerSub->Get( String::New( "scanCode" ) ) );
-    subscription.abovePrice = 
-        scannerSub->Get( String::New( "abovePrice" ) )->NumberValue();
-    subscription.belowPrice = 
-        scannerSub->Get( String::New( "belowPrice" ) )->NumberValue();
-    subscription.aboveVolume = 
-        scannerSub->Get( String::New( "aboveVolume" ) )->Int32Value();
-    subscription.marketCapAbove = 
-        scannerSub->Get( String::New( "marketCapAbove" ) )->NumberValue();
-    subscription.marketCapBelow = 
-        scannerSub->Get( String::New( "marketCapBelow" ) )->NumberValue();
     subscription.moodyRatingAbove = 
         getChar( scannerSub->Get( String::New( "moodyRatingAbove" ) ) );
     subscription.moodyRatingBelow = 
@@ -1092,30 +1205,14 @@ void NodeIbapi::convertSubForIb( Handle<Object> scannerSub,
         getChar( scannerSub->Get( String::New( "maturityDateAbove" ) ) );
     subscription.maturityDateBelow = 
         getChar( scannerSub->Get( String::New( "maturityDateBelow" ) ) );
-    subscription.couponRateAbove = 
-        scannerSub->Get( String::New( "couponRateAbove" ) )->NumberValue();
-    subscription.couponRateBelow = 
-        scannerSub->Get( String::New( "couponRateBelow" ) )->NumberValue();
     subscription.excludeConvertible = 
         scannerSub->Get( String::New( "excludeConvertible" ) )->Int32Value();
     subscription.averageOptionVolumeAbove = 
-        scannerSub->Get( 
-            String::New( "averageOptionVolumeAbove" ) )->Int32Value();
+        scannerSub->Get( String::New( "averageOptionVolumeAbove" ) )->Int32Value();
     subscription.scannerSettingPairs = 
         getChar( scannerSub->Get( String::New( "scannerSettingPairs" ) ) );
     subscription.stockTypeFilter = 
         getChar( scannerSub->Get( String::New( "stockTypeFilter" ) ) );
 }
 
-// see http://stackoverflow.com/questions/10507323/shortest-way-one-liner-to-get-a-default-argument-out-of-a-v8-function
-char *NodeIbapi::getChar( v8::Local<v8::Value> value, const char *fallback ) {
-    if ( value->IsString() ) {
-        v8::String::AsciiValue string( value );
-        char *str  = ( char * ) malloc( string.length() + 1 );
-        std::strcpy( str, *string );
-        return str;
-    }
-    char *str = ( char * ) malloc( std::strlen( fallback ) + 1 );
-    std::strcpy( str, fallback );
-    return str;
-}
+

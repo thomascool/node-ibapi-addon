@@ -91,7 +91,7 @@ public:
     void reqScannerSubscription( int tickerId, 
                                  const ScannerSubscription &subscription );
     void reqCurrentTime();
-    void reqFundamentalData( TickerId reqId, const Contract&, 
+    void reqFundamentalData( TickerId reqId, const Contract &contract, 
                              const IBString &reportType );
     void cancelFundamentalData( TickerId reqId );
     void calculateImpliedVolatility( TickerId reqId, const Contract &contract, 
@@ -191,30 +191,49 @@ private:
     std::auto_ptr<EPosixClientSocket> m_pClient;
 
 ///// node.js accessible
-    std::string m_currentTime;
+
     std::queue< TickPriceData > m_tickPrices;
     std::queue< TickSizeData > m_tickSizes;
     std::queue< TickOptionComputationData > m_tickOptionComps;
     std::queue< TickGenericData > m_tickGenerics;
     std::queue< TickStringData > m_tickStrings;
     std::queue< TickEFPData > m_tickEFPs;
-    std::queue< TickSnapshotEndData > m_tickSnapshotEnds;
-    std::queue< MarketDataTypeData > m_marketDataTypes;
-
     std::queue< OrderStatusData > m_orderStatuses;
     std::queue< OpenOrderData > m_openOrders;
-    std::queue< RealtimeBarData > m_realtimeBars;
-
+    std::queue< OpenOrderEndData > m_openOrderEnd;
     std::queue< WinErrorData > m_winErrors;
-    std::queue< ErrorData > m_errors;
-
+    std::queue< ConnectionClosedData > m_connectionClosed;
     std::queue< UpdateAccountValueData > m_updateAccountValues;
     std::queue< UpdatePortfolioData > m_updatePortfolios;
     std::queue< UpdateAccountTimeData > m_updateAccountTimes;
+    std::queue< AccountDownloadEndData > m_accountDownloadEnds;
     std::queue< OrderId > m_validId;
     std::queue< ContractDetailsData > m_contractDetails;
     std::queue< BondContractDetailsData > m_bondContractDetails;
-
+    std::queue< ContractDetailsEndData > m_contractDetailsEnd;
+    std::queue< ExecDetailsData > m_execDetails;
+    std::queue< ExecDetailsEndData > m_execDetailsEnd;
+    std::queue< ErrorData > m_errors;
+    std::queue< UpdateMktDepthData > m_updateMktDepths;
+    std::queue< UpdateMktDepthL2Data > m_updateMktDepthL2s;
+    std::queue< UpdateNewsBulletinData > m_updateNewsBulletins;
+    std::queue< ManagedAccountsData > m_managedAccounts;
+    std::queue< ReceiveFAData > m_receiveFAs;
+    std::queue< HistoricalDataData > m_historicalData;
+    std::queue< ScannerParametersData > m_scannerParameters;
+    std::queue< ScannerDataData > m_scannerData;
+    std::queue< ScannerDataEndData > m_scannerDataEnd;
+    std::queue< RealtimeBarData > m_realtimeBars;
+    std::string m_currentTime;
+    std::queue< FundamentalDataData > m_fundamentalData;
+    std::queue< DeltaNeutralValidationData > m_deltaNeutralValidations;
+    std::queue< TickSnapshotEndData > m_tickSnapshotEnds;
+    std::queue< MarketDataTypeData > m_marketDataTypes;
+    std::queue< CommissionReportData > m_commissionReports;
+    std::queue< PositionData > m_positions;
+    std::queue< PositionEndData > m_positionEnd;
+    std::queue< AccountSummaryData > m_accountSummaries;
+    std::queue< AccountSummaryEndData > m_accountSummaryEnd;
 };
 
 #endif

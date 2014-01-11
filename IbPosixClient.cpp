@@ -364,9 +364,9 @@ void IbPosixClient::reqScannerSubscription( int tickerId,
 void IbPosixClient::reqCurrentTime() {
     m_pClient->reqCurrentTime();
 }
-void IbPosixClient::reqFundamentalData( TickerId reqId, const Contract&, 
+void IbPosixClient::reqFundamentalData( TickerId reqId, 
+                                        const Contract &contract, 
                                         const IBString &reportType ) {
-    Contract contract;
     m_pClient->reqFundamentalData( reqId, contract, reportType );
 }
 void IbPosixClient::cancelFundamentalData( TickerId reqId ) {
@@ -515,14 +515,22 @@ void IbPosixClient::openOrder( OrderId orderId, const Contract&, const Order&,
     newData.orderState = ostate;
     this->m_openOrders.push( newData );
 }
-void IbPosixClient::openOrderEnd() {}
+void IbPosixClient::openOrderEnd() {
+    OpenOrderEndData newData;
+    newData.ended = 1;
+    this->m_openOrderEnd.push( newData );
+}
 void IbPosixClient::winError( const IBString &str, int lastError ) {
     WinErrorData newData;
     newData.str = str;
     newData.lastError = lastError;
     this->m_winErrors.push( newData );
 }
-void IbPosixClient::connectionClosed() {}
+void IbPosixClient::connectionClosed() {
+    ConnectionClosedData newData;
+    newData.closed = 1;
+    this->m_connectionClosed.push( newData );
+}
 void IbPosixClient::updateAccountValue( const IBString& key, 
                                         const IBString& val,
                                         const IBString& currency, 
@@ -555,7 +563,11 @@ void IbPosixClient::updateAccountTime( const IBString& timeStamp ) {
     newData.timeStamp = timeStamp;
     this->m_updateAccountTimes.push( newData );
 }
-void IbPosixClient::accountDownloadEnd( const IBString& accountName ) {}
+void IbPosixClient::accountDownloadEnd( const IBString& accountName ) {
+    AccountDownloadEndData newData;
+    newData.accountName = accountName;
+    this->m_accountDownloadEnds.push( newData );
+}
 void IbPosixClient::nextValidId( OrderId orderId ) {
     this->m_validId.push( orderId );
 }
@@ -567,16 +579,30 @@ void IbPosixClient::contractDetails( int reqId,
     this->m_contractDetails.push( newData );
 }
 void IbPosixClient::bondContractDetails( int reqId, 
-        const ContractDetails& contractDetails ) {
+                                      const ContractDetails& contractDetails ) {
     BondContractDetailsData newData;
     newData.reqId = reqId;
     newData.contractDetails = contractDetails;
     this->m_bondContractDetails.push( newData );
 }
-void IbPosixClient::contractDetailsEnd( int reqId ) {}
+void IbPosixClient::contractDetailsEnd( int reqId ) {
+    ContractDetailsEndData newData;
+    newData.reqId = reqId;
+    this->m_contractDetailsEnd.push( newData );
+}
 void IbPosixClient::execDetails( int reqId, const Contract& contract, 
-                                 const Execution& execution ) {}
-void IbPosixClient::execDetailsEnd( int reqId ) {}
+                                 const Execution& execution ) {
+    ExecDetailsData newData;
+    newData.reqId = reqId;
+    newData.contract = contract;
+    newData.execution = execution;
+    this->m_execDetails.push( newData );
+}
+void IbPosixClient::execDetailsEnd( int reqId ) {
+    ExecDetailsEndData newData;
+    newData.reqId = reqId;
+    this->m_execDetailsEnd.push( newData );
+}
 void IbPosixClient::error( const int id, const int errorCode, 
                            const IBString errorString ) {
     ErrorData newData;
@@ -588,28 +614,93 @@ void IbPosixClient::error( const int id, const int errorCode,
         disconnect();
 }
 void IbPosixClient::updateMktDepth( TickerId id, int position, int operation, 
-                                    int side, double price, int size ) {}
+                                    int side, double price, int size ) {
+    UpdateMktDepthData newData;
+    newData.id = id;
+    newData.position = position;
+    newData.operation = operation;
+    newData.side = side;
+    newData.price = price;
+    newData.size = size;
+    this->m_updateMktDepths.push( newData );
+}
 void IbPosixClient::updateMktDepthL2( TickerId id, int position, 
                                       IBString marketMaker, int operation, 
-                                      int side, double price, int size ) {}
+                                      int side, double price, int size ) {
+    UpdateMktDepthL2Data newData;
+    newData.id = id;
+    newData.position = position;
+    newData.marketMaker = marketMaker;
+    newData.operation = operation;
+    newData.side = side;
+    newData.price = price;
+    newData.size = size;
+    this->m_updateMktDepthL2s.push( newData );
+}
 void IbPosixClient::updateNewsBulletin( int msgId, int msgType, 
                                         const IBString& newsMessage, 
-                                        const IBString& originExch ) {}
-void IbPosixClient::managedAccounts( const IBString& accountsList ) {}
+                                        const IBString& originExch ) {
+    UpdateNewsBulletinData newData;
+    newData.msgId = msgId;
+    newData.msgType = msgType;
+    newData.newsMessage = newsMessage;
+    newData.originExch = originExch;
+    this->m_updateNewsBulletins.push( newData );
+}
+void IbPosixClient::managedAccounts( const IBString& accountsList ) {
+    ManagedAccountsData newData;
+    newData.accountsList = accountsList;
+    this->m_managedAccounts.push( newData );
+}
 void IbPosixClient::receiveFA( faDataType pFaDataType, const IBString& cxml ) {
+    ReceiveFAData newData;
+    newData.pFaDataType = pFaDataType;
+    newData.cxml = cxml;
+    this->m_receiveFAs.push( newData );
 }
 void IbPosixClient::historicalData( TickerId reqId, const IBString& date, 
                                     double open, double high, double low, 
                                     double close, int volume, int barCount, 
-                                    double WAP, int hasGaps ) {}
-void IbPosixClient::scannerParameters( const IBString &xml ) {}
+                                    double WAP, int hasGaps ) {
+    HistoricalDataData newData;
+    newData.reqId = reqId;
+    newData.date = date;
+    newData.open = open;
+    newData.high = high;
+    newData.low = low;
+    newData.close = close;
+    newData.volume = volume;
+    newData.barCount = barCount;
+    newData.WAP = WAP;
+    newData.hasGaps = hasGaps;
+    this->m_historicalData.push( newData );
+}
+void IbPosixClient::scannerParameters( const IBString &xml ) {
+    ScannerParametersData newData;
+    newData.xml = xml;
+    this->m_scannerParameters.push( newData );
+}
 void IbPosixClient::scannerData( int reqId, int rank, 
                                  const ContractDetails &contractDetails, 
                                  const IBString &distance, 
                                  const IBString &benchmark, 
                                  const IBString &projection, 
-                                 const IBString &legsStr ) {}
-void IbPosixClient::scannerDataEnd( int reqId ) {}
+                                 const IBString &legsStr ) {
+    ScannerDataData newData;
+    newData.reqId = reqId;
+    newData.rank = rank;
+    newData.contractDetails = contractDetails;
+    newData.distance = distance;
+    newData.benchmark = benchmark;
+    newData.projection = projection;
+    newData.legsStr = legsStr;
+    this->m_scannerData.push( newData );
+}
+void IbPosixClient::scannerDataEnd( int reqId ) {
+    ScannerDataEndData newData;
+    newData.reqId = reqId;
+    this->m_scannerDataEnd.push( newData );
+}
 void IbPosixClient::realtimeBar( TickerId reqId, long itime, double open, 
                                  double high, double low, double close, 
                                  long volume, double wap, int count ) {
@@ -633,19 +724,65 @@ void IbPosixClient::currentTime( long time ) {
     this->m_currentTime.append( currTime );
     time_t now = ::time( NULL );
 }
-void IbPosixClient::fundamentalData( TickerId reqId, const IBString& data ) {}
+void IbPosixClient::fundamentalData( TickerId reqId, const IBString& data ) {
+    FundamentalDataData newData;
+    newData.reqId = reqId;
+    newData.data = data;
+    this->m_fundamentalData.push( newData );
+}
 void IbPosixClient::deltaNeutralValidation( int reqId, 
-                                            const UnderComp& underComp ) {}
-void IbPosixClient::tickSnapshotEnd( int reqId ) {}
-void IbPosixClient::marketDataType( TickerId reqId, int marketDataType ) {}
+                                            const UnderComp& underComp ) {
+    DeltaNeutralValidationData newData;
+    newData.reqId = reqId;
+    newData.underComp = underComp;
+    this->m_deltaNeutralValidations.push( newData );
+}
+void IbPosixClient::tickSnapshotEnd( int reqId ) {
+    TickSnapshotEndData newData;
+    newData.reqId = reqId;
+    this->m_tickSnapshotEnds.push( newData );
+}
+void IbPosixClient::marketDataType( TickerId reqId, int marketDataType ) {
+    MarketDataTypeData newData;
+    newData.reqId = reqId;
+    newData.marketDataType = marketDataType;
+    this->m_marketDataTypes.push( newData );
+}
 void IbPosixClient::commissionReport( 
-        const CommissionReport& commissionReport ) {}
+        const CommissionReport& commissionReport ) {
+    CommissionReportData newData;
+    newData.commissionReport = commissionReport;
+    this->m_commissionReports.push( newData );
+}
 void IbPosixClient::position( const IBString& account, 
                               const Contract& contract, int position, 
-                              double avgCost ) {}
-void IbPosixClient::positionEnd() {}
+                              double avgCost ) {
+    PositionData newData;
+    newData.account = account;
+    newData.contract = contract;
+    newData.position = position;
+    newData.avgCost = avgCost;
+    this->m_positions.push( newData );
+}
+void IbPosixClient::positionEnd() {
+    PositionEndData newData;
+    newData.ended = 1;
+    this->m_positionEnd.push( newData );
+}
 void IbPosixClient::accountSummary( int reqId, const IBString& account, 
                                     const IBString& tag, const IBString& value,
-                                    const IBString& curency ) {}
-void IbPosixClient::accountSummaryEnd( int reqId ) {}
+                                    const IBString& curency ) {
+    AccountSummaryData newData;
+    newData.reqId = reqId;
+    newData.account = account;
+    newData.tag = tag;
+    newData.value = value;
+    newData.curency = curency;
+    this->m_accountSummaries.push( newData );
+}
+void IbPosixClient::accountSummaryEnd( int reqId ) {
+    AccountSummaryEndData newData;
+    newData.reqId = reqId;
+    this->m_accountSummaryEnd.push( newData );
+}
 
