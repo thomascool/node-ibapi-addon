@@ -20,30 +20,6 @@ public:
 
     void processMessages();
 
-// accessors
-    std::string getCurrentTime();
-    TickPriceData getTickPrice();
-    TickSizeData getTickSize();
-    TickOptionComputationData getTickOptionComputation();
-    TickGenericData getTickGeneric();
-    TickStringData getTickString();
-    TickEFPData getTickEFP();
-    TickSnapshotEndData getTickSnapshotEnd();
-    MarketDataTypeData getMarketDataType();
-
-    OrderStatusData getOrderStatus();
-    OpenOrderData getOpenOrder();
-    RealtimeBarData getRealtimeBar();
-
-    WinErrorData getWinError();
-    ErrorData getError();
-
-    UpdateAccountValueData getUpdateAccountValue();
-    UpdatePortfolioData getUpdatePortfolio();
-    UpdateAccountTimeData getUpdateAccountTime();
-
-    OrderId getNextValidId();
-
 // EClientSocket
 
     bool connect( const char * host, unsigned int port, int clientId = 0 );
@@ -187,6 +163,50 @@ public:
                          const IBString& curency );
     void accountSummaryEnd( int reqId );
 
+// accessors
+    TickPriceData getTickPrice(); 
+    TickSizeData getTickSize(); 
+    TickOptionComputationData getTickOptionComputation(); 
+    TickGenericData getTickGeneric(); 
+    TickStringData getTickString(); 
+    TickEFPData getTickEFP(); 
+    OrderStatusData getOrderStatus(); 
+    OpenOrderData getOpenOrder(); 
+    OpenOrderEndData getOpenOrderEnd(); 
+    WinErrorData getWinError(); 
+    ConnectionClosedData getConnectionClosed(); 
+    UpdateAccountValueData getUpdateAccountValue(); 
+    UpdatePortfolioData getUpdatePortfolio(); 
+    UpdateAccountTimeData getUpdateAccountTime(); 
+    AccountDownloadEndData getAccountDownloadEnd(); 
+    NextValidIdData getNextValidId(); 
+    ContractDetailsData getContractDetails(); 
+    BondContractDetailsData getBondContractDetails(); 
+    ContractDetailsEndData getContractDetailsEnd(); 
+    ExecDetailsData getExecDetails(); 
+    ExecDetailsEndData getExecDetailsEnd(); 
+    ErrorData getError(); 
+    UpdateMktDepthData getUpdateMktDepth(); 
+    UpdateMktDepthL2Data getUpdateMktDepthL2(); 
+    UpdateNewsBulletinData getUpdateNewsBulletin(); 
+    ManagedAccountsData getManagedAccounts(); 
+    ReceiveFAData getReceiveFA(); 
+    HistoricalDataData getHistoricalData(); 
+    ScannerParametersData getScannerParameters(); 
+    ScannerDataData getScannerData(); 
+    ScannerDataEndData getScannerDataEnd(); 
+    RealtimeBarData getRealtimeBar(); 
+    // std::string geturrentTime() ;
+    FundamentalDataData getFundamentalData(); 
+    DeltaNeutralValidationData getDeltaNeutralValidation(); 
+    TickSnapshotEndData getTickSnapshotEnd(); 
+    MarketDataTypeData getMarketDataType(); 
+    CommissionReportData getCommissionReport(); 
+    PositionData getPosition(); 
+    PositionEndData getPositionEnd(); 
+    AccountSummaryData getAccountSummary(); 
+    AccountSummaryEndData getAccountSummaryEnd();
+
 private:
     std::auto_ptr<EPosixClientSocket> m_pClient;
 
@@ -207,7 +227,7 @@ private:
     std::queue< UpdatePortfolioData > m_updatePortfolios;
     std::queue< UpdateAccountTimeData > m_updateAccountTimes;
     std::queue< AccountDownloadEndData > m_accountDownloadEnds;
-    std::queue< OrderId > m_validId;
+    std::queue< NextValidIdData > m_validId;
     std::queue< ContractDetailsData > m_contractDetails;
     std::queue< BondContractDetailsData > m_bondContractDetails;
     std::queue< ContractDetailsEndData > m_contractDetailsEnd;
@@ -224,7 +244,7 @@ private:
     std::queue< ScannerDataData > m_scannerData;
     std::queue< ScannerDataEndData > m_scannerDataEnd;
     std::queue< RealtimeBarData > m_realtimeBars;
-    std::string m_currentTime;
+    // std::string m_currentTime;
     std::queue< FundamentalDataData > m_fundamentalData;
     std::queue< DeltaNeutralValidationData > m_deltaNeutralValidations;
     std::queue< TickSnapshotEndData > m_tickSnapshotEnds;

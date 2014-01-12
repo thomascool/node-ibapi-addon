@@ -16,6 +16,9 @@ var processIbMsg = function () {
 var doReqFunc = function () {
   obj.doReqFunc();
 }
+var disconnectClient = function () {
+  obj.disconnect();
+}
 
 var eurusd = ibcontract.createContract();
 eurusd.symbol = 'EUR';
@@ -43,25 +46,26 @@ aaplJuly500Call.currency = 'USD';
 
 
 var subscribeEurUsd = function () {
-  obj.reqMktData(1,eurusd,"",false);
+  obj.reqMktData(1,eurusd,"165",false);
 }
 var subscribeMsft = function () {
   obj.reqMktData(3,msftContract,"165",false);
 }
 var subscribeAaplOpt = function () {
-  obj.reqMktData(4,aaplJuly500Call,"",false);
+  obj.reqMktData(4,aaplJuly500Call,"165",false);
 }
 
 obj.on('connected', function () {
   console.log('connected');
   setInterval(processIbMsg,0.1);
   obj.funcQueue.push(subscribeEurUsd);
-  // obj.funcQueue.push(subscribeMsft);
-  // obj.funcQueue.push(subscribeAaplOpt);
+  obj.funcQueue.push(subscribeMsft);
+  obj.funcQueue.push(subscribeAaplOpt);
 })
 .once('nextValidId', function (data) {
-  orderId = data;
+  orderId = data.orderId;
   setInterval(doReqFunc,100);
+  setTimeout(disconnectClient,9001);
 })
 .on('tickPrice', function (tickPrice) {
   console.log( "TickPrice: " + tickPrice.tickerId.toString() + " " + 

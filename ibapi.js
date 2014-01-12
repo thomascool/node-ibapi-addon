@@ -40,48 +40,48 @@ addon.NodeIbapi.prototype.processIbMsg = function () {
   openOrder = this.getOpenOrder();
   realtimeBar = this.getRealtimeBar();
 
-  if (clientError.str != "") {
+  if (clientError.isValid) {
     this.emit('clientError',clientError);
   }
-  if (srvError.id != -1) {
+  if (srvError.isValid) {
     this.emit('srvError',srvError);
   }
-  if (tickPrice.tickerId != -1) {
+  if (tickPrice.isValid) {
     this.emit('tickPrice',tickPrice);
   }
-  if (tickSize.tickerId != -1) {
+  if (tickSize.isValid) {
     this.emit('tickSize',tickSize);
   }
-  if (tickOptionComp.tickerId != -1) {
+  if (tickOptionComp.isValid) {
     this.emit('tickOptionComputation',tickOptionComp);
   }
-  if (tickGeneric.tickerId != -1) {
+  if (tickGeneric.isValid) {
     this.emit('tickGeneric',tickGeneric);
   }
-  if (tickString.tickerId != -1) {
+  if (tickString.isValid) {
     this.emit('tickString', tickString);
   }
-  if (tickEFP.tickerId != -1) {
+  if (tickEFP.isValid) {
     this.emit('tickEFP', tickEFP);
   }
-  if (tickSnapshotEnd.reqId != -1) {
+  if (tickSnapshotEnd.isValid) {
     this.emit('tickSnapshotEnd', tickSnapshotEnd);
   }
-  if (marketDataType.reqId != -1) {
+  if (marketDataType.isValid) {
     this.emit('marketDataType', marketDataType);
   }
 
-  if (orderStatus.orderId > -1) {
+  if (orderStatus.isValid) {
     this.emit('orderStatus',orderStatus);
   }
-  if (openOrder.orderId > -1) {
+  if (openOrder.isValid) {
     this.emit('openOrder',openOrder);
   }
-  if (realtimeBar.reqId > -1) {
+  if (realtimeBar.isValid) {
     this.emit('realtimeBar', realtimeBar);
   }
 
-  if (nextValidId > -1) {
+  if (nextValidId.isValid) {
     this.emit('nextValidId', nextValidId);
   }
 

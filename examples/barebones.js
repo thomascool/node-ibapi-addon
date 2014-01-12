@@ -17,9 +17,16 @@ obj.on('connected', function () {
   obj.funcQueue.push(addReqId);
 })
 .once('nextValidId', function (data) {
-  orderId = data;
+  orderId = data.orderId;
   console.log('nextValidId: ' + orderId);
   setInterval(doReqFunc,100);
+})
+.on('clientError', function (clientError) {
+  console.log('Client error' + clientError.id.toString());
+})
+.on('srvError', function (svrError) {
+  console.log('Error: ' + svrError.id.toString() + ' - ' + 
+    svrError.errorCode.toString() + ' - ' + svrError.errorString.toString());
 })
 .on('disconnected', function () {
   console.log('disconnected');

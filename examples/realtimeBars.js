@@ -39,7 +39,7 @@ obj.on('connected', function () {
   setInterval(processIbMsg,0.1);
 })
 .once('nextValidId', function (data) {
-  orderId = data;
+  orderId = data.orderId;
   setInterval(doReqFunc,100);
 })
 .on('realtimeBar', function (realtimeBar) {

@@ -21,6 +21,9 @@ var doReqFunc = function () {
 var doOpenOrderReq = function () {
   obj.reqOpenOrders();
 }
+var disconnectClient = function () {
+  obj.disconnect();
+}
 var msftContract = ibcontract.createContract();
 msftContract.symbol = 'MSFT';
 msftContract.secType = 'STK';
@@ -48,11 +51,12 @@ obj.on('connected', function () {
   setInterval(processIbMsg,0.1);
 })
 .once('nextValidId', function (data) {
-  orderId = data;
+  orderId = data.orderId;
   setInterval(function () {obj.funcQueue.push(doOpenOrderReq);},200);
   setInterval(function () {obj.funcQueue.push(placeThatOrder);},1000);
   setInterval(function () {obj.funcQueue.push(cancelPrevOrder);},1000);
   setInterval(doReqFunc,200);
+  setTimeout(disconnectClient,9001);
 })
 .on('orderStatus',function (orderStatus) { 
   console.log("OrderID, status, filled, remaining, avgFillPrice, permId, parentId, lastFillPrice, clientId, whyHeld");

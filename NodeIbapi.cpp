@@ -27,8 +27,8 @@ void NodeIbapi::Init( Handle<Object> exports ) {
     /// getters
     tpl->PrototypeTemplate()->Set( String::NewSymbol( "getNextValidId" ),
         FunctionTemplate::New( NextValidId )->GetFunction() );
-    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getCurrentTime" ),
-        FunctionTemplate::New( CurrentTime )->GetFunction() );
+    // tpl->PrototypeTemplate()->Set( String::NewSymbol( "getCurrentTime" ),
+    //     FunctionTemplate::New( CurrentTime )->GetFunction() );
     tpl->PrototypeTemplate()->Set( String::NewSymbol( "getTickPrice" ),
         FunctionTemplate::New( TickPrice )->GetFunction() );
     tpl->PrototypeTemplate()->Set( String::NewSymbol( "getTickSize" ),
@@ -756,14 +756,23 @@ Handle<Value> NodeIbapi::CancelAccountSummary( const Arguments &args ) {
 Handle<Value> NodeIbapi::NextValidId( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    return scope.Close( Integer::New( obj->m_client.getNextValidId() ) );
+
+    NextValidIdData newNextValidId;
+    newNextValidId = obj->m_client.getNextValidId();
+
+    Handle<Object> retNextValidId = Object::New();
+    retNextValidId->Set( String::NewSymbol( "isValid" ), 
+                         Boolean::New( newNextValidId.isValid ) );
+    retNextValidId->Set( String::NewSymbol( "orderId" ),
+                         Integer::New( newNextValidId.orderId ) );
+    return scope.Close( retNextValidId );
 }
 
-Handle<Value> NodeIbapi::CurrentTime( const Arguments &args ) {
-    HandleScope scope;
-    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-    return scope.Close( String::New( obj->m_client.getCurrentTime().c_str() ) );
-}
+// Handle<Value> NodeIbapi::CurrentTime( const Arguments &args ) {
+//     HandleScope scope;
+//     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+//     return scope.Close( String::New( obj->m_client.getCurrentTime().c_str() ) );
+// }
 
 Handle<Value> NodeIbapi::TickPrice( const Arguments &args ) {
     HandleScope scope;
@@ -773,6 +782,8 @@ Handle<Value> NodeIbapi::TickPrice( const Arguments &args ) {
     newTickPrice = obj->m_client.getTickPrice();
 
     Handle<Object> retTickPrice = Object::New();
+    retTickPrice->Set( String::NewSymbol( "isValid" ), 
+                       Boolean::New( newTickPrice.isValid ) );
     retTickPrice->Set( String::NewSymbol( "tickerId" ), 
                        Integer::New( newTickPrice.tickerId ) );
     retTickPrice->Set( String::NewSymbol( "field" ), 
@@ -792,6 +803,8 @@ Handle<Value> NodeIbapi::TickSize( const Arguments &args ) {
     newTickSize = obj->m_client.getTickSize();
 
     Handle<Object> retTickSize = Object::New();
+    retTickSize->Set( String::NewSymbol( "isValid" ), 
+                      Boolean::New( newTickSize.isValid ) );
     retTickSize->Set( String::NewSymbol( "tickerId" ),
                       Integer::New( newTickSize.tickerId ) );
     retTickSize->Set( String::NewSymbol( "field" ), 
@@ -809,6 +822,8 @@ Handle<Value> NodeIbapi::TickOptionComputation( const Arguments &args ) {
     newTickOpt = obj->m_client.getTickOptionComputation();
 
     Handle<Object> retTickOpt = Object::New();
+    retTickOpt->Set( String::NewSymbol( "isValid" ), 
+                     Boolean::New( newTickOpt.isValid ) );
     retTickOpt->Set( String::NewSymbol( "tickerId" ), 
                      Integer::New( newTickOpt.tickerId ) );
     retTickOpt->Set( String::NewSymbol( "tickType" ), 
@@ -839,6 +854,8 @@ Handle<Value> NodeIbapi::TickGeneric( const Arguments &args ) {
     newTickGen = obj->m_client.getTickGeneric();
 
     Handle<Object> retTickGen = Object::New();
+    retTickGen->Set( String::NewSymbol( "isValid" ), 
+                     Boolean::New( newTickGen.isValid ) );
     retTickGen->Set( String::NewSymbol( "tickerId" ), 
                      Integer::New( newTickGen.tickerId ) );
     retTickGen->Set( String::NewSymbol( "tickType" ), 
@@ -855,6 +872,8 @@ Handle<Value> NodeIbapi::TickString( const Arguments &args ) {
     newTickStr = obj->m_client.getTickString();
 
     Handle<Object> retTickStr = Object::New();
+    retTickStr->Set( String::NewSymbol( "isValid" ), 
+                     Boolean::New( newTickStr.isValid ) );
     retTickStr->Set( String::NewSymbol( "tickerId" ), 
                      Integer::New( newTickStr.tickerId ) );
     retTickStr->Set( String::NewSymbol( "tickType" ), 
@@ -871,6 +890,8 @@ Handle<Value> NodeIbapi::TickEFP( const Arguments &args ) {
     newTickEFP = obj->m_client.getTickEFP();
 
     Handle<Object> retTickEFP = Object::New();
+    retTickEFP->Set( String::NewSymbol( "isValid" ), 
+                     Boolean::New( newTickEFP.isValid ) );
     retTickEFP->Set( String::NewSymbol( "tickerId" ), 
                      Integer::New( newTickEFP.tickerId ) );
     retTickEFP->Set( String::NewSymbol( "tickType" ), 
@@ -898,6 +919,8 @@ Handle<Value> NodeIbapi::TickSnapshotEnd( const Arguments &args ) {
     TickSnapshotEndData newTickSnapshotEnd;
     newTickSnapshotEnd = obj->m_client.getTickSnapshotEnd();
     Handle<Object> retTickSnapshotEnd = Object::New();
+    retTickSnapshotEnd->Set( String::NewSymbol( "isValid" ), 
+                     Boolean::New( newTickSnapshotEnd.isValid ) );
     retTickSnapshotEnd->Set( String::NewSymbol( "reqId" ), 
                              Integer::New( newTickSnapshotEnd.reqId ) );
     return scope.Close( retTickSnapshotEnd );
@@ -909,6 +932,8 @@ Handle<Value> NodeIbapi::MarketDataType( const Arguments &args ) {
     MarketDataTypeData newMarketDataType;
     newMarketDataType = obj->m_client.getMarketDataType();
     Handle<Object> retMarketDataType = Object::New();
+    retMarketDataType->Set( String::NewSymbol( "isValid" ), 
+                     Boolean::New( newMarketDataType.isValid ) );
     retMarketDataType->Set( String::NewSymbol( "reqId" ), 
                             Integer::New( newMarketDataType.reqId ) );
     retMarketDataType->Set( String::NewSymbol( "marketDataType" ), 
@@ -923,6 +948,8 @@ Handle<Value> NodeIbapi::OrderStatus( const Arguments &args ) {
     newOrderStatus = obj->m_client.getOrderStatus();
 
     Handle<Object> retOrderStatus = Object::New();
+    retOrderStatus->Set( String::NewSymbol( "isValid" ), 
+                     Boolean::New( newOrderStatus.isValid ) );
     retOrderStatus->Set( String::NewSymbol( "orderId" ), 
                          Integer::New( newOrderStatus.orderId ) );
     retOrderStatus->Set( String::NewSymbol( "status" ), 
@@ -953,6 +980,8 @@ Handle<Value> NodeIbapi::OpenOrder( const Arguments &args ) {
     newOpenOrder = obj->m_client.getOpenOrder();
 
     Handle<Object> retOpenOrder = Object::New();
+    retOpenOrder->Set( String::NewSymbol( "isValid" ), 
+                     Boolean::New( newOpenOrder.isValid ) );
     retOpenOrder->Set( String::NewSymbol( "orderId" ), 
                        Integer::New( newOpenOrder.orderId ) );
     retOpenOrder->Set( String::NewSymbol( "status" ), 
@@ -983,6 +1012,8 @@ Handle<Value> NodeIbapi::RealtimeBar( const Arguments &args ) {
     newRealtimeBar = obj->m_client.getRealtimeBar();
 
     Handle<Object> retRealtimeBar = Object::New();
+    retRealtimeBar->Set( String::NewSymbol( "isValid" ), 
+                     Boolean::New( newRealtimeBar.isValid ) );
     retRealtimeBar->Set( String::NewSymbol( "reqId" ), 
                          Integer::New( newRealtimeBar.reqId ) );
     retRealtimeBar->Set( String::NewSymbol( "time" ), 
@@ -1012,6 +1043,8 @@ Handle<Value> NodeIbapi::WinError( const Arguments &args ) {
     newWinError = obj->m_client.getWinError();
 
     Handle<Object> retWinError = Object::New();
+    retWinError->Set( String::NewSymbol( "isValid" ), 
+                     Boolean::New( newWinError.isValid ) );
     retWinError->Set( String::NewSymbol( "str" ), 
                       String::New( newWinError.str.c_str() ) );
     retWinError->Set( String::NewSymbol( "lastError" ), 
@@ -1027,6 +1060,8 @@ Handle<Value> NodeIbapi::Error( const Arguments &args ) {
     newError = obj->m_client.getError();
 
     Handle<Object> retError = Object::New();
+    retError->Set( String::NewSymbol( "isValid" ), 
+                     Boolean::New( newError.isValid ) );
     retError->Set( String::NewSymbol( "id" ), Integer::New( newError.id ) );
     retError->Set( String::NewSymbol( "errorCode" ), 
                    Integer::New( newError.errorCode ) );
@@ -1043,6 +1078,8 @@ Handle<Value> NodeIbapi::UpdateAccountValue( const Arguments &args ) {
     newUpdateAccountValue = obj->m_client.getUpdateAccountValue();
 
     Handle<Object> retUpdateAccountValue = Object::New();
+    retUpdateAccountValue->Set( String::NewSymbol( "isValid" ), 
+                     Boolean::New( newUpdateAccountValue.isValid ) );
     retUpdateAccountValue->Set( String::NewSymbol( "key" ), 
         String::New( newUpdateAccountValue.key.c_str() ) );
     retUpdateAccountValue->Set( String::NewSymbol( "val" ), 

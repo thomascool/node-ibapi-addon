@@ -14,6 +14,9 @@ var addReqId = function () {
 var doReqFunc = function () {
   obj.doReqFunc();
 }
+var disconnectClient = function () {
+  obj.disconnect();
+}
 
 var msftContract1 = ibcontract.createContract();
 msftContract1.symbol = 'MSFT';
@@ -49,7 +52,7 @@ obj.on('connected', function () {
     svrError.errorCode.toString() + ' - ' + svrError.errorString.toString());
 })
 .once('nextValidId', function (data) {
-  orderId = data;
+  orderId = data.orderId;
   setInterval(doReqFunc,100);
   setInterval(function () {
     obj.funcQueue.push(placeMsftOrder(msftContract1, orderId));
@@ -58,7 +61,8 @@ obj.on('connected', function () {
     obj.funcQueue.push(placeMsftOrder(msftContract2, orderId));
     obj.funcQueue.push(cancelPrevOrder(orderId));
     orderId = orderId + 1;
-  },5000);
+  },2000);
+  setTimeout(disconnectClient,9001);
 })
 .on('disconnected', function () {
   console.log('disconnected');

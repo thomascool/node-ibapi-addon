@@ -75,187 +75,6 @@ void IbPosixClient::processMessages() {
     }
 }
 
-std::string IbPosixClient::getCurrentTime() {
-    std::string retVal = this->m_currentTime;
-    this->m_currentTime.clear();
-    return retVal;
-}
-
-TickPriceData IbPosixClient::getTickPrice() {
-    TickPriceData popped;
-    if ( !this->m_tickPrices.empty() ) {
-        popped = this->m_tickPrices.front();
-        this->m_tickPrices.pop();
-        return popped;
-    }
-    popped.tickerId = -1;
-    return popped; 
-}
-TickSizeData IbPosixClient::getTickSize() {
-    TickSizeData popped;
-    if ( !this->m_tickSizes.empty() ) {
-        popped = this->m_tickSizes.front();
-        this->m_tickSizes.pop();
-        return popped;
-    }
-    popped.tickerId = -1;
-    return popped; 
-}
-TickOptionComputationData IbPosixClient::getTickOptionComputation() {
-    TickOptionComputationData popped;
-    if ( !this->m_tickOptionComps.empty() ) {
-        popped = this->m_tickOptionComps.front();
-        this->m_tickOptionComps.pop();
-        return popped;
-    }
-    popped.tickerId = -1;
-    return popped; 
-}
-TickGenericData IbPosixClient::getTickGeneric() {
-    TickGenericData popped;
-    if ( !this->m_tickGenerics.empty() ) {
-        popped = this->m_tickGenerics.front();
-        this->m_tickGenerics.pop();
-        return popped;
-    }
-    popped.tickerId = -1;
-    return popped;     
-}
-TickStringData IbPosixClient::getTickString() {
-    TickStringData popped;
-    if ( !this->m_tickStrings.empty() ) {
-        popped = this->m_tickStrings.front();
-        this->m_tickStrings.pop();
-        return popped;
-    }
-    popped.tickerId = -1;
-    return popped; 
-}
-TickEFPData IbPosixClient::getTickEFP() {
-    TickEFPData popped;
-    if ( !this->m_tickEFPs.empty() ) {
-        popped = this->m_tickEFPs.front();
-        this->m_tickEFPs.pop();
-        return popped;
-    }
-    popped.tickerId = -1;
-    return popped; 
-}
-TickSnapshotEndData IbPosixClient::getTickSnapshotEnd() {
-    TickSnapshotEndData popped;
-    if ( !this->m_tickSnapshotEnds.empty() ) {
-        popped = this->m_tickSnapshotEnds.front();
-        this->m_tickSnapshotEnds.pop();
-        return popped;
-    }
-    popped.reqId = -1;
-    return popped;
-}
-MarketDataTypeData IbPosixClient::getMarketDataType() {
-    MarketDataTypeData popped;
-    if ( !this->m_marketDataTypes.empty() ) {
-        popped = this->m_marketDataTypes.front();
-        this->m_marketDataTypes.pop();
-        return popped;
-    }
-    popped.reqId = -1;
-    return popped;
-}
-OrderStatusData IbPosixClient::getOrderStatus() {
-    OrderStatusData popped;
-    if ( !this->m_orderStatuses.empty() ) {
-        popped = this->m_orderStatuses.front();
-        this->m_orderStatuses.pop();
-        return popped;
-    }
-    popped.orderId = -1;
-    return popped; 
-}
-OpenOrderData IbPosixClient::getOpenOrder() {
-    OpenOrderData popped;
-    if ( !this->m_openOrders.empty() ) {
-        popped = this->m_openOrders.front();
-        this->m_openOrders.pop();
-        return popped;
-    }
-    popped.orderId = -1;
-    return popped; 
-}
-RealtimeBarData IbPosixClient::getRealtimeBar() {
-    RealtimeBarData popped;
-    if ( !this->m_realtimeBars.empty() ) {
-        popped = this->m_realtimeBars.front();
-        this->m_realtimeBars.pop();
-        return popped;
-    }
-    popped.reqId = -1;
-    return popped;
-}
-
-WinErrorData IbPosixClient::getWinError() {
-    WinErrorData popped;
-    if ( !this->m_winErrors.empty() ) {
-        popped = this->m_winErrors.front();
-        this->m_winErrors.pop();
-        return popped;
-    }
-    popped.str = "";
-    return popped;
-}
-
-ErrorData IbPosixClient::getError() {
-    ErrorData popped;
-    if ( !this->m_errors.empty() ) {
-        popped = this->m_errors.front();
-        this->m_errors.pop();
-        return popped;
-    }
-    popped.id = -1;
-    return popped;
-}
-
-UpdateAccountValueData IbPosixClient::getUpdateAccountValue() {
-    UpdateAccountValueData popped;
-    if ( !this->m_updateAccountValues.empty() ) {
-        popped = this->m_updateAccountValues.front();
-        this->m_updateAccountValues.pop();
-        return popped;
-    }
-    popped.accountName = "";
-    return popped;
-}
-UpdatePortfolioData IbPosixClient::getUpdatePortfolio() {
-    UpdatePortfolioData popped;
-    if ( !this->m_updatePortfolios.empty() ) {
-        popped = this->m_updatePortfolios.front();
-        this->m_updatePortfolios.pop();
-        return popped;
-    }
-    popped.accountName = "";
-    return popped;
-}
-UpdateAccountTimeData IbPosixClient::getUpdateAccountTime() {
-    UpdateAccountTimeData popped;
-    if ( !this->m_updateAccountTimes.empty() ) {
-        popped = this->m_updateAccountTimes.front();
-        this->m_updateAccountTimes.pop();
-        return popped;
-    }
-    popped.timeStamp = "";
-    return popped;
-}
-
-
-OrderId IbPosixClient::getNextValidId() {
-    OrderId popped;
-    if ( !this->m_validId.empty() ) {
-        popped = this->m_validId.front();
-        this->m_validId.pop();
-        return popped;
-    }
-    popped = -1;
-    return popped;
-}
 
 /////////////////// API EPosixClientSocket method for node access /////////////
 void IbPosixClient::reqMktData( TickerId tickerId, const Contract &contract, 
@@ -417,6 +236,7 @@ void IbPosixClient::cancelAccountSummary( int reqId ) {
 void IbPosixClient::tickPrice( TickerId tickerId, TickType field, double price,
                                int canAutoExecute ) {
     TickPriceData newData;
+    newData.isValid = true;
     newData.tickerId = tickerId;
     newData.field = field;
     newData.price = price;
@@ -425,6 +245,7 @@ void IbPosixClient::tickPrice( TickerId tickerId, TickType field, double price,
 }
 void IbPosixClient::tickSize( TickerId tickerId, TickType field, int size ) {
     TickSizeData newData;
+    newData.isValid = true;
     newData.tickerId = tickerId;
     newData.field = field;
     newData.size = size;
@@ -438,6 +259,7 @@ void IbPosixClient::tickOptionComputation( TickerId tickerId,
                                            double gamma, double vega, 
                                            double theta, double undPrice ) {
     TickOptionComputationData newData;
+    newData.isValid = true;
     newData.tickerId = tickerId;
     newData.tickType = tickType;
     newData.impliedVol = impliedVol;
@@ -454,6 +276,7 @@ void IbPosixClient::tickOptionComputation( TickerId tickerId,
 void IbPosixClient::tickGeneric( TickerId tickerId, TickType tickType, 
                                  double value ) {
     TickGenericData newData;
+    newData.isValid = true;
     newData.tickerId = tickerId;
     newData.tickType = tickType;
     newData.value = value;
@@ -463,6 +286,7 @@ void IbPosixClient::tickGeneric( TickerId tickerId, TickType tickType,
 void IbPosixClient::tickString( TickerId tickerId, TickType tickType, 
                                 const IBString& value ) {
     TickStringData newData;
+    newData.isValid = true;
     newData.tickerId = tickerId;
     newData.tickType = tickType;
     newData.value = value;
@@ -477,6 +301,7 @@ void IbPosixClient::tickEFP( TickerId tickerId, TickType tickType,
                              double dividendImpact, 
                              double dividendsToExpiry ) {
     TickEFPData newData;
+    newData.isValid = true;
     newData.tickerId = tickerId;
     newData.tickType = tickType;
     newData.basisPoints = basisPoints;
@@ -495,6 +320,7 @@ void IbPosixClient::orderStatus( OrderId orderId, const IBString &status,
                                  double lastFillPrice, int clientId, 
                                  const IBString& whyHeld ) {
     OrderStatusData newData;
+    newData.isValid = true;
     newData.orderId = orderId;
     newData.status = status;
     newData.filled = filled;
@@ -511,24 +337,26 @@ void IbPosixClient::orderStatus( OrderId orderId, const IBString &status,
 void IbPosixClient::openOrder( OrderId orderId, const Contract&, const Order&, 
                                const OrderState& ostate ) {
     OpenOrderData newData;
+    newData.isValid = true;
     newData.orderId = orderId;
     newData.orderState = ostate;
     this->m_openOrders.push( newData );
 }
 void IbPosixClient::openOrderEnd() {
     OpenOrderEndData newData;
-    newData.ended = 1;
+    newData.isValid = true;
     this->m_openOrderEnd.push( newData );
 }
 void IbPosixClient::winError( const IBString &str, int lastError ) {
     WinErrorData newData;
+    newData.isValid = true;
     newData.str = str;
     newData.lastError = lastError;
     this->m_winErrors.push( newData );
 }
 void IbPosixClient::connectionClosed() {
     ConnectionClosedData newData;
-    newData.closed = 1;
+    newData.isValid = true;
     this->m_connectionClosed.push( newData );
 }
 void IbPosixClient::updateAccountValue( const IBString& key, 
@@ -536,6 +364,7 @@ void IbPosixClient::updateAccountValue( const IBString& key,
                                         const IBString& currency, 
                                         const IBString& accountName ) {
     UpdateAccountValueData newData;
+    newData.isValid = true;
     newData.key = key;
     newData.val = val;
     newData.currency = currency;
@@ -548,6 +377,7 @@ void IbPosixClient::updatePortfolio( const Contract& contract, int position,
                                      double realizedPNL, 
                                      const IBString& accountName ) {
     UpdatePortfolioData newData;
+    newData.isValid = true;
     newData.contract = contract;
     newData.position = position;
     newData.marketPrice = marketPrice;
@@ -560,20 +390,26 @@ void IbPosixClient::updatePortfolio( const Contract& contract, int position,
 }
 void IbPosixClient::updateAccountTime( const IBString& timeStamp ) {
     UpdateAccountTimeData newData;
+    newData.isValid = true;
     newData.timeStamp = timeStamp;
     this->m_updateAccountTimes.push( newData );
 }
 void IbPosixClient::accountDownloadEnd( const IBString& accountName ) {
     AccountDownloadEndData newData;
+    newData.isValid = true;
     newData.accountName = accountName;
     this->m_accountDownloadEnds.push( newData );
 }
 void IbPosixClient::nextValidId( OrderId orderId ) {
-    this->m_validId.push( orderId );
+    NextValidIdData newData;
+    newData.isValid = true;
+    newData.orderId = orderId;
+    this->m_validId.push( newData );
 }
 void IbPosixClient::contractDetails( int reqId, 
                                      const ContractDetails& contractDetails ) {
     ContractDetailsData newData;
+    newData.isValid = true;
     newData.reqId = reqId;
     newData.contractDetails = contractDetails;
     this->m_contractDetails.push( newData );
@@ -581,18 +417,21 @@ void IbPosixClient::contractDetails( int reqId,
 void IbPosixClient::bondContractDetails( int reqId, 
                                       const ContractDetails& contractDetails ) {
     BondContractDetailsData newData;
+    newData.isValid = true;
     newData.reqId = reqId;
     newData.contractDetails = contractDetails;
     this->m_bondContractDetails.push( newData );
 }
 void IbPosixClient::contractDetailsEnd( int reqId ) {
     ContractDetailsEndData newData;
+    newData.isValid = true;
     newData.reqId = reqId;
     this->m_contractDetailsEnd.push( newData );
 }
 void IbPosixClient::execDetails( int reqId, const Contract& contract, 
                                  const Execution& execution ) {
     ExecDetailsData newData;
+    newData.isValid = true;
     newData.reqId = reqId;
     newData.contract = contract;
     newData.execution = execution;
@@ -600,12 +439,14 @@ void IbPosixClient::execDetails( int reqId, const Contract& contract,
 }
 void IbPosixClient::execDetailsEnd( int reqId ) {
     ExecDetailsEndData newData;
+    newData.isValid = true;
     newData.reqId = reqId;
     this->m_execDetailsEnd.push( newData );
 }
 void IbPosixClient::error( const int id, const int errorCode, 
                            const IBString errorString ) {
     ErrorData newData;
+    newData.isValid = true;
     newData.id = id;
     newData.errorCode = errorCode;
     newData.errorString = errorString;
@@ -616,6 +457,7 @@ void IbPosixClient::error( const int id, const int errorCode,
 void IbPosixClient::updateMktDepth( TickerId id, int position, int operation, 
                                     int side, double price, int size ) {
     UpdateMktDepthData newData;
+    newData.isValid = true;
     newData.id = id;
     newData.position = position;
     newData.operation = operation;
@@ -628,6 +470,7 @@ void IbPosixClient::updateMktDepthL2( TickerId id, int position,
                                       IBString marketMaker, int operation, 
                                       int side, double price, int size ) {
     UpdateMktDepthL2Data newData;
+    newData.isValid = true;
     newData.id = id;
     newData.position = position;
     newData.marketMaker = marketMaker;
@@ -641,6 +484,7 @@ void IbPosixClient::updateNewsBulletin( int msgId, int msgType,
                                         const IBString& newsMessage, 
                                         const IBString& originExch ) {
     UpdateNewsBulletinData newData;
+    newData.isValid = true;
     newData.msgId = msgId;
     newData.msgType = msgType;
     newData.newsMessage = newsMessage;
@@ -649,11 +493,13 @@ void IbPosixClient::updateNewsBulletin( int msgId, int msgType,
 }
 void IbPosixClient::managedAccounts( const IBString& accountsList ) {
     ManagedAccountsData newData;
+    newData.isValid = true;
     newData.accountsList = accountsList;
     this->m_managedAccounts.push( newData );
 }
 void IbPosixClient::receiveFA( faDataType pFaDataType, const IBString& cxml ) {
     ReceiveFAData newData;
+    newData.isValid = true;
     newData.pFaDataType = pFaDataType;
     newData.cxml = cxml;
     this->m_receiveFAs.push( newData );
@@ -663,6 +509,7 @@ void IbPosixClient::historicalData( TickerId reqId, const IBString& date,
                                     double close, int volume, int barCount, 
                                     double WAP, int hasGaps ) {
     HistoricalDataData newData;
+    newData.isValid = true;
     newData.reqId = reqId;
     newData.date = date;
     newData.open = open;
@@ -677,6 +524,7 @@ void IbPosixClient::historicalData( TickerId reqId, const IBString& date,
 }
 void IbPosixClient::scannerParameters( const IBString &xml ) {
     ScannerParametersData newData;
+    newData.isValid = true;
     newData.xml = xml;
     this->m_scannerParameters.push( newData );
 }
@@ -687,6 +535,7 @@ void IbPosixClient::scannerData( int reqId, int rank,
                                  const IBString &projection, 
                                  const IBString &legsStr ) {
     ScannerDataData newData;
+    newData.isValid = true;
     newData.reqId = reqId;
     newData.rank = rank;
     newData.contractDetails = contractDetails;
@@ -698,6 +547,7 @@ void IbPosixClient::scannerData( int reqId, int rank,
 }
 void IbPosixClient::scannerDataEnd( int reqId ) {
     ScannerDataEndData newData;
+    newData.isValid = true;
     newData.reqId = reqId;
     this->m_scannerDataEnd.push( newData );
 }
@@ -705,6 +555,7 @@ void IbPosixClient::realtimeBar( TickerId reqId, long itime, double open,
                                  double high, double low, double close, 
                                  long volume, double wap, int count ) {
     RealtimeBarData newData;
+    newData.isValid = true;
     newData.reqId = reqId;
     newData.time = itime;
     newData.open = open;
@@ -719,13 +570,14 @@ void IbPosixClient::realtimeBar( TickerId reqId, long itime, double open,
 void IbPosixClient::currentTime( long time ) {
     time_t t = ( time_t )time;
     struct tm * timeinfo = localtime ( &t );
-    this->m_currentTime.clear();
+    // this->m_currentTime.clear();
     std::string currTime( asctime( timeinfo ) );
-    this->m_currentTime.append( currTime );
+    // this->m_currentTime.append( currTime );
     time_t now = ::time( NULL );
 }
 void IbPosixClient::fundamentalData( TickerId reqId, const IBString& data ) {
     FundamentalDataData newData;
+    newData.isValid = true;
     newData.reqId = reqId;
     newData.data = data;
     this->m_fundamentalData.push( newData );
@@ -733,17 +585,20 @@ void IbPosixClient::fundamentalData( TickerId reqId, const IBString& data ) {
 void IbPosixClient::deltaNeutralValidation( int reqId, 
                                             const UnderComp& underComp ) {
     DeltaNeutralValidationData newData;
+    newData.isValid = true;
     newData.reqId = reqId;
     newData.underComp = underComp;
     this->m_deltaNeutralValidations.push( newData );
 }
 void IbPosixClient::tickSnapshotEnd( int reqId ) {
     TickSnapshotEndData newData;
+    newData.isValid = true;
     newData.reqId = reqId;
     this->m_tickSnapshotEnds.push( newData );
 }
 void IbPosixClient::marketDataType( TickerId reqId, int marketDataType ) {
     MarketDataTypeData newData;
+    newData.isValid = true;
     newData.reqId = reqId;
     newData.marketDataType = marketDataType;
     this->m_marketDataTypes.push( newData );
@@ -751,6 +606,7 @@ void IbPosixClient::marketDataType( TickerId reqId, int marketDataType ) {
 void IbPosixClient::commissionReport( 
         const CommissionReport& commissionReport ) {
     CommissionReportData newData;
+    newData.isValid = true;
     newData.commissionReport = commissionReport;
     this->m_commissionReports.push( newData );
 }
@@ -758,6 +614,7 @@ void IbPosixClient::position( const IBString& account,
                               const Contract& contract, int position, 
                               double avgCost ) {
     PositionData newData;
+    newData.isValid = true;
     newData.account = account;
     newData.contract = contract;
     newData.position = position;
@@ -766,13 +623,14 @@ void IbPosixClient::position( const IBString& account,
 }
 void IbPosixClient::positionEnd() {
     PositionEndData newData;
-    newData.ended = 1;
+    newData.isValid = true;
     this->m_positionEnd.push( newData );
 }
 void IbPosixClient::accountSummary( int reqId, const IBString& account, 
                                     const IBString& tag, const IBString& value,
                                     const IBString& curency ) {
     AccountSummaryData newData;
+    newData.isValid = true;
     newData.reqId = reqId;
     newData.account = account;
     newData.tag = tag;
@@ -782,7 +640,418 @@ void IbPosixClient::accountSummary( int reqId, const IBString& account,
 }
 void IbPosixClient::accountSummaryEnd( int reqId ) {
     AccountSummaryEndData newData;
+    newData.isValid = true;
     newData.reqId = reqId;
     this->m_accountSummaryEnd.push( newData );
 }
 
+TickPriceData IbPosixClient::getTickPrice() {
+    TickPriceData popped;
+    if ( !this->m_tickPrices.empty() ) {
+        popped = this->m_tickPrices.front();
+        this->m_tickPrices.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped; 
+}
+TickSizeData IbPosixClient::getTickSize() {
+    TickSizeData popped;
+    if ( !this->m_tickSizes.empty() ) {
+        popped = this->m_tickSizes.front();
+        this->m_tickSizes.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped; 
+}
+TickOptionComputationData IbPosixClient::getTickOptionComputation() {
+    TickOptionComputationData popped;
+    if ( !this->m_tickOptionComps.empty() ) {
+        popped = this->m_tickOptionComps.front();
+        this->m_tickOptionComps.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped; 
+}
+TickGenericData IbPosixClient::getTickGeneric() {
+    TickGenericData popped;
+    if ( !this->m_tickGenerics.empty() ) {
+        popped = this->m_tickGenerics.front();
+        this->m_tickGenerics.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;     
+}
+TickStringData IbPosixClient::getTickString() {
+    TickStringData popped;
+    if ( !this->m_tickStrings.empty() ) {
+        popped = this->m_tickStrings.front();
+        this->m_tickStrings.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped; 
+}
+TickEFPData IbPosixClient::getTickEFP() {
+    TickEFPData popped;
+    if ( !this->m_tickEFPs.empty() ) {
+        popped = this->m_tickEFPs.front();
+        this->m_tickEFPs.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped; 
+}
+OrderStatusData IbPosixClient::getOrderStatus() {
+    OrderStatusData popped;
+    if ( !this->m_orderStatuses.empty() ) {
+        popped = this->m_orderStatuses.front();
+        this->m_orderStatuses.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped; 
+}
+OpenOrderData IbPosixClient::getOpenOrder() {
+    OpenOrderData popped;
+    if ( !this->m_openOrders.empty() ) {
+        popped = this->m_openOrders.front();
+        this->m_openOrders.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped; 
+}
+OpenOrderEndData IbPosixClient::getOpenOrderEnd() {
+    OpenOrderEndData popped;
+    if ( !this->m_openOrderEnd.empty() ) {
+        popped = this->m_openOrderEnd.front();
+        this->m_openOrderEnd.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped; 
+}
+WinErrorData IbPosixClient::getWinError() {
+    WinErrorData popped;
+    if ( !this->m_winErrors.empty() ) {
+        popped = this->m_winErrors.front();
+        this->m_winErrors.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+ConnectionClosedData IbPosixClient::getConnectionClosed() {
+    ConnectionClosedData popped;
+    if ( !this->m_connectionClosed.empty() ) {
+        popped = this->m_connectionClosed.front();
+        this->m_connectionClosed.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped; 
+}
+UpdateAccountValueData IbPosixClient::getUpdateAccountValue() {
+    UpdateAccountValueData popped;
+    if ( !this->m_updateAccountValues.empty() ) {
+        popped = this->m_updateAccountValues.front();
+        this->m_updateAccountValues.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+UpdatePortfolioData IbPosixClient::getUpdatePortfolio() {
+    UpdatePortfolioData popped;
+    if ( !this->m_updatePortfolios.empty() ) {
+        popped = this->m_updatePortfolios.front();
+        this->m_updatePortfolios.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+UpdateAccountTimeData IbPosixClient::getUpdateAccountTime() {
+    UpdateAccountTimeData popped;
+    if ( !this->m_updateAccountTimes.empty() ) {
+        popped = this->m_updateAccountTimes.front();
+        this->m_updateAccountTimes.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+AccountDownloadEndData IbPosixClient::getAccountDownloadEnd() {
+    AccountDownloadEndData popped;
+    if ( !this->m_accountDownloadEnds.empty() ) {
+        popped = this->m_accountDownloadEnds.front();
+        this->m_accountDownloadEnds.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+NextValidIdData IbPosixClient::getNextValidId() {
+    NextValidIdData popped;
+    if ( !this->m_validId.empty() ) {
+        popped = this->m_validId.front();
+        this->m_validId.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+ContractDetailsData IbPosixClient::getContractDetails() {
+    ContractDetailsData popped;   
+    if ( !this->m_contractDetails.empty() ) {
+        popped = this->m_contractDetails.front();
+        this->m_contractDetails.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+BondContractDetailsData IbPosixClient::getBondContractDetails() {
+    BondContractDetailsData popped;
+    if ( !this->m_bondContractDetails.empty() ) {
+        popped = this->m_bondContractDetails.front();
+        this->m_bondContractDetails.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+ContractDetailsEndData IbPosixClient::getContractDetailsEnd() {
+    ContractDetailsEndData popped;
+    if ( !this->m_contractDetailsEnd.empty() ) {
+        popped = this->m_contractDetailsEnd.front();
+        this->m_contractDetailsEnd.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+ExecDetailsData IbPosixClient::getExecDetails() {
+    ExecDetailsData popped;
+    if ( !this->m_execDetails.empty() ) {
+        popped = this->m_execDetails.front();
+        this->m_execDetails.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+ExecDetailsEndData IbPosixClient::getExecDetailsEnd() {
+    ExecDetailsEndData popped;
+    if ( !this->m_execDetailsEnd.empty() ) {
+        popped = this->m_execDetailsEnd.front();
+        this->m_execDetailsEnd.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+ErrorData IbPosixClient::getError() {
+    ErrorData popped;
+    if ( !this->m_errors.empty() ) {
+        popped = this->m_errors.front();
+        this->m_errors.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+UpdateMktDepthData IbPosixClient::getUpdateMktDepth() {
+    UpdateMktDepthData popped;
+    if ( !this->m_updateMktDepths.empty() ) {
+        popped = this->m_updateMktDepths.front();
+        this->m_updateMktDepths.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+UpdateMktDepthL2Data IbPosixClient::getUpdateMktDepthL2() {
+    UpdateMktDepthL2Data popped;
+    if ( !this->m_updateMktDepthL2s.empty() ) {
+        popped = this->m_updateMktDepthL2s.front();
+        this->m_updateMktDepthL2s.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+UpdateNewsBulletinData IbPosixClient::getUpdateNewsBulletin() {
+    UpdateNewsBulletinData popped;
+    if ( !this->m_updateNewsBulletins.empty() ) {
+        popped = this->m_updateNewsBulletins.front();
+        this->m_updateNewsBulletins.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+ManagedAccountsData IbPosixClient::getManagedAccounts() {
+    ManagedAccountsData popped;
+    if ( !this->m_managedAccounts.empty() ) {
+        popped = this->m_managedAccounts.front();
+        this->m_managedAccounts.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+ReceiveFAData IbPosixClient::getReceiveFA() {
+    ReceiveFAData popped;
+    if ( !this->m_receiveFAs.empty() ) {
+        popped = this->m_receiveFAs.front();
+        this->m_receiveFAs.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+HistoricalDataData IbPosixClient::getHistoricalData() {
+    HistoricalDataData popped;
+    if ( !this->m_historicalData.empty() ) {
+        popped = this->m_historicalData.front();
+        this->m_historicalData.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+ScannerParametersData IbPosixClient::getScannerParameters() {
+    ScannerParametersData popped;
+    if ( !this->m_scannerParameters.empty() ) {
+        popped = this->m_scannerParameters.front();
+        this->m_scannerParameters.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+ScannerDataData IbPosixClient::getScannerData() {
+    ScannerDataData popped;
+    if ( !this->m_scannerData.empty() ) {
+        popped = this->m_scannerData.front();
+        this->m_scannerData.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+ScannerDataEndData IbPosixClient::getScannerDataEnd() {
+    ScannerDataEndData popped;
+    if ( !this->m_scannerDataEnd.empty() ) {
+        popped = this->m_scannerDataEnd.front();
+        this->m_scannerDataEnd.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+RealtimeBarData IbPosixClient::getRealtimeBar() {
+    RealtimeBarData popped;
+    if ( !this->m_realtimeBars.empty() ) {
+        popped = this->m_realtimeBars.front();
+        this->m_realtimeBars.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+FundamentalDataData IbPosixClient::getFundamentalData() {
+    FundamentalDataData popped;
+    if ( !this->m_fundamentalData.empty() ) {
+        popped = this->m_fundamentalData.front();
+        this->m_fundamentalData.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+DeltaNeutralValidationData IbPosixClient::getDeltaNeutralValidation() {
+    DeltaNeutralValidationData popped;
+    if ( !this->m_deltaNeutralValidations.empty() ) {
+        popped = this->m_deltaNeutralValidations.front();
+        this->m_deltaNeutralValidations.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+TickSnapshotEndData IbPosixClient::getTickSnapshotEnd() {
+    TickSnapshotEndData popped;
+    if ( !this->m_tickSnapshotEnds.empty() ) {
+        popped = this->m_tickSnapshotEnds.front();
+        this->m_tickSnapshotEnds.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+MarketDataTypeData IbPosixClient::getMarketDataType() {
+    MarketDataTypeData popped;
+    if ( !this->m_marketDataTypes.empty() ) {
+        popped = this->m_marketDataTypes.front();
+        this->m_marketDataTypes.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+CommissionReportData IbPosixClient::getCommissionReport() {
+    CommissionReportData popped;
+    if ( !this->m_commissionReports.empty() ) {
+        popped = this->m_commissionReports.front();
+        this->m_commissionReports.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+PositionData IbPosixClient::getPosition() {
+    PositionData popped;
+    if ( !this->m_positions.empty() ) {
+        popped = this->m_positions.front();
+        this->m_positions.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+PositionEndData IbPosixClient::getPositionEnd() {
+    PositionEndData popped;
+    if ( !this->m_positionEnd.empty() ) {
+        popped = this->m_positionEnd.front();
+        this->m_positionEnd.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+AccountSummaryData IbPosixClient::getAccountSummary() {
+    AccountSummaryData popped;
+    if ( !this->m_accountSummaries.empty() ) {
+        popped = this->m_accountSummaries.front();
+        this->m_accountSummaries.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}
+AccountSummaryEndData IbPosixClient::getAccountSummaryEnd() {
+    AccountSummaryEndData popped;
+    if ( !this->m_accountSummaryEnd.empty() ) {
+        popped = this->m_accountSummaryEnd.front();
+        this->m_accountSummaryEnd.pop();
+        return popped;
+    }
+    popped.isValid = false;
+    return popped;
+}

@@ -9,17 +9,20 @@
 #include "import/CommissionReport.h"
 
 struct TickPriceData {
+    bool isValid;
     TickerId tickerId;
     TickType field;
     double price;
     int canAutoExecute;
 };
 struct TickSizeData {
+    bool isValid;
     TickerId tickerId;
     TickType field;
     int size;
 };
 struct TickOptionComputationData {
+    bool isValid;
    TickerId tickerId;
    TickType tickType;
    double impliedVol;
@@ -32,16 +35,19 @@ struct TickOptionComputationData {
    double undPrice;
 };
 struct TickGenericData {
+    bool isValid;
     TickerId tickerId;
     TickType tickType;
     double value;
 };
 struct TickStringData {
+    bool isValid;
     TickerId tickerId;
     TickType tickType;
     IBString value;
 };
 struct TickEFPData {
+    bool isValid;
     TickerId tickerId;
     TickType tickType;
     double basisPoints;
@@ -54,6 +60,7 @@ struct TickEFPData {
     double dividendsToExpiry;
 };
 struct OrderStatusData {
+    bool isValid;
     OrderId orderId;
     IBString status;
     int filled;
@@ -68,28 +75,32 @@ struct OrderStatusData {
     IBString whyHeld;
 };
 struct OpenOrderData {
+    bool isValid;
     OrderId orderId;
     Contract contract;
     Order order;
     OrderState orderState;
 };
 struct OpenOrderEndData {
-    int ended;
+    bool isValid;
 };
 struct WinErrorData {
+    bool isValid;
     IBString str;
     int lastError;
 };
 struct ConnectionClosedData {
-    int closed;
+    bool isValid;
 };
 struct UpdateAccountValueData {
+    bool isValid;
     IBString key;
     IBString val;
     IBString currency;
     IBString accountName;
 };
 struct UpdatePortfolioData {
+    bool isValid;
     Contract contract;
     int position;
     double marketPrice;
@@ -101,39 +112,49 @@ struct UpdatePortfolioData {
     IBString accountName;
 };
 struct UpdateAccountTimeData {
+    bool isValid;
     IBString timeStamp;
 };
 struct AccountDownloadEndData {
+    bool isValid;
     IBString accountName;
 };
 struct NextValidIdData {
+    bool isValid;
     OrderId orderId;
 };
 struct ContractDetailsData {
+    bool isValid;
     int reqId;
     ContractDetails contractDetails;
 };
 struct BondContractDetailsData {
+    bool isValid;
     int reqId;
     ContractDetails contractDetails;
 };
 struct ContractDetailsEndData {
+    bool isValid;
     int reqId;
 };
 struct ExecDetailsData {
+    bool isValid;
     int reqId;
     Contract contract;
     Execution execution;
 };
 struct ExecDetailsEndData {
+    bool isValid;
     int reqId;
 };
 struct ErrorData {
+    bool isValid;
     int id;
     int errorCode;
     IBString errorString;
 };
 struct UpdateMktDepthData {
+    bool isValid;
     TickerId id;
     int position;
     int operation;
@@ -142,6 +163,7 @@ struct UpdateMktDepthData {
     int size;
 };
 struct UpdateMktDepthL2Data {
+    bool isValid;
     TickerId id;
     int position;
     IBString marketMaker;
@@ -151,19 +173,23 @@ struct UpdateMktDepthL2Data {
     int size;
 };
 struct UpdateNewsBulletinData {
+    bool isValid;
     int msgId;
     int msgType;
     IBString newsMessage;
     IBString originExch;
 };
 struct ManagedAccountsData {
+    bool isValid;
     IBString accountsList;
 };
 struct ReceiveFAData {
+    bool isValid;
     faDataType pFaDataType;
     IBString cxml;
 };
 struct HistoricalDataData {
+    bool isValid;
     TickerId reqId;
     IBString date;
     double open;
@@ -176,9 +202,11 @@ struct HistoricalDataData {
     int hasGaps;
 };
 struct ScannerParametersData {
+    bool isValid;
     IBString xml;
 };
 struct ScannerDataData {
+    bool isValid;
     int reqId;
     int rank;
     ContractDetails contractDetails;
@@ -188,9 +216,11 @@ struct ScannerDataData {
     IBString legsStr;
 };
 struct ScannerDataEndData {
+    bool isValid;
     int reqId;
 };
 struct RealtimeBarData {
+    bool isValid;
     TickerId reqId;
     long time;
     double open;
@@ -202,36 +232,44 @@ struct RealtimeBarData {
     int count;
 };
 struct CurrentTimeData {
+    bool isValid;
     long time;
 };
 struct FundamentalDataData {
+    bool isValid;
     TickerId reqId;
     IBString data;
 };
 struct DeltaNeutralValidationData {
+    bool isValid;
     int reqId;
     UnderComp underComp;
 };
 struct TickSnapshotEndData {
+    bool isValid;
     int reqId;
 };
 struct MarketDataTypeData {
+    bool isValid;
     TickerId reqId;
     int marketDataType;
 };
 struct CommissionReportData {
+    bool isValid;
    CommissionReport commissionReport;
 };
 struct PositionData {
+    bool isValid;
    IBString account;
    Contract contract;
    int position;
    double avgCost;
 };
 struct PositionEndData {
-    int ended;
+    bool isValid;
 };
 struct AccountSummaryData {
+    bool isValid;
    int reqId;
    IBString account;
    IBString tag;
@@ -239,6 +277,7 @@ struct AccountSummaryData {
    IBString curency;
 };
 struct AccountSummaryEndData {
+    bool isValid;
    int reqId;
 };
 
