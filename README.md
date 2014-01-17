@@ -192,4 +192,4 @@ Uses mocha, so install it.
 * See issues list in https://github.com/dchem/node-ibapi-addon/issues?state=open
 
 ### License
-Copyright (c) 2013 Jae Yang. See LICENSE file for license rights and limitations (MIT).
+Copyright (c) 2014 Jae Yang. See LICENSE file for license rights and limitations (MIT).
