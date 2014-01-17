@@ -58,7 +58,7 @@ void NodeIbapi::Init( Handle<Object> exports ) {
     tpl->PrototypeTemplate()->Set( String::NewSymbol( "getNextValidId" ), 
         FunctionTemplate::New( NextValidId )->GetFunction() );
     tpl->PrototypeTemplate()->Set( String::NewSymbol( "getContractDetails" ), 
-        FunctionTemplate::New( ContractDetails )->GetFunction() );
+        FunctionTemplate::New( GetContractDetails )->GetFunction() );
     tpl->PrototypeTemplate()->Set( String::NewSymbol( "getBondContractDetails" ), 
         FunctionTemplate::New( BondContractDetails )->GetFunction() );
     tpl->PrototypeTemplate()->Set( String::NewSymbol( "getContractDetailsEnd" ), 
@@ -1035,7 +1035,7 @@ Handle<Value> NodeIbapi::WinError( const Arguments &args ) {
 
     Handle<Object> retWinError = Object::New();
     retWinError->Set( String::NewSymbol( "isValid" ), 
-                     Boolean::New( newWinError.isValid ) );
+                      Boolean::New( newWinError.isValid ) );
     retWinError->Set( String::NewSymbol( "str" ), 
                       String::New( newWinError.str.c_str() ) );
     retWinError->Set( String::NewSymbol( "lastError" ), 
@@ -1083,19 +1083,26 @@ Handle<Value> NodeIbapi::UpdatePortfolio( const Arguments &args ) {
     UpdatePortfolioData newUpdatePortfolio;
     newUpdatePortfolio = obj->m_client.getUpdatePortfolio();
 
-    // Handle<Object> contract = Object::New();
-    // contract->Set( String::NewSymbol( "conId" ), 
-    //     Integer::New( newUpdatePortfolio.contract.conId ) );
-    // contract->Set( String::NewSymbol( "exchange" ),
-    //     String::New( newUpdatePortfolio.contract.exchange ) );
-    // contract->Set( String::NewSymbol( "symbol" ),
-
-
-
     Handle<Object> retUpdatePortfolio = Object::New();
-    // retUpdatePortfolio->Set( String::NewSymbol( "contract" ),
-    //     String:: )
-
+    retUpdatePortfolio->Set( String::NewSymbol( "isValid" ),
+                             Boolean::New( newUpdatePortfolio.isValid ) );
+    retUpdatePortfolio->Set( String::NewSymbol( "contract" ), 
+        convertContractForNode( newUpdatePortfolio.contract ) );
+    retUpdatePortfolio->Set( String::NewSymbol( "position" ),
+                             Integer::New( newUpdatePortfolio.position ) );
+    retUpdatePortfolio->Set( String::NewSymbol( "marketPrice" ),
+                             Number::New( newUpdatePortfolio.marketPrice ) );
+    retUpdatePortfolio->Set( String::NewSymbol( "marketValue" ),
+                             Number::New( newUpdatePortfolio.marketValue ) );
+    retUpdatePortfolio->Set( String::NewSymbol( "averageCost" ),
+                             Number::New( newUpdatePortfolio.averageCost ) );
+    retUpdatePortfolio->Set( String::NewSymbol( "unrealizedPNL" ),
+                             Number::New( newUpdatePortfolio.unrealizedPNL ) );
+    retUpdatePortfolio->Set( String::NewSymbol( "realizedPNL" ),
+                             Number::New( newUpdatePortfolio.realizedPNL ) );
+    retUpdatePortfolio->Set( String::NewSymbol( "accountName" ),
+                             String::New( 
+                                newUpdatePortfolio.accountName.c_str() ) );
     return scope.Close( retUpdatePortfolio );
 }
 Handle<Value> NodeIbapi::UpdateAccountTime( const Arguments &args ) {
@@ -1142,74 +1149,87 @@ Handle<Value> NodeIbapi::NextValidId( const Arguments &args ) {
                          Integer::New( newNextValidId.orderId ) );
     return scope.Close( retNextValidId );
 }
-Handle<Value> NodeIbapi::ContractDetails( const Arguments &args ) {
+Handle<Value> NodeIbapi::GetContractDetails( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
 
-    ContractDetailsData newData;
-    newData = obj->m_client.getContractDetails();
+    ContractDetailsData newContractDetails;
+    newContractDetails = obj->m_client.getContractDetails();
 
-    Handle<Object> retData = Object::New();
-    retData->Set( String::NewSymbol( "isValid" ),
-                  Boolean::New( newData.isValid ) );
-    retData->Set( String::NewSymbol( "reqId" ),
-                  Integer::New( newData.reqId ) );
-    Handle<Object> contractDetails = Object::New();
+    Handle<Object> retContractDetails = Object::New();
+    retContractDetails->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newContractDetails.isValid ) );
+    retContractDetails->Set( String::NewSymbol( "reqId" ),
+                  Integer::New( newContractDetails.reqId ) );
+    retContractDetails->Set( String::NewSymbol( "contractDetails" ),
+        convertContDetailForNode( newContractDetails.contractDetails ) );
 
-// TODO STOPPED HERE
-    return scope.Close( retData );
+    return scope.Close( retContractDetails );
 }
 Handle<Value> NodeIbapi::BondContractDetails( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
 
-    BondContractDetailsData newData;
-    newData = obj->m_client.getBondContractDetails();
+    BondContractDetailsData newBondContractDetails;
+    newBondContractDetails = obj->m_client.getBondContractDetails();
 
-    Handle<Object> retData = Object::New();
-    retData->Set( String::NewSymbol( "isValid" ),
-                  Boolean::New( newData.isValid ) );
+    Handle<Object> retContractDetails = Object::New();
+    retContractDetails->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newBondContractDetails.isValid ) );
+    retContractDetails->Set( String::NewSymbol( "reqId" ),
+                  Integer::New( newBondContractDetails.reqId ) );
+    retContractDetails->Set( String::NewSymbol( "contractDetails" ),
+        convertContDetailForNode( newBondContractDetails.contractDetails ) );
 
-    return scope.Close( retData );
+    return scope.Close( retContractDetails );
 }
 Handle<Value> NodeIbapi::ContractDetailsEnd( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
 
-    ContractDetailsEndData newData;
-    newData = obj->m_client.getContractDetailsEnd();
+    ContractDetailsEndData newContractDetailsEnd;
+    newContractDetailsEnd = obj->m_client.getContractDetailsEnd();
 
-    Handle<Object> retData = Object::New();
-    retData->Set( String::NewSymbol( "isValid" ),
-                  Boolean::New( newData.isValid ) );
+    Handle<Object> retContractDetailsEnd = Object::New();
+    retContractDetailsEnd->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newContractDetailsEnd.isValid ) );
+    retContractDetailsEnd->Set( String::NewSymbol( "reqId" ),
+                  Integer::New( newContractDetailsEnd.reqId ) );
 
-    return scope.Close( retData );
+    return scope.Close( retContractDetailsEnd );
 }
 Handle<Value> NodeIbapi::ExecDetails( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
 
-    ExecDetailsData newData;
-    newData = obj->m_client.getExecDetails();
+    ExecDetailsData newExecDetails;
+    newExecDetails = obj->m_client.getExecDetails();
 
-    Handle<Object> retData = Object::New();
-    retData->Set( String::NewSymbol( "isValid" ),
-                  Boolean::New( newData.isValid ) );
-
-    return scope.Close( retData );
+    Handle<Object> retExecDetails = Object::New();
+    retExecDetails->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newExecDetails.isValid ) );
+    retExecDetails->Set( String::NewSymbol( "reqId" ),
+                  Integer::New( newExecDetails.reqId ) );
+    retExecDetails->Set( String::NewSymbol( "contract" ),
+                  convertContractForNode( newExecDetails.contract ) );
+    retExecDetails->Set( String::NewSymbol( "execution" ),
+                  convertExecForNode( newExecDetails.execution ) );
+    return scope.Close( retExecDetails );
 }
 Handle<Value> NodeIbapi::ExecDetailsEnd( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
 
-    ExecDetailsEndData newData;
-    newData = obj->m_client.getExecDetailsEnd();
+    ExecDetailsEndData newExecDetailsEnd;
+    newExecDetailsEnd = obj->m_client.getExecDetailsEnd();
 
-    Handle<Object> retData = Object::New();
-    retData->Set( String::NewSymbol( "isValid" ),
-                  Boolean::New( newData.isValid ) );
+    Handle<Object> retExecDetailsEnd = Object::New();
+    retExecDetailsEnd->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newExecDetailsEnd.isValid ) );
+    retExecDetailsEnd->Set( String::NewSymbol( "reqId" ),
+                  Integer::New( newExecDetailsEnd.reqId ) );
 
-    return scope.Close( retData );
+    return scope.Close( retExecDetailsEnd );
 }
 Handle<Value> NodeIbapi::Error( const Arguments &args ) {
     HandleScope scope;
@@ -1220,7 +1240,7 @@ Handle<Value> NodeIbapi::Error( const Arguments &args ) {
 
     Handle<Object> retError = Object::New();
     retError->Set( String::NewSymbol( "isValid" ), 
-                     Boolean::New( newError.isValid ) );
+                   Boolean::New( newError.isValid ) );
     retError->Set( String::NewSymbol( "id" ), Integer::New( newError.id ) );
     retError->Set( String::NewSymbol( "errorCode" ), 
                    Integer::New( newError.errorCode ) );
@@ -1233,53 +1253,89 @@ Handle<Value> NodeIbapi::UpdateMktDepth( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
 
-    UpdateMktDepthData newData;
-    newData = obj->m_client.getUpdateMktDepth();
+    UpdateMktDepthData newUpdateMktDepth;
+    newUpdateMktDepth = obj->m_client.getUpdateMktDepth();
 
-    Handle<Object> retData = Object::New();
-    retData->Set( String::NewSymbol( "isValid" ),
-                  Boolean::New( newData.isValid ) );
+    Handle<Object> retUpdateMktDepth = Object::New();
+    retUpdateMktDepth->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newUpdateMktDepth.isValid ) );
+    retUpdateMktDepth->Set( String::NewSymbol( "id" ),
+                  Integer::New( newUpdateMktDepth.id ) );
+    retUpdateMktDepth->Set( String::NewSymbol( "position" ),
+                  Integer::New( newUpdateMktDepth.position ) );
+    retUpdateMktDepth->Set( String::NewSymbol( "operation" ),
+                  Integer::New( newUpdateMktDepth.operation ) );
+    retUpdateMktDepth->Set( String::NewSymbol( "side" ),
+                  Integer::New( newUpdateMktDepth.side ) );
+    retUpdateMktDepth->Set( String::NewSymbol( "price" ),
+                  Number::New( newUpdateMktDepth.price ) );
+    retUpdateMktDepth->Set( String::NewSymbol( "size" ),
+                  Integer::New( newUpdateMktDepth.size ) );
 
-    return scope.Close( retData );
+    return scope.Close( retUpdateMktDepth );
 }
 Handle<Value> NodeIbapi::UpdateMktDepthL2( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
 
-    UpdateMktDepthL2Data newData;
-    newData = obj->m_client.getUpdateMktDepthL2();
+    UpdateMktDepthL2Data newUpdateMktDepthL2;
+    newUpdateMktDepthL2 = obj->m_client.getUpdateMktDepthL2();
 
-    Handle<Object> retData = Object::New();
-    retData->Set( String::NewSymbol( "isValid" ),
-                  Boolean::New( newData.isValid ) );
+    Handle<Object> retUpdateMktDepthL2 = Object::New();
+    retUpdateMktDepthL2->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newUpdateMktDepthL2.isValid ) ); 
+    retUpdateMktDepthL2->Set( String::NewSymbol( "id" ),
+                  Integer::New( newUpdateMktDepthL2.id ) ); 
+    retUpdateMktDepthL2->Set( String::NewSymbol( "position" ),
+                  Integer::New( newUpdateMktDepthL2.position ) ); 
+    retUpdateMktDepthL2->Set( String::NewSymbol( "marketMaker" ),
+                  String::New( newUpdateMktDepthL2.marketMaker.c_str() ) ); 
+    retUpdateMktDepthL2->Set( String::NewSymbol( "operation" ),
+                  Integer::New( newUpdateMktDepthL2.operation ) ); 
+    retUpdateMktDepthL2->Set( String::NewSymbol( "side" ),
+                  Integer::New( newUpdateMktDepthL2.side ) ); 
+    retUpdateMktDepthL2->Set( String::NewSymbol( "price" ),
+                  Number::New( newUpdateMktDepthL2.price ) ); 
+    retUpdateMktDepthL2->Set( String::NewSymbol( "size" ),
+                  Integer::New( newUpdateMktDepthL2.size ) ); 
 
-    return scope.Close( retData );
+    return scope.Close( retUpdateMktDepthL2 );
 }
 Handle<Value> NodeIbapi::UpdateNewsBulletin( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
 
-    UpdateNewsBulletinData newData;
-    newData = obj->m_client.getUpdateNewsBulletin();
+    UpdateNewsBulletinData newUpdateNewsBulletin;
+    newUpdateNewsBulletin = obj->m_client.getUpdateNewsBulletin();
 
-    Handle<Object> retData = Object::New();
-    retData->Set( String::NewSymbol( "isValid" ),
-                  Boolean::New( newData.isValid ) );
+    Handle<Object> retUpdateNewsBulletin = Object::New();
+    retUpdateNewsBulletin->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newUpdateNewsBulletin.isValid ) ); 
+    retUpdateNewsBulletin->Set( String::NewSymbol( "msgId" ),
+                  Integer::New( newUpdateNewsBulletin.msgId ) ); 
+    retUpdateNewsBulletin->Set( String::NewSymbol( "msgType" ),
+                  Integer::New( newUpdateNewsBulletin.msgType ) ); 
+    retUpdateNewsBulletin->Set( String::NewSymbol( "newsMessage" ),
+                  String::New( newUpdateNewsBulletin.newsMessage.c_str() ) ); 
+    retUpdateNewsBulletin->Set( String::NewSymbol( "originExch" ),
+                  String::New( newUpdateNewsBulletin.originExch.c_str() ) ); 
 
-    return scope.Close( retData );
+    return scope.Close( retUpdateNewsBulletin );
 }
 Handle<Value> NodeIbapi::ManagedAccounts( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
 
-    ManagedAccountsData newData;
-    newData = obj->m_client.getManagedAccounts();
+    ManagedAccountsData newManagedAccounts;
+    newManagedAccounts = obj->m_client.getManagedAccounts();
 
-    Handle<Object> retData = Object::New();
-    retData->Set( String::NewSymbol( "isValid" ),
-                  Boolean::New( newData.isValid ) );
+    Handle<Object> retManagedAccounts = Object::New();
+    retManagedAccounts->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newManagedAccounts.isValid ) );
+    retManagedAccounts->Set( String::NewSymbol( "isValid" ),
+                  String::New( newManagedAccounts.accountsList.c_str() ) );
 
-    return scope.Close( retData );
+    return scope.Close( retManagedAccounts );
 }
 Handle<Value> NodeIbapi::ReceiveFA( const Arguments &args ) {
     HandleScope scope;
@@ -1292,59 +1348,100 @@ Handle<Value> NodeIbapi::ReceiveFA( const Arguments &args ) {
     retData->Set( String::NewSymbol( "isValid" ),
                   Boolean::New( newData.isValid ) );
 
+    // TODO
+
     return scope.Close( retData );
 }
 Handle<Value> NodeIbapi::HistoricalData( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
 
-    HistoricalDataData newData;
-    newData = obj->m_client.getHistoricalData();
+    HistoricalDataData newHistoricalData;
+    newHistoricalData = obj->m_client.getHistoricalData();
 
-    Handle<Object> retData = Object::New();
-    retData->Set( String::NewSymbol( "isValid" ),
-                  Boolean::New( newData.isValid ) );
+    Handle<Object> retHistoricalData = Object::New();
+    retHistoricalData->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newHistoricalData.isValid ) ); 
+    retHistoricalData->Set( String::NewSymbol( "reqId" ),
+                  Integer::New( newHistoricalData.reqId ) ); 
+    retHistoricalData->Set( String::NewSymbol( "date" ),
+                  String::New( newHistoricalData.date.c_str() ) ); 
+    retHistoricalData->Set( String::NewSymbol( "open" ),
+                  Number::New( newHistoricalData.open ) ); 
+    retHistoricalData->Set( String::NewSymbol( "high" ),
+                  Number::New( newHistoricalData.high ) ); 
+    retHistoricalData->Set( String::NewSymbol( "low" ),
+                  Number::New( newHistoricalData.low ) ); 
+    retHistoricalData->Set( String::NewSymbol( "close" ),
+                  Number::New( newHistoricalData.close ) ); 
+    retHistoricalData->Set( String::NewSymbol( "volume" ),
+                  Integer::New( newHistoricalData.volume ) ); 
+    retHistoricalData->Set( String::NewSymbol( "barCount" ),
+                  Integer::New( newHistoricalData.barCount ) ); 
+    retHistoricalData->Set( String::NewSymbol( "WAP" ),
+                  Number::New( newHistoricalData.WAP ) ); 
+    retHistoricalData->Set( String::NewSymbol( "hasGaps" ),
+                  Integer::New( newHistoricalData.hasGaps ) ); 
 
-    return scope.Close( retData );
+    return scope.Close( retHistoricalData );
 }
 Handle<Value> NodeIbapi::ScannerParameters( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
 
-    ScannerParametersData newData;
-    newData = obj->m_client.getScannerParameters();
+    ScannerParametersData newScannerParameters;
+    newScannerParameters = obj->m_client.getScannerParameters();
 
-    Handle<Object> retData = Object::New();
-    retData->Set( String::NewSymbol( "isValid" ),
-                  Boolean::New( newData.isValid ) );
+    Handle<Object> retScannerParameters = Object::New();
+    retScannerParameters->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newScannerParameters.isValid ) );
+    retScannerParameters->Set( String::NewSymbol( "xml" ),
+                  String::New( newScannerParameters.xml.c_str() ) );
 
-    return scope.Close( retData );
+    return scope.Close( retScannerParameters );
 }
 Handle<Value> NodeIbapi::ScannerData( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
 
-    ScannerDataData newData;
-    newData = obj->m_client.getScannerData();
+    ScannerDataData newScannerData;
+    newScannerData = obj->m_client.getScannerData();
 
-    Handle<Object> retData = Object::New();
-    retData->Set( String::NewSymbol( "isValid" ),
-                  Boolean::New( newData.isValid ) );
+    Handle<Object> retScannerData = Object::New();
 
-    return scope.Close( retData );
+    retScannerData->Set( String::NewSymbol( "isValid" ) ,
+                  Boolean::New( newScannerData.isValid ) ); 
+    retScannerData->Set( String::NewSymbol( "reqId" ) ,
+                  Integer::New( newScannerData.reqId ) ); 
+    retScannerData->Set( String::NewSymbol( "rank" ) ,
+                  Integer::New( newScannerData.rank ) ); 
+    retScannerData->Set( String::NewSymbol( "contractDetails" ) ,
+                  convertContDetailForNode( newScannerData.contractDetails ) ); 
+    retScannerData->Set( String::NewSymbol( "distance" ) ,
+                  String::New( newScannerData.distance.c_str() ) ); 
+    retScannerData->Set( String::NewSymbol( "benchmark" ) ,
+                  String::New( newScannerData.benchmark.c_str() ) ); 
+    retScannerData->Set( String::NewSymbol( "projection" ) ,
+                  String::New( newScannerData.projection.c_str() ) ); 
+    retScannerData->Set( String::NewSymbol( "legsStr" ) ,
+                  String::New( newScannerData.legsStr.c_str() ) ); 
+
+    return scope.Close( retScannerData );
 }
 Handle<Value> NodeIbapi::ScannerDataEnd( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
 
-    ScannerDataEndData newData;
-    newData = obj->m_client.getScannerDataEnd();
+    ScannerDataEndData newScannerEnd;
+    newScannerEnd = obj->m_client.getScannerDataEnd();
 
-    Handle<Object> retData = Object::New();
-    retData->Set( String::NewSymbol( "isValid" ),
-                  Boolean::New( newData.isValid ) );
+    Handle<Object> retScannerEnd = Object::New();
+    retScannerEnd->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newScannerEnd.isValid ) );
+    retScannerEnd->Set( String::NewSymbol( "reqId" ),
+                  Integer::New( newScannerEnd.reqId ) );
 
-    return scope.Close( retData );
+    return scope.Close( retScannerEnd );
 }
 Handle<Value> NodeIbapi::RealtimeBar( const Arguments &args ) {
     HandleScope scope;
@@ -1376,31 +1473,48 @@ Handle<Value> NodeIbapi::RealtimeBar( const Arguments &args ) {
                          Integer::New( newRealtimeBar.count ) );
     return scope.Close( retRealtimeBar );
 }
+// TODO currentTime
 Handle<Value> NodeIbapi::FundamentalData( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
 
-    FundamentalDataData newData;
-    newData = obj->m_client.getFundamentalData();
+    FundamentalDataData newFundamentalData;
+    newFundamentalData = obj->m_client.getFundamentalData();
 
-    Handle<Object> retData = Object::New();
-    retData->Set( String::NewSymbol( "isValid" ),
-                  Boolean::New( newData.isValid ) );
+    Handle<Object> retFundamentalData = Object::New();
+    retFundamentalData->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newFundamentalData.isValid ) );
+    retFundamentalData->Set( String::NewSymbol( "reqId" ),
+                  Integer::New( newFundamentalData.reqId ) );
+    retFundamentalData->Set( String::NewSymbol( "data" ),
+                  String::New( newFundamentalData.data.c_str() ) );
 
-    return scope.Close( retData );
+    return scope.Close( retFundamentalData );
 }
 Handle<Value> NodeIbapi::DeltaNeutralValidation( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
 
-    DeltaNeutralValidationData newData;
-    newData = obj->m_client.getDeltaNeutralValidation();
+    DeltaNeutralValidationData newDeltaNeutralValidation;
+    newDeltaNeutralValidation = obj->m_client.getDeltaNeutralValidation();
 
-    Handle<Object> retData = Object::New();
-    retData->Set( String::NewSymbol( "isValid" ),
-                  Boolean::New( newData.isValid ) );
+    Handle<Object> retDeltaNeutralValidation = Object::New();
+    retDeltaNeutralValidation->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newDeltaNeutralValidation.isValid ) );
+    retDeltaNeutralValidation->Set( String::NewSymbol( "reqId" ),
+                  Integer::New( newDeltaNeutralValidation.reqId ) );
 
-    return scope.Close( retData );
+    Handle<Object> underComp = Object::New();
+    underComp->Set( String::NewSymbol( "conId" ),
+                    Integer::New( newDeltaNeutralValidation.underComp.conId ) );
+    underComp->Set( String::NewSymbol( "delta" ),
+                    Number::New( newDeltaNeutralValidation.underComp.delta ) );
+    underComp->Set( String::NewSymbol( "price" ),
+                    Number::New( newDeltaNeutralValidation.underComp.price ) );
+    retDeltaNeutralValidation->Set( String::NewSymbol( "underComp" ), 
+                                    underComp );
+
+    return scope.Close( retDeltaNeutralValidation );
 }
 Handle<Value> NodeIbapi::TickSnapshotEnd( const Arguments &args ) {
     HandleScope scope;
@@ -1434,66 +1548,102 @@ Handle<Value> NodeIbapi::CommissionReport( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
 
-    CommissionReportData newData;
-    newData = obj->m_client.getCommissionReport();
+    CommissionReportData newCommRep;
+    newCommRep = obj->m_client.getCommissionReport();
 
-    Handle<Object> retData = Object::New();
-    retData->Set( String::NewSymbol( "isValid" ),
-                  Boolean::New( newData.isValid ) );
+    Handle<Object> retCommRep = Object::New();
+    retCommRep->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newCommRep.isValid ) );
 
-    return scope.Close( retData );
+    Handle<Object> commissionReport = Object::New();
+    commissionReport->Set( String::NewSymbol( "execId" ),
+        String::New( newCommRep.commissionReport.execId.c_str() ) );
+    commissionReport->Set( String::NewSymbol( "commission" ),
+        Number::New( newCommRep.commissionReport.commission ) );
+    commissionReport->Set( String::NewSymbol( "currency" ),
+        String::New( newCommRep.commissionReport.currency.c_str() ) );
+    commissionReport->Set( String::NewSymbol( "realizedPNL" ),
+        Number::New( newCommRep.commissionReport.realizedPNL ) );
+    commissionReport->Set( String::NewSymbol( "yield" ),
+        Number::New( newCommRep.commissionReport.yield ) );
+    commissionReport->Set( String::NewSymbol( "yieldRedemptionDate" ),
+        Integer::New( newCommRep.commissionReport.yieldRedemptionDate ) );
+
+    retCommRep->Set( String::NewSymbol( "commissionReport" ), 
+        commissionReport );
+
+    return scope.Close( retCommRep );
 }
 Handle<Value> NodeIbapi::Position( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
 
-    PositionData newData;
-    newData = obj->m_client.getPosition();
+    PositionData newPosition;
+    newPosition = obj->m_client.getPosition();
 
-    Handle<Object> retData = Object::New();
-    retData->Set( String::NewSymbol( "isValid" ),
-                  Boolean::New( newData.isValid ) );
-
-    return scope.Close( retData );
+    Handle<Object> retPosition = Object::New();
+    retPosition->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newPosition.isValid ) ); 
+    retPosition->Set( String::NewSymbol( "account" ),
+                  String::New( newPosition.account.c_str() ) ); 
+    retPosition->Set( String::NewSymbol( "contract" ),
+                  convertContractForNode( newPosition.contract ) ); 
+    retPosition->Set( String::NewSymbol( "position" ),
+                  Integer::New( newPosition.position ) ); 
+    retPosition->Set( String::NewSymbol( "avgCost" ),
+                  Number::New( newPosition.avgCost ) ); 
+    return scope.Close( retPosition );
 }
 Handle<Value> NodeIbapi::PositionEnd( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
 
-    PositionEndData newData;
-    newData = obj->m_client.getPositionEnd();
+    PositionEndData newPositionEnd;
+    newPositionEnd = obj->m_client.getPositionEnd();
 
-    Handle<Object> retData = Object::New();
-    retData->Set( String::NewSymbol( "isValid" ),
-                  Boolean::New( newData.isValid ) );
+    Handle<Object> retPositionEnd = Object::New();
+    retPositionEnd->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newPositionEnd.isValid ) );
 
-    return scope.Close( retData );
+    return scope.Close( retPositionEnd );
 }
 Handle<Value> NodeIbapi::AccountSummary( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
 
-    AccountSummaryData newData;
-    newData = obj->m_client.getAccountSummary();
+    AccountSummaryData newAccountSummary;
+    newAccountSummary = obj->m_client.getAccountSummary();
 
-    Handle<Object> retData = Object::New();
-    retData->Set( String::NewSymbol( "isValid" ),
-                  Boolean::New( newData.isValid ) );
+    Handle<Object> retAccountSummary = Object::New();
+    retAccountSummary->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newAccountSummary.isValid ) );
+    retAccountSummary->Set( String::NewSymbol( "reqId" ),
+                  Integer::New( newAccountSummary.reqId ) );
+    retAccountSummary->Set( String::NewSymbol( "account" ),
+                  String::New( newAccountSummary.account.c_str() ) );
+    retAccountSummary->Set( String::NewSymbol( "tag" ),
+                  String::New( newAccountSummary.tag.c_str() ) );
+    retAccountSummary->Set( String::NewSymbol( "value" ),
+                  String::New( newAccountSummary.value.c_str() ) );
+    retAccountSummary->Set( String::NewSymbol( "curency" ),
+                  String::New( newAccountSummary.curency.c_str() ) );
 
-    return scope.Close( retData );
+    return scope.Close( retAccountSummary );
 }
 Handle<Value> NodeIbapi::AccountSummaryEnd( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
 
-    AccountSummaryEndData newData;
-    newData = obj->m_client.getAccountSummaryEnd();
+    AccountSummaryEndData newAcctSumEnd;
+    newAcctSumEnd = obj->m_client.getAccountSummaryEnd();
 
-    Handle<Object> retData = Object::New();
-    retData->Set( String::NewSymbol( "isValid" ),
-                  Boolean::New( newData.isValid ) );
+    Handle<Object> retAcctSumEnd = Object::New();
+    retAcctSumEnd->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newAcctSumEnd.isValid ) );
+    retAcctSumEnd->Set( String::NewSymbol( "reqId" ),
+                  Boolean::New( newAcctSumEnd.reqId ) );
 
-    return scope.Close( retData );
+    return scope.Close( retAcctSumEnd );
 }
 
 
@@ -1573,6 +1723,41 @@ void NodeIbapi::convertContractForIb( Handle<Object> ibContract,
     }
 }
 
+Handle<Object> NodeIbapi::convertContractForNode( Contract &contract ) {
+    Handle<Object> retContract = Object::New();
+    retContract->Set( String::NewSymbol( "conId" ), 
+                      Integer::New( contract.conId ) );
+    retContract->Set( String::NewSymbol( "symbol" ),
+                      String::New( contract.symbol.c_str() ) );
+    retContract->Set( String::NewSymbol( "secType" ),
+                      String::New( contract.secType.c_str() ) ); //IBString
+    retContract->Set( String::NewSymbol( "expiry" ),
+                      String::New( contract.expiry.c_str() ) ); //IBString
+    retContract->Set( String::NewSymbol( "strike" ),
+                      Number::New( contract.strike ) ); //double
+    retContract->Set( String::NewSymbol( "right" ),
+                      String::New( contract.right.c_str() ) ); //IBString
+    retContract->Set( String::NewSymbol( "multiplier" ),
+                      String::New( contract.multiplier.c_str() ) ); //IBString
+    retContract->Set( String::NewSymbol( "exchange" ),
+                      String::New( contract.exchange.c_str() ) ); //IBString
+    retContract->Set( String::NewSymbol( "primaryExchange" ),
+                      String::New( contract.primaryExchange.c_str() ) ); //IBString
+    retContract->Set( String::NewSymbol( "currency" ),
+                      String::New( contract.currency.c_str() ) ); //IBString
+    retContract->Set( String::NewSymbol( "localSymbol" ),
+                      String::New( contract.localSymbol.c_str() ) ); //IBString
+    retContract->Set( String::NewSymbol( "tradingClass" ),
+                      String::New( contract.tradingClass.c_str() ) ); //IBString
+    retContract->Set( String::NewSymbol( "includeExpired" ),
+                      Boolean::New( contract.includeExpired ) ); //bool
+    retContract->Set( String::NewSymbol( "secIdType" ),
+                      String::New( contract.secIdType.c_str() ) ); //IBString
+    retContract->Set( String::NewSymbol( "secId" ),
+                      String::New( contract.secId.c_str() ) ); //IBString
+    return retContract;
+}
+
 void NodeIbapi::convertSubForIb( Handle<Object> scannerSub,
                                  ScannerSubscription &subscription ) {
 
@@ -1636,4 +1821,114 @@ void NodeIbapi::convertSubForIb( Handle<Object> scannerSub,
         getChar( scannerSub->Get( String::New( "stockTypeFilter" ) ) );
 }
 
+Handle<Object> NodeIbapi::convertContDetailForNode( ContractDetails &contDet ) {
+    Handle<Object> retContDet = Object::New();
 
+    retContDet->Set( String::NewSymbol( "summary" ) , 
+                     convertContractForNode( contDet.summary ) );
+    retContDet->Set( String::NewSymbol( "marketName" ) , 
+                     String::New( contDet.marketName.c_str() ) );  
+    retContDet->Set( String::NewSymbol( "minTick" ) , 
+                     Number::New( contDet.minTick ) );    
+    retContDet->Set( String::NewSymbol( "orderTypes" ) , 
+                     String::New( contDet.orderTypes.c_str() ) );  
+    retContDet->Set( String::NewSymbol( "validExchanges" ) , 
+                     String::New( contDet.validExchanges.c_str() ) );  
+    retContDet->Set( String::NewSymbol( "priceMagnifier" ) , 
+                     Integer::New( contDet.priceMagnifier ) ); ;    
+    retContDet->Set( String::NewSymbol( "underConId" ) , 
+                     Integer::New( contDet.underConId ) ); ;     
+    retContDet->Set( String::NewSymbol( "longName" ) , 
+                     String::New( contDet.longName.c_str() ) );  
+    retContDet->Set( String::NewSymbol( "contractMonth" ) , 
+                     String::New( contDet.contractMonth.c_str() ) );  
+    retContDet->Set( String::NewSymbol( "industry" ) , 
+                     String::New( contDet.industry.c_str() ) );  
+    retContDet->Set( String::NewSymbol( "category" ) , 
+                     String::New( contDet.category.c_str() ) );  
+    retContDet->Set( String::NewSymbol( "subcategory" ) , 
+                     String::New( contDet.subcategory.c_str() ) );  
+    retContDet->Set( String::NewSymbol( "timeZoneId" ) , 
+                     String::New( contDet.timeZoneId.c_str() ) );  
+    retContDet->Set( String::NewSymbol( "tradingHours" ) , 
+                     String::New( contDet.tradingHours.c_str() ) );  
+    retContDet->Set( String::NewSymbol( "liquidHours" ) , 
+                     String::New( contDet.liquidHours.c_str() ) );  
+    retContDet->Set( String::NewSymbol( "evRule" ) , 
+                     String::New( contDet.evRule.c_str() ) );  
+    retContDet->Set( String::NewSymbol( "evMultiplier" ) , 
+                     Number::New( contDet.evMultiplier ) ); 
+
+    // Bond values   
+    retContDet->Set( String::NewSymbol( "cusip" ) , 
+                     String::New( contDet.cusip.c_str() ) );  
+    retContDet->Set( String::NewSymbol( "ratings" ) , 
+                     String::New( contDet.ratings.c_str() ) );  
+    retContDet->Set( String::NewSymbol( "descAppend" ) , 
+                     String::New( contDet.descAppend.c_str() ) );  
+    retContDet->Set( String::NewSymbol( "bondType" ) , 
+                     String::New( contDet.bondType.c_str() ) );  
+    retContDet->Set( String::NewSymbol( "couponType" ) , 
+                     String::New( contDet.couponType.c_str() ) );  
+    retContDet->Set( String::NewSymbol( "callable" ) , 
+                     Boolean::New( contDet.callable ) );    
+    retContDet->Set( String::NewSymbol( "putable" ) , 
+                     Boolean::New( contDet.putable ) );    
+    retContDet->Set( String::NewSymbol( "coupon" ) , 
+                     Number::New( contDet.coupon ) );    
+    retContDet->Set( String::NewSymbol( "convertible" ) , 
+                     Boolean::New( contDet.convertible ) );    
+    retContDet->Set( String::NewSymbol( "maturity" ) , 
+                     String::New( contDet.maturity.c_str() ) );  
+    retContDet->Set( String::NewSymbol( "issueDate" ) , 
+                     String::New( contDet.issueDate.c_str() ) );  
+    retContDet->Set( String::NewSymbol( "nextOptionDate" ) , 
+                     String::New( contDet.nextOptionDate.c_str() ) );  
+    retContDet->Set( String::NewSymbol( "nextOptionType" ) , 
+                     String::New( contDet.nextOptionType.c_str() ) );  
+    retContDet->Set( String::NewSymbol( "nextOptionPartial" ) , 
+                     Boolean::New( contDet.nextOptionPartial ) );    
+    retContDet->Set( String::NewSymbol( "notes" ) , 
+                     String::New( contDet.notes.c_str() ) );
+
+    return retContDet;
+}
+
+Handle<Object> NodeIbapi::convertExecForNode( Execution &execution ) {
+    Handle<Object> retExecution = Object::New();
+
+    retExecution->Set( String::NewSymbol( "execId" ),
+                       String::New( execution.execId.c_str() ) );
+    retExecution->Set( String::NewSymbol( "time" ),
+                       String::New( execution.time.c_str() ) );
+    retExecution->Set( String::NewSymbol( "acctNumber" ),
+                       String::New( execution.acctNumber.c_str() ) );
+    retExecution->Set( String::NewSymbol( "exchange" ),
+                       String::New( execution.exchange.c_str() ) );
+    retExecution->Set( String::NewSymbol( "side" ),
+                       String::New( execution.side.c_str() ) );
+    retExecution->Set( String::NewSymbol( "shares" ),
+                       Integer::New( execution.shares ) );
+    retExecution->Set( String::NewSymbol( "price" ),
+                       Number::New( execution.price ) );
+    retExecution->Set( String::NewSymbol( "permId" ),
+                       Integer::New( execution.permId ) );
+    retExecution->Set( String::NewSymbol( "clientId" ),
+                       Integer::New( execution.clientId ) );
+    retExecution->Set( String::NewSymbol( "orderId" ),
+                       Integer::New( execution.orderId ) );
+    retExecution->Set( String::NewSymbol( "liquidation" ),
+                       Integer::New( execution.liquidation ) );
+    retExecution->Set( String::NewSymbol( "cumQty" ),
+                       Integer::New( execution.cumQty ) );
+    retExecution->Set( String::NewSymbol( "avgPrice" ),
+                       Number::New( execution.avgPrice ) );
+    retExecution->Set( String::NewSymbol( "orderRef" ),
+                       String::New( execution.orderRef.c_str() ) );
+    retExecution->Set( String::NewSymbol( "evRule" ),
+                       String::New( execution.evRule.c_str() ) );
+    retExecution->Set( String::NewSymbol( "evMultiplier" ),
+                       Number::New( execution.evMultiplier ) );
+
+    return retExecution;
+}

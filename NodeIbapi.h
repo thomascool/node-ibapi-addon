@@ -86,7 +86,7 @@ private:
     static Handle<Value> UpdateAccountTime( const Arguments& args );
     static Handle<Value> AccountDownloadEnd( const Arguments& args );
     static Handle<Value> NextValidId( const Arguments& args );
-    static Handle<Value> ContractDetails( const Arguments& args );
+    static Handle<Value> GetContractDetails( const Arguments& args );
     static Handle<Value> BondContractDetails( const Arguments& args );
     static Handle<Value> ContractDetailsEnd( const Arguments& args );
     static Handle<Value> ExecDetails( const Arguments& args );
@@ -121,8 +121,11 @@ private:
     static bool isWrongType( bool predicateRes, int argId );
     static void convertContractForIb( Handle<Object> ibContract, 
                                       Contract &contract );
+    static Handle<Object> convertContractForNode( Contract &contract );
     static void convertSubForIb( Handle<Object> scannerSub, 
                                  ScannerSubscription &subscription );
+    static Handle<Object> convertContDetailForNode( ContractDetails &contDet );
+    static Handle<Object> convertExecForNode( Execution &execution );
 
     IbPosixClient m_client;
 
