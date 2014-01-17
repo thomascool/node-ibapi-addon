@@ -1014,7 +1014,17 @@ Handle<Value> NodeIbapi::OpenOrder( const Arguments &args ) {
     return scope.Close( retOpenOrder );
 }
 Handle<Value> NodeIbapi::OpenOrderEnd( const Arguments &args ) {
-    // TODO
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    OpenOrderEndData newOpenOrderEnd;
+    newOpenOrderEnd = obj->m_client.getOpenOrderEnd();
+
+    Handle<Object> retOpenOrderEnd = Object::New();
+    retOpenOrderEnd->Set( String::NewSymbol( "isValid" ),
+                          Boolean::New( newOpenOrderEnd.isValid ) );
+
+    return scope.Close( retOpenOrderEnd );
 }
 Handle<Value> NodeIbapi::WinError( const Arguments &args ) {
     HandleScope scope;
@@ -1034,7 +1044,17 @@ Handle<Value> NodeIbapi::WinError( const Arguments &args ) {
     return scope.Close( retWinError );
 }
 Handle<Value> NodeIbapi::ConnectionClosed( const Arguments &args ) {
-    // TODO
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    ConnectionClosedData newConnectionClosed;
+    newConnectionClosed = obj->m_client.getConnectionClosed();
+
+    Handle<Object> retConnectionClosed = Object::New();
+    retConnectionClosed->Set( String::NewSymbol( "isValid" ),
+                          Boolean::New( newConnectionClosed.isValid ) );
+
+    return scope.Close( retConnectionClosed );
 }
 Handle<Value> NodeIbapi::UpdateAccountValue( const Arguments &args ) {
     HandleScope scope;
