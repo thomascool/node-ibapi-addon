@@ -21,47 +21,94 @@ void NodeIbapi::Init( Handle<Object> exports ) {
     tpl->InstanceTemplate()->SetInternalFieldCount( 1 );
 
     // prototype
-    // TODO need to write test, not sure what would be a good one..
+    // TODO need to write test, not sure what would be a good one..a
     tpl->PrototypeTemplate()->Set( String::NewSymbol( "processMsg" ),
         FunctionTemplate::New( ProcessMsg )->GetFunction() );
     /// getters
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getTickPrice" ), 
+        FunctionTemplate::New( TickPrice )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getTickSize" ), 
+        FunctionTemplate::New( TickSize )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getTickOptionComputation" ), 
+        FunctionTemplate::New( TickOptionComputation )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getTickGeneric" ), 
+        FunctionTemplate::New( TickGeneric )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getTickString" ), 
+        FunctionTemplate::New( TickString )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getTickEFP" ), 
+        FunctionTemplate::New( TickEFP )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getOrderStatus" ), 
+        FunctionTemplate::New( OrderStatus )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getOpenOrder" ), 
+        FunctionTemplate::New( OpenOrder )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getOpenOrderEnd" ), 
+        FunctionTemplate::New( OpenOrderEnd )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getWinError" ), 
+        FunctionTemplate::New( WinError )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getConnectionClosed" ), 
+        FunctionTemplate::New( ConnectionClosed )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getUpdateAccountValue" ), 
+        FunctionTemplate::New( UpdateAccountValue )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getUpdatePortfolio" ), 
+        FunctionTemplate::New( UpdatePortfolio )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getUpdateAccountTime" ), 
+        FunctionTemplate::New( UpdateAccountTime )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getAccountDownloadEnd" ), 
+        FunctionTemplate::New( AccountDownloadEnd )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getNextValidId" ), 
+        FunctionTemplate::New( NextValidId )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getContractDetails" ), 
+        FunctionTemplate::New( ContractDetails )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getBondContractDetails" ), 
+        FunctionTemplate::New( BondContractDetails )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getContractDetailsEnd" ), 
+        FunctionTemplate::New( ContractDetailsEnd )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getExecDetails" ), 
+        FunctionTemplate::New( ExecDetails )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getExecDetailsEnd" ), 
+        FunctionTemplate::New( ExecDetailsEnd )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getError" ), 
+        FunctionTemplate::New( Error )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getUpdateMktDepth" ), 
+        FunctionTemplate::New( UpdateMktDepth )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getUpdateMktDepthL2" ), 
+        FunctionTemplate::New( UpdateMktDepthL2 )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getUpdateNewsBulletin" ), 
+        FunctionTemplate::New( UpdateNewsBulletin )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getManagedAccounts" ), 
+        FunctionTemplate::New( ManagedAccounts )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getReceiveFA" ), 
+        FunctionTemplate::New( ReceiveFA )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getHistoricalData" ), 
+        FunctionTemplate::New( HistoricalData )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getScannerParameters" ), 
+        FunctionTemplate::New( ScannerParameters )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getScannerData" ), 
+        FunctionTemplate::New( ScannerData )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getScannerDataEnd" ), 
+        FunctionTemplate::New( ScannerDataEnd )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getRealtimeBar" ), 
+        FunctionTemplate::New( RealtimeBar )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getFundamentalData" ), 
+        FunctionTemplate::New( FundamentalData )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getDeltaNeutralValidation" ), 
+        FunctionTemplate::New( DeltaNeutralValidation )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getTickSnapshotEnd" ), 
+        FunctionTemplate::New( TickSnapshotEnd )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getMarketDataType" ), 
+        FunctionTemplate::New( MarketDataType )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getCommissionReport" ), 
+        FunctionTemplate::New( CommissionReport )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getPosition" ), 
+        FunctionTemplate::New( Position )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getPositionEnd" ), 
+        FunctionTemplate::New( PositionEnd )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getAccountSummary" ), 
+        FunctionTemplate::New( AccountSummary )->GetFunction() );
+    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getAccountSummaryEnd" ), 
+        FunctionTemplate::New( AccountSummaryEnd )->GetFunction() );
     tpl->PrototypeTemplate()->Set( String::NewSymbol( "getNextValidId" ),
         FunctionTemplate::New( NextValidId )->GetFunction() );
-    // tpl->PrototypeTemplate()->Set( String::NewSymbol( "getCurrentTime" ),
-    //     FunctionTemplate::New( CurrentTime )->GetFunction() );
-    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getTickPrice" ),
-        FunctionTemplate::New( TickPrice )->GetFunction() );
-    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getTickSize" ),
-        FunctionTemplate::New( TickSize )->GetFunction() );
-    tpl->PrototypeTemplate()->Set( 
-        String::NewSymbol( "getTickOptionComputation" ),
-        FunctionTemplate::New( TickOptionComputation )->GetFunction() );
-    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getTickGeneric" ),
-        FunctionTemplate::New( TickGeneric )->GetFunction() );
-    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getTickString" ),
-        FunctionTemplate::New( TickString )->GetFunction() );
-    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getTickEFP" ),
-        FunctionTemplate::New( TickEFP )->GetFunction() );
-    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getTickSnapshotEnd" ),
-        FunctionTemplate::New( TickSnapshotEnd )->GetFunction() );
-    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getMarketDataType" ),
-        FunctionTemplate::New( MarketDataType )->GetFunction() );
-
-    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getOrderStatus" ),
-        FunctionTemplate::New( OrderStatus )->GetFunction() );
-    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getOpenOrder" ),
-        FunctionTemplate::New( OpenOrder )->GetFunction() );
-    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getRealtimeBar" ),
-        FunctionTemplate::New( RealtimeBar )->GetFunction() );
-    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getWinError" ),
-        FunctionTemplate::New( WinError )->GetFunction() );
-    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getError" ),
-        FunctionTemplate::New( Error )->GetFunction() );
-    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getUpdateAccountValue" ),
-        FunctionTemplate::New( UpdateAccountValue )->GetFunction() );
-    tpl->PrototypeTemplate()->Set( String::NewSymbol( "getUpdatePortfolio" ),
-        FunctionTemplate::New( UpdatePortfolio )->GetFunction() );
-
 
     /// EClientSocket
     tpl->PrototypeTemplate()->Set( String::NewSymbol( "connect" ),
@@ -753,20 +800,10 @@ Handle<Value> NodeIbapi::CancelAccountSummary( const Arguments &args ) {
     return scope.Close( Undefined() );
 }
 
-Handle<Value> NodeIbapi::NextValidId( const Arguments &args ) {
-    HandleScope scope;
-    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+///////////////////////////////////////////////////////////////////////////////
+//  Getters
+///////////////////////////////////////////////////////////////////////////////
 
-    NextValidIdData newNextValidId;
-    newNextValidId = obj->m_client.getNextValidId();
-
-    Handle<Object> retNextValidId = Object::New();
-    retNextValidId->Set( String::NewSymbol( "isValid" ), 
-                         Boolean::New( newNextValidId.isValid ) );
-    retNextValidId->Set( String::NewSymbol( "orderId" ),
-                         Integer::New( newNextValidId.orderId ) );
-    return scope.Close( retNextValidId );
-}
 
 // Handle<Value> NodeIbapi::CurrentTime( const Arguments &args ) {
 //     HandleScope scope;
@@ -912,34 +949,6 @@ Handle<Value> NodeIbapi::TickEFP( const Arguments &args ) {
                      Number::New( newTickEFP.dividendsToExpiry ) );
     return scope.Close( retTickEFP );
 }
-Handle<Value> NodeIbapi::TickSnapshotEnd( const Arguments &args ) {
-    HandleScope scope;
-    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-
-    TickSnapshotEndData newTickSnapshotEnd;
-    newTickSnapshotEnd = obj->m_client.getTickSnapshotEnd();
-    Handle<Object> retTickSnapshotEnd = Object::New();
-    retTickSnapshotEnd->Set( String::NewSymbol( "isValid" ), 
-                     Boolean::New( newTickSnapshotEnd.isValid ) );
-    retTickSnapshotEnd->Set( String::NewSymbol( "reqId" ), 
-                             Integer::New( newTickSnapshotEnd.reqId ) );
-    return scope.Close( retTickSnapshotEnd );
-}
-Handle<Value> NodeIbapi::MarketDataType( const Arguments &args ) {
-    HandleScope scope;
-    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-
-    MarketDataTypeData newMarketDataType;
-    newMarketDataType = obj->m_client.getMarketDataType();
-    Handle<Object> retMarketDataType = Object::New();
-    retMarketDataType->Set( String::NewSymbol( "isValid" ), 
-                     Boolean::New( newMarketDataType.isValid ) );
-    retMarketDataType->Set( String::NewSymbol( "reqId" ), 
-                            Integer::New( newMarketDataType.reqId ) );
-    retMarketDataType->Set( String::NewSymbol( "marketDataType" ), 
-                            Integer::New( newMarketDataType.marketDataType ) );
-    return scope.Close( retMarketDataType );
-}
 Handle<Value> NodeIbapi::OrderStatus( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
@@ -1004,37 +1013,9 @@ Handle<Value> NodeIbapi::OpenOrder( const Arguments &args ) {
         String::New( newOpenOrder.orderState.warningText.c_str() ) );
     return scope.Close( retOpenOrder );
 }
-Handle<Value> NodeIbapi::RealtimeBar( const Arguments &args ) {
-    HandleScope scope;
-    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-
-    RealtimeBarData newRealtimeBar;
-    newRealtimeBar = obj->m_client.getRealtimeBar();
-
-    Handle<Object> retRealtimeBar = Object::New();
-    retRealtimeBar->Set( String::NewSymbol( "isValid" ), 
-                     Boolean::New( newRealtimeBar.isValid ) );
-    retRealtimeBar->Set( String::NewSymbol( "reqId" ), 
-                         Integer::New( newRealtimeBar.reqId ) );
-    retRealtimeBar->Set( String::NewSymbol( "time" ), 
-                         Integer::New( newRealtimeBar.time ) );
-    retRealtimeBar->Set( String::NewSymbol( "open" ), 
-                         Number::New( newRealtimeBar.open ) );
-    retRealtimeBar->Set( String::NewSymbol( "high" ), 
-                         Number::New( newRealtimeBar.high ) );
-    retRealtimeBar->Set( String::NewSymbol( "low" ), 
-                         Number::New( newRealtimeBar.low ) );
-    retRealtimeBar->Set( String::NewSymbol( "close" ), 
-                         Number::New( newRealtimeBar.close ) );
-    retRealtimeBar->Set( String::NewSymbol( "volume" ), 
-                         Integer::New( newRealtimeBar.volume ) );
-    retRealtimeBar->Set( String::NewSymbol( "wap" ), 
-                         Number::New( newRealtimeBar.wap ) );
-    retRealtimeBar->Set( String::NewSymbol( "count" ), 
-                         Integer::New( newRealtimeBar.count ) );
-    return scope.Close( retRealtimeBar );
+Handle<Value> NodeIbapi::OpenOrderEnd( const Arguments &args ) {
+    // TODO
 }
-
 Handle<Value> NodeIbapi::WinError( const Arguments &args ) {
     HandleScope scope;
     NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
@@ -1052,23 +1033,8 @@ Handle<Value> NodeIbapi::WinError( const Arguments &args ) {
 
     return scope.Close( retWinError );
 }
-Handle<Value> NodeIbapi::Error( const Arguments &args ) {
-    HandleScope scope;
-    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
-
-    ErrorData newError;
-    newError = obj->m_client.getError();
-
-    Handle<Object> retError = Object::New();
-    retError->Set( String::NewSymbol( "isValid" ), 
-                     Boolean::New( newError.isValid ) );
-    retError->Set( String::NewSymbol( "id" ), Integer::New( newError.id ) );
-    retError->Set( String::NewSymbol( "errorCode" ), 
-                   Integer::New( newError.errorCode ) );
-    retError->Set( String::NewSymbol( "errorString" ), 
-                   String::New( newError.errorString.c_str() ) );
-
-    return scope.Close( retError );
+Handle<Value> NodeIbapi::ConnectionClosed( const Arguments &args ) {
+    // TODO
 }
 Handle<Value> NodeIbapi::UpdateAccountValue( const Arguments &args ) {
     HandleScope scope;
@@ -1112,6 +1078,404 @@ Handle<Value> NodeIbapi::UpdatePortfolio( const Arguments &args ) {
 
     return scope.Close( retUpdatePortfolio );
 }
+Handle<Value> NodeIbapi::UpdateAccountTime( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    UpdateAccountTimeData newAccountTime;
+    newAccountTime = obj->m_client.getUpdateAccountTime();
+
+    Handle<Object> retAccountTime = Object::New();
+    retAccountTime->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newAccountTime.isValid ) );
+    retAccountTime->Set( String::NewSymbol( "timeStamp" ),
+                  String::New( newAccountTime.timeStamp.c_str() ) );
+
+    return scope.Close( retAccountTime );
+}
+Handle<Value> NodeIbapi::AccountDownloadEnd( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    AccountDownloadEndData newAcctDownloadEnd;
+    newAcctDownloadEnd = obj->m_client.getAccountDownloadEnd();
+
+    Handle<Object> retAcctDownloadEnd = Object::New();
+    retAcctDownloadEnd->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newAcctDownloadEnd.isValid ) );
+    retAcctDownloadEnd->Set( String::NewSymbol( "accountName" ),
+                  String::New( newAcctDownloadEnd.accountName.c_str() ) );
+
+    return scope.Close( retAcctDownloadEnd );
+}
+Handle<Value> NodeIbapi::NextValidId( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    NextValidIdData newNextValidId;
+    newNextValidId = obj->m_client.getNextValidId();
+
+    Handle<Object> retNextValidId = Object::New();
+    retNextValidId->Set( String::NewSymbol( "isValid" ), 
+                         Boolean::New( newNextValidId.isValid ) );
+    retNextValidId->Set( String::NewSymbol( "orderId" ),
+                         Integer::New( newNextValidId.orderId ) );
+    return scope.Close( retNextValidId );
+}
+Handle<Value> NodeIbapi::ContractDetails( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    ContractDetailsData newData;
+    newData = obj->m_client.getContractDetails();
+
+    Handle<Object> retData = Object::New();
+    retData->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newData.isValid ) );
+    retData->Set( String::NewSymbol( "reqId" ),
+                  Integer::New( newData.reqId ) );
+    Handle<Object> contractDetails = Object::New();
+
+// TODO STOPPED HERE
+    return scope.Close( retData );
+}
+Handle<Value> NodeIbapi::BondContractDetails( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    BondContractDetailsData newData;
+    newData = obj->m_client.getBondContractDetails();
+
+    Handle<Object> retData = Object::New();
+    retData->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newData.isValid ) );
+
+    return scope.Close( retData );
+}
+Handle<Value> NodeIbapi::ContractDetailsEnd( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    ContractDetailsEndData newData;
+    newData = obj->m_client.getContractDetailsEnd();
+
+    Handle<Object> retData = Object::New();
+    retData->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newData.isValid ) );
+
+    return scope.Close( retData );
+}
+Handle<Value> NodeIbapi::ExecDetails( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    ExecDetailsData newData;
+    newData = obj->m_client.getExecDetails();
+
+    Handle<Object> retData = Object::New();
+    retData->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newData.isValid ) );
+
+    return scope.Close( retData );
+}
+Handle<Value> NodeIbapi::ExecDetailsEnd( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    ExecDetailsEndData newData;
+    newData = obj->m_client.getExecDetailsEnd();
+
+    Handle<Object> retData = Object::New();
+    retData->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newData.isValid ) );
+
+    return scope.Close( retData );
+}
+Handle<Value> NodeIbapi::Error( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    ErrorData newError;
+    newError = obj->m_client.getError();
+
+    Handle<Object> retError = Object::New();
+    retError->Set( String::NewSymbol( "isValid" ), 
+                     Boolean::New( newError.isValid ) );
+    retError->Set( String::NewSymbol( "id" ), Integer::New( newError.id ) );
+    retError->Set( String::NewSymbol( "errorCode" ), 
+                   Integer::New( newError.errorCode ) );
+    retError->Set( String::NewSymbol( "errorString" ), 
+                   String::New( newError.errorString.c_str() ) );
+
+    return scope.Close( retError );
+}
+Handle<Value> NodeIbapi::UpdateMktDepth( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    UpdateMktDepthData newData;
+    newData = obj->m_client.getUpdateMktDepth();
+
+    Handle<Object> retData = Object::New();
+    retData->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newData.isValid ) );
+
+    return scope.Close( retData );
+}
+Handle<Value> NodeIbapi::UpdateMktDepthL2( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    UpdateMktDepthL2Data newData;
+    newData = obj->m_client.getUpdateMktDepthL2();
+
+    Handle<Object> retData = Object::New();
+    retData->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newData.isValid ) );
+
+    return scope.Close( retData );
+}
+Handle<Value> NodeIbapi::UpdateNewsBulletin( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    UpdateNewsBulletinData newData;
+    newData = obj->m_client.getUpdateNewsBulletin();
+
+    Handle<Object> retData = Object::New();
+    retData->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newData.isValid ) );
+
+    return scope.Close( retData );
+}
+Handle<Value> NodeIbapi::ManagedAccounts( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    ManagedAccountsData newData;
+    newData = obj->m_client.getManagedAccounts();
+
+    Handle<Object> retData = Object::New();
+    retData->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newData.isValid ) );
+
+    return scope.Close( retData );
+}
+Handle<Value> NodeIbapi::ReceiveFA( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    ReceiveFAData newData;
+    newData = obj->m_client.getReceiveFA();
+
+    Handle<Object> retData = Object::New();
+    retData->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newData.isValid ) );
+
+    return scope.Close( retData );
+}
+Handle<Value> NodeIbapi::HistoricalData( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    HistoricalDataData newData;
+    newData = obj->m_client.getHistoricalData();
+
+    Handle<Object> retData = Object::New();
+    retData->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newData.isValid ) );
+
+    return scope.Close( retData );
+}
+Handle<Value> NodeIbapi::ScannerParameters( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    ScannerParametersData newData;
+    newData = obj->m_client.getScannerParameters();
+
+    Handle<Object> retData = Object::New();
+    retData->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newData.isValid ) );
+
+    return scope.Close( retData );
+}
+Handle<Value> NodeIbapi::ScannerData( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    ScannerDataData newData;
+    newData = obj->m_client.getScannerData();
+
+    Handle<Object> retData = Object::New();
+    retData->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newData.isValid ) );
+
+    return scope.Close( retData );
+}
+Handle<Value> NodeIbapi::ScannerDataEnd( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    ScannerDataEndData newData;
+    newData = obj->m_client.getScannerDataEnd();
+
+    Handle<Object> retData = Object::New();
+    retData->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newData.isValid ) );
+
+    return scope.Close( retData );
+}
+Handle<Value> NodeIbapi::RealtimeBar( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    RealtimeBarData newRealtimeBar;
+    newRealtimeBar = obj->m_client.getRealtimeBar();
+
+    Handle<Object> retRealtimeBar = Object::New();
+    retRealtimeBar->Set( String::NewSymbol( "isValid" ), 
+                     Boolean::New( newRealtimeBar.isValid ) );
+    retRealtimeBar->Set( String::NewSymbol( "reqId" ), 
+                         Integer::New( newRealtimeBar.reqId ) );
+    retRealtimeBar->Set( String::NewSymbol( "time" ), 
+                         Integer::New( newRealtimeBar.time ) );
+    retRealtimeBar->Set( String::NewSymbol( "open" ), 
+                         Number::New( newRealtimeBar.open ) );
+    retRealtimeBar->Set( String::NewSymbol( "high" ), 
+                         Number::New( newRealtimeBar.high ) );
+    retRealtimeBar->Set( String::NewSymbol( "low" ), 
+                         Number::New( newRealtimeBar.low ) );
+    retRealtimeBar->Set( String::NewSymbol( "close" ), 
+                         Number::New( newRealtimeBar.close ) );
+    retRealtimeBar->Set( String::NewSymbol( "volume" ), 
+                         Integer::New( newRealtimeBar.volume ) );
+    retRealtimeBar->Set( String::NewSymbol( "wap" ), 
+                         Number::New( newRealtimeBar.wap ) );
+    retRealtimeBar->Set( String::NewSymbol( "count" ), 
+                         Integer::New( newRealtimeBar.count ) );
+    return scope.Close( retRealtimeBar );
+}
+Handle<Value> NodeIbapi::FundamentalData( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    FundamentalDataData newData;
+    newData = obj->m_client.getFundamentalData();
+
+    Handle<Object> retData = Object::New();
+    retData->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newData.isValid ) );
+
+    return scope.Close( retData );
+}
+Handle<Value> NodeIbapi::DeltaNeutralValidation( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    DeltaNeutralValidationData newData;
+    newData = obj->m_client.getDeltaNeutralValidation();
+
+    Handle<Object> retData = Object::New();
+    retData->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newData.isValid ) );
+
+    return scope.Close( retData );
+}
+Handle<Value> NodeIbapi::TickSnapshotEnd( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    TickSnapshotEndData newTickSnapshotEnd;
+    newTickSnapshotEnd = obj->m_client.getTickSnapshotEnd();
+    Handle<Object> retTickSnapshotEnd = Object::New();
+    retTickSnapshotEnd->Set( String::NewSymbol( "isValid" ), 
+                     Boolean::New( newTickSnapshotEnd.isValid ) );
+    retTickSnapshotEnd->Set( String::NewSymbol( "reqId" ), 
+                             Integer::New( newTickSnapshotEnd.reqId ) );
+    return scope.Close( retTickSnapshotEnd );
+}
+Handle<Value> NodeIbapi::MarketDataType( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    MarketDataTypeData newMarketDataType;
+    newMarketDataType = obj->m_client.getMarketDataType();
+    Handle<Object> retMarketDataType = Object::New();
+    retMarketDataType->Set( String::NewSymbol( "isValid" ), 
+                     Boolean::New( newMarketDataType.isValid ) );
+    retMarketDataType->Set( String::NewSymbol( "reqId" ), 
+                            Integer::New( newMarketDataType.reqId ) );
+    retMarketDataType->Set( String::NewSymbol( "marketDataType" ), 
+                            Integer::New( newMarketDataType.marketDataType ) );
+    return scope.Close( retMarketDataType );
+}
+Handle<Value> NodeIbapi::CommissionReport( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    CommissionReportData newData;
+    newData = obj->m_client.getCommissionReport();
+
+    Handle<Object> retData = Object::New();
+    retData->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newData.isValid ) );
+
+    return scope.Close( retData );
+}
+Handle<Value> NodeIbapi::Position( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    PositionData newData;
+    newData = obj->m_client.getPosition();
+
+    Handle<Object> retData = Object::New();
+    retData->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newData.isValid ) );
+
+    return scope.Close( retData );
+}
+Handle<Value> NodeIbapi::PositionEnd( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    PositionEndData newData;
+    newData = obj->m_client.getPositionEnd();
+
+    Handle<Object> retData = Object::New();
+    retData->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newData.isValid ) );
+
+    return scope.Close( retData );
+}
+Handle<Value> NodeIbapi::AccountSummary( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    AccountSummaryData newData;
+    newData = obj->m_client.getAccountSummary();
+
+    Handle<Object> retData = Object::New();
+    retData->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newData.isValid ) );
+
+    return scope.Close( retData );
+}
+Handle<Value> NodeIbapi::AccountSummaryEnd( const Arguments &args ) {
+    HandleScope scope;
+    NodeIbapi* obj = ObjectWrap::Unwrap<NodeIbapi>( args.This() );
+
+    AccountSummaryEndData newData;
+    newData = obj->m_client.getAccountSummaryEnd();
+
+    Handle<Object> retData = Object::New();
+    retData->Set( String::NewSymbol( "isValid" ),
+                  Boolean::New( newData.isValid ) );
+
+    return scope.Close( retData );
+}
+
 
 
 ///////////////////////////////////////////////////////////////////////////////
