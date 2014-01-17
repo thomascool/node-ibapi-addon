@@ -12,6 +12,7 @@ For direct JavaScript implementation of IB API for Node.js, please visit Pilwon 
 
 ### Change Notes:
 
+* 2013-01-17 - 0.1.0 - all EWrapper events bound in ibapi.js
 * 2013-01-09 - 0.0.4 - get commands output JS objects
 * 2013-12-29 - 0.0.3 - Added EventEmitter support
 * 2013-09-26 - 0.0.2 - EClientSocket hooks and EWrapper hooks
@@ -72,65 +73,24 @@ The following commands are extended commands in ibapi.js if one were to use it.
 .processIbMsg()
 .connectToIb()
 ```
-
-### Module Wrapper Events
-```js
-// processIbMsg events - returns arrays
-.on('clientError', function (clientError))
-.on('srvError', function (srvError))
-.on('nextValidId' function (nextValidId))
-.on('tickPrice', function (tickPrice))
-.on('tickSize', function (tickSize))
-.on('tickOptionComputation', function(tickOptionComputation))
-.on('tickGeneric', function(tickGeneric))
-.on('tickString', function(tickString))
-.on('tickEFP', function(tickEFP))
-.on('tickSnapshotEnd', function(tickSnapshotEnd))
-.on('marketDataType', function(marketDataType))
-.on('orderStatus', function(orderStatus))
-.on('openOrder', function(openOrder))
-.on('realtimeBar', function(realtimeBar))
-.on('disconnected', function ())
-
-// connectToIb events
-.on('connected', function())
-.on('connectionFail' function())
-```
-
-### Addon Wrapper Commands
+### Client methods
 ```js
 // Msg processor
 //  a POSIX implementation of network message handler
 .processMsg()
 
-// Getters
-//  Following commands are used for getting the incoming data from 
-//  the msg queue 
-.getNextValidId()
-.getTickPrice()
-.getTickSize()
-.getTickOptionComputation()
-.getTickGeneric()
-.getTickString()
-.getTickEFP()
-.getTickSnapshotEnd()
-.getMarketDataType()
-.getOrderStatus()
-.getOpenOrder()
-.getRealtimeBar()
-.getWinError()
-.getError()
-.getUpdateAccountValue()
-
 // IB API Commands
 //  Following commands are used for requesting specific action 
 //  through IB API
+//  Whenever you need to input contract, it must be js object contract see
+//  lib/contract.js
+//  Likewise, for scanner subscription, see lib/scannerSubscription.js
+
 .connect(host,port,clientId)
 .disconnect()
 .isConnected()
 .reqMktData(reqId, contract, genericTickType, snapShot)
 .cancelMktData(reqId)
-.placeSimpleOrder(orderId, symbol, secType, exchange, primaryExchange, currency, action, quantity, orderType, price)
 .placeOrder(orderId, contract, action, quantity, orderType, price)
 .cancelOrder(orderId)
 .reqOpenOrders()
@@ -138,12 +98,92 @@ The following commands are extended commands in ibapi.js if one were to use it.
 .reqExecutions(reqId, clientId, acctCode, time, symbol, secType, exchange, side)
 .reqIds(1)
 .checkMessages()
-
+.reqContractDetails(reqId, contract)
+.reqMktDepth(tickerId, contract, numRows ) 
+.cancelMktDepth(tickerId)
+.reqNewsBulletins(allMsgs)
+.cancelNewsBulletins()
+.setServerLogLevel(level)
+.reqAutoOpenOrders(bAutoBind)
+.reqAllOpenOrders()
+.reqManagedAccts()
+.requestFA( ) // not yet implemented
+.replaceFA( ) // not yet implemented
+.reqHistoricalData(id, contract, endDateTime, durationStr, barSizeSetting, whatToShow, useRTH, formatDate)
+.exerciseOptions(tickerId, contract, exerciseAction, exerciseQuantity, account, override )
+.cancelHistoricalData(tickerId)
 .reqRealtimeBars(tickerId, contract, barSize, whatToShow, useRTH)
 .cancelRealTimeBars(tickerId)
+.cancelScannerSubscription(tickerId)
+.reqScannerParameters()
+.reqScannerSubscription(tickerId, subscription)
+.reqCurrentTime() // not implemented
+.reqFundamentalData( reqId, contract, reportType )
+.cancelFundamentalData(reqId)
+.calculateImpliedVolatility( reqId, contract, optionPrice, underPrice )
+.calculateOptionPrice( reqId, contract, volatility, underPrice )
+.cancelCalculateImpliedVolatility(reqId)
+.cancelCalculateOptionPrice(reqId)
+.reqGlobalCancel()
+.reqMarketDataType(marketDataType)
+.reqPositions()
+.cancelPositions()
+.reqAccountSummary( reqId, groupName, tags )
+.cancelAccountSummary(reqId)
 ```
 
+### EWrapper Events
+```js
+// processIbMsg events - returns arrays
+.on('tickPrice', function( tickPrice ) )
+.on('tickSize', function( tickSize ) )
+.on('tickOptionComputation', function( tickOptionComputation ) )
+.on('tickGeneric', function( tickGeneric ) )
+.on('tickString', function( tickString ) )
+.on('tickEFP', function( tickEFP ) )
+.on('orderStatus', function( orderStatus ) )
+.on('openOrder', function( openOrder ) )
+.on('openOrderEnd', function( openOrderEnd ) )
+.on('clientError', function( clientError ) )
+.on('connectionClosed', function( connectionClosed ) )
+.on('updateAccountValue', function( updateAccountValue ) )
+.on('updatePortfolio', function( updatePortfolio ) )
+.on('updateAccountTime', function( updateAccountTime ) )
+.on('accountDownloadEnd', function( accountDownloadEnd ) )
+.on('nextValidId', function( nextValidId ) )
+.on('contractDetails', function( contractDetails ) )
+.on('bondContractDetails', function( bondContractDetails ) )
+.on('contractDetailsEnd', function( contractDetailsEnd ) )
+.on('execDetails', function( execDetails ) )
+.on('execDetailsEnd', function( execDetailsEnd ) )
+.on('svrError', function( svrError ) )
+.on('updateMktDepth', function( updateMktDepth ) )
+.on('updateMktDepthL2', function( updateMktDepthL2 ) )
+.on('updateNewsBulletin', function( updateNewsBulletin ) )
+.on('managedAccounts', function( managedAccounts ) )
+.on('receiveFA', function( receiveFA ) )
+.on('historicalData', function( historicalData ) )
+.on('scannerParameters', function( scannerParameters ) )
+.on('scannerData', function( scannerData ) )
+.on('scannerDataEnd', function( scannerDataEnd ) )
+.on('realtimeBar', function( realtimeBar ) )
+.on('fundamentalData', function( fundamentalData ) )
+.on('deltaNeutralValidation', function( deltaNeutralValidation ) )
+.on('tickSnapshotEnd', function( tickSnapshotEnd ) )
+.on('marketDataType', function( marketDataType ) )
+.on('commissionReport', function( commissionReport ) )
+.on('position', function( position ) )
+.on('positionEnd', function( positionEnd ) )
+.on('accountSummary', function( accountSummary ) )
+.on('accountSummaryEnd', function( accountSummaryEnd ) )
+.on('nextValidId', function( nextValidId ) )
 
+.on('disconnected', function ())
+
+// connectToIb events
+.on('connected', function())
+.on('connectionFail' function())
+```
 
 ### Tests:
 Uses mocha, so install it.
