@@ -22,6 +22,7 @@ For direct JavaScript implementation of IB API for Node.js, please visit Pilwon 
 
 1. Make sure to have node-gyp installed
 2. Run the install.sh which does the following:
+ * Download the latest stable IB API into /import
  * Copy the contents of IB API package's 
     IBJts/source/PosixClient/Shared into /import directory
  * Copy the contents of IB API package's
@@ -33,6 +34,15 @@ For direct JavaScript implementation of IB API for Node.js, please visit Pilwon 
 4. If build fails because you have VS2012, use ```node-gyp --msvs_version=2012 rebuild```
 
 ### Usage
+1. Require ibapi
+2. Bind processIbMsg to setInterval
+3. Bind doReqFunc to setInterval once nextValidId is received
+4. Define what happens in the callbacks for each events
+5. Push request functions to function queue funcQueue
+6. Invoke connectToIb
+7. ...
+8. Profit!
+
 ```js
 var addon = require('ibapi');
 var obj = new addon.NodeIbapi();
@@ -66,12 +76,12 @@ obj.connectToIb('127.0.0.1',7496,0);
 
 ```
 ### Module Wrapper Commands
-The following commands are extended commands in ibapi.js if one were to use it.
+The following commands are extended commands in ibapi.js.
 ```js
-.addReqId()
-.doReqFunc()
-.processIbMsg()
-.connectToIb()
+.addReqId()     // requests nextValidId, wraps reqIds(1)
+.doReqFunc()    // runs request functions in a function queue
+.processIbMsg() // processes incoming and outgoing messages
+.connectToIb()  // connects to IB and returns a connected or connectionFail event
 ```
 ### Client methods
 ```js
