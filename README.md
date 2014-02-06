@@ -63,7 +63,7 @@ obj.on('connected', function () {
   obj.funcQueue.push(addReqId);
 })
 .once('nextValidId', function (data) {
-  orderId = data;
+  orderId = data.orderId;
   console.log('nextValidId: ' + orderId);
   setInterval(doReqFunc,100);
 })
