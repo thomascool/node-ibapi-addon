@@ -1068,7 +1068,7 @@ Handle<Value> NodeIbapi::UpdateAccountValue( const Arguments &args ) {
                      Boolean::New( newUpdateAccountValue.isValid ) );
     retUpdateAccountValue->Set( String::NewSymbol( "key" ), 
         String::New( newUpdateAccountValue.key.c_str() ) );
-    retUpdateAccountValue->Set( String::NewSymbol( "val" ), 
+    retUpdateAccountValue->Set( String::NewSymbol( "value" ), 
         String::New( newUpdateAccountValue.val.c_str() ) );
     retUpdateAccountValue->Set( String::NewSymbol( "currency" ), 
         String::New( newUpdateAccountValue.currency.c_str() ) );
@@ -1694,7 +1694,7 @@ void NodeIbapi::convertContractForIb( Handle<Object> ibContract,
     contract.conId = ibContract->Get( String::New( "conId" ) )->Int32Value();
     contract.exchange = 
         getChar( ibContract->Get( String::New( "exchange" ) ) );
-    if ( contract.conId == 0 ) {
+    //if ( contract.conId == 0 ) {
         contract.symbol = getChar( ibContract->Get( String::New( "symbol" ) ) );
         contract.secType = 
             getChar( ibContract->Get( String::New( "secType" ) ) );
@@ -1720,7 +1720,7 @@ void NodeIbapi::convertContractForIb( Handle<Object> ibContract,
             getChar( ibContract->Get( String::New( "secIdType" ) ) );
         contract.secId = 
             getChar( ibContract->Get( String::New( "secId" ) ) );
-    }
+    //}
 }
 
 Handle<Object> NodeIbapi::convertContractForNode( Contract &contract ) {
