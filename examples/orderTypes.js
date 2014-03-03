@@ -47,7 +47,7 @@ obj.on('connected', function () {
 .on('clientError', function (clientError) {
   console.log('Client error' + clientError.id.toString());
 })
-.on('srvError', function (svrError) {
+.on('svrError', function (svrError) {
   console.log('Error: ' + svrError.id.toString() + ' - ' + 
     svrError.errorCode.toString() + ' - ' + svrError.errorString.toString());
 })
