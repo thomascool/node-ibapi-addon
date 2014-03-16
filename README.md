@@ -19,7 +19,7 @@ For direct JavaScript implementation of IB API for Node.js, please visit Pilwon 
 * 2013-09-26 - 0.0.2 - EClientSocket hooks and EWrapper hooks
 * 2013-09-02 - 0.0.1 - Initial commit - connect, disconnect, isConnected works
 
-### Instalation dependency for Windows:
+### Installation dependency for Windows:
 Make sure you have MINGW installed.
 
 ### Installation from NPM:
