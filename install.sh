@@ -14,4 +14,3 @@ sed -ie '4i#define IB_USE_STD_STRING' ./EClientSocketBase.cpp
 sed -ie '4i#define IB_USE_STD_STRING' ./EPosixClientSocket.cpp
 sed -ie 's_// LINUX_#include <unistd.h>_g' ./EPosixClientSocketPlatform.h
 cd $PDIR
-node-gyp rebuild
