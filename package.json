@@ -1,6 +1,6 @@
 {
   "name": "ibapi",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Interactive Brokers API addon for NodeJS ",
   "main": "ibapi.js",
   "directories": {
@@ -41,7 +41,10 @@
     "client",
     "library"
   ],
-  "author": "Jae Yang",
+  "author": { 
+    "name" : "Jae Yang",
+    "email" : "jaey226@gmail.com",
+  }
   "license": "MIT",
   "gypfile": true,
   "bugs": {
