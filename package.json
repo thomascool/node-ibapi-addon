@@ -43,7 +43,7 @@
   ],
   "author": { 
     "name" : "Jae Yang",
-    "email" : "jaey226@gmail.com",
+    "email" : "jaey226@gmail.com"
   }
   "license": "MIT",
   "gypfile": true,
