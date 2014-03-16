@@ -12,11 +12,16 @@ For direct JavaScript implementation of IB API for Node.js, please visit Pilwon 
 
 ### Change Notes:
 
+* 2013-03-15 - 0.1.9 - Smoother installation to multiple OSes
 * 2013-01-17 - 0.1.0 - all EWrapper events bound in ibapi.js
 * 2013-01-09 - 0.0.4 - get commands output JS objects
 * 2013-12-29 - 0.0.3 - Added EventEmitter support
 * 2013-09-26 - 0.0.2 - EClientSocket hooks and EWrapper hooks
 * 2013-09-02 - 0.0.1 - Initial commit - connect, disconnect, isConnected works
+
+### Instalation dependency for Windows:
+Make sure you have MINGW installed.
+
 ### Installation from NPM:
 ```
 npm install ibapi
@@ -32,10 +37,10 @@ For Windows with MSVS 2012:
 npm install ibapi --msvs_version=2012
 ```
 
-### Installation:
+### Installation from git repo:
 
 1. Make sure to have node-gyp installed
-2. Run the install.sh which does the following:
+2. Run the preinstall.sh which does the following:
  * Download the latest stable IB API into /import
  * Copy the contents of IB API package's 
     IBJts/source/PosixClient/Shared into /import directory
