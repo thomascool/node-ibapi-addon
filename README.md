@@ -17,6 +17,20 @@ For direct JavaScript implementation of IB API for Node.js, please visit Pilwon 
 * 2013-12-29 - 0.0.3 - Added EventEmitter support
 * 2013-09-26 - 0.0.2 - EClientSocket hooks and EWrapper hooks
 * 2013-09-02 - 0.0.1 - Initial commit - connect, disconnect, isConnected works
+### Installation from NPM:
+```
+npm install ibapi
+```
+
+For Windows with MSVS 2013:
+```
+npm install ibapi --msvs_version=2013
+```
+
+For Windows with MSVS 2012:
+```
+npm install ibapi --msvs_version=2012
+```
 
 ### Installation:
 
