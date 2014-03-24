@@ -7,8 +7,17 @@
                   ,"IbPosixClient.cpp"
                   ,"import/EPosixClientSocket.cpp"
                   ,"import/EClientSocketBase.cpp" ],
-      "cflags":  ['-fexceptions', '-O2'],
-      "cflags_cc": ['-fexceptions', '-O2']
+      "cflags":  ['-O2'],
+      "cflags_cc": ['-O2'],
+      'cflags!': [ '-fno-exceptions' ],
+      'cflags_cc!': [ '-fno-exceptions' ],
+      'conditions': [
+        ['OS=="mac"', {
+          'xcode_settings': {
+            'GCC_ENABLE_CPP_EXCEPTIONS': 'YES'
+          }
+        }]
+      ]
     }
   ]
 }
