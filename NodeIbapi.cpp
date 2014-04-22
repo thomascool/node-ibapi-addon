@@ -1590,8 +1590,6 @@ Handle<Value> NodeIbapi::Position( const Arguments &args ) {
                   convertContractForNode( newPosition.contract ) ); 
     retPosition->Set( String::NewSymbol( "position" ),
                   Integer::New( newPosition.position ) ); 
-    retPosition->Set( String::NewSymbol( "avgCost" ),
-                  Number::New( newPosition.avgCost ) ); 
     return scope.Close( retPosition );
 }
 Handle<Value> NodeIbapi::PositionEnd( const Arguments &args ) {
