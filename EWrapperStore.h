@@ -263,6 +263,7 @@ struct PositionData {
    IBString account;
    Contract contract;
    int position;
+   double avgCost;
 };
 struct PositionEndData {
     bool isValid;
