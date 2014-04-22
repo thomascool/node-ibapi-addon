@@ -25,5 +25,7 @@ elif [ "$(expr substr $(uname -s) 1 10)" = "MINGW32_NT" ]; then
 sed -i '4i#define IB_USE_STD_STRING' ./EClientSocketBase.cpp
 sed -i '4i#define IB_USE_STD_STRING' ./EPosixClientSocket.cpp
 sed -i 's_// LINUX_#include <unistd.h>_g' ./EPosixClientSocketPlatform.h
+sed -i 's_"StdAfx.h"_"afx.h"_g' ./EClientSocketBaseImpl.h
+sed -i 's/snprintf/_snprintf/g' ./EClientSocketBaseImpl.h
 fi
 cd $PDIR
