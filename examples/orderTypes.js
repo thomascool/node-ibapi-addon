@@ -34,13 +34,13 @@ var placeMsftLmtOrder = function (contract, oId) {
   console.log('Next valid order Id: %d',oId);
   console.log("Placing order for MSFT");
   obj.placeOrder(oId,contract, 
-    "BUY", 1000, "LMT", 0.11, 0.11);
+    "BUY", 1000, "LMT", 0.11);
 }
 var placeMsftMitOrder = function (contract, oId) {
   console.log('Next valid order Id: %d',oId);
   console.log("Placing order for MSFT");
   obj.placeOrder(oId,contract, 
-    "BUY", 1000, "MIT", 0.11, 0.11);
+    "BUY", 1000, "MIT", 0.11);
 }
 var cancelPrevOrder = function (oId) {
   console.log('canceling order: %d', oId);
